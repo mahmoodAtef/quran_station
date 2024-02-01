@@ -160,7 +160,7 @@ class MoshafWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        //  context.push(MoshafScreen(moshaf: moshaf));
+        context.push(MoshafScreen(moshaf: moshaf));
       },
       child: Card(
         surfaceTintColor: ColorManager.error,
@@ -195,7 +195,7 @@ class MoshafWidget extends StatelessWidget {
                     style: TextStylesManager.regularBoldWhiteStyle,
                   ),
                   subtitle: Text(
-                    '${moshaf.moshafData.surahTotal}تسجيل ',
+                    '${moshaf.moshafData.surahTotal} تسجيل ',
                     style: TextStylesManager.regularWhiteStyle,
                   ),
                   // trailing: Text(reciter.count.toString()),

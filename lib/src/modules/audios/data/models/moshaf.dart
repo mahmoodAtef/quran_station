@@ -3,9 +3,9 @@ import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart
 
 class Moshaf {
   final MoshafData moshafData;
-  final MoshafDetails? moshafDetails;
+  MoshafDetails? moshafDetails;
 
-  const Moshaf(
+  Moshaf(
     this.moshafData, {
     this.moshafDetails,
   });

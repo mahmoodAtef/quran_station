@@ -13,7 +13,7 @@ class MoshafDetails extends Equatable {
   factory MoshafDetails.fromJson(Map<String, dynamic> json) {
     return MoshafDetails(
       server: json['server'],
-      surahsIds: _getSurahsIndexesFromString(json['surah_list']),
+      surahsIds: List<int>.from(json['surah_list'].map((x) => x)),
     );
   }
 

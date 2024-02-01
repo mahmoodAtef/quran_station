@@ -27,3 +27,10 @@ class GetReciterEvent extends AudiosEvent {
   @override
   List<Object?> get props => [reciterId];
 }
+
+class GetMoshafDetailsEvent extends AudiosEvent {
+  final int moshafId;
+  const GetMoshafDetailsEvent(this.moshafId);
+  @override
+  List<Object?> get props => [moshafId];
+}

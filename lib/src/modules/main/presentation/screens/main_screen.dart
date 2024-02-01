@@ -64,7 +64,7 @@ class MainScreen extends StatelessWidget {
         centerTitle: true,
         title: const Text(
           'محطة القرآن الكريم',
-          style: TextStylesManager.blackTitle,
+          style: TextStylesManager.appBarTitle,
         ),
       ),
       drawer: appDrawer,

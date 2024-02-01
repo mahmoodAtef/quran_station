@@ -1,8 +1,10 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf.dart';
+import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
 import 'package:quran_station/src/modules/audios/data/repositories/audios_repository.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 
@@ -25,13 +27,14 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   // play surah
   // play quarn radio
   // download surah
-
   AudiosRepository repository = AudiosRepository();
-
   List<Reciter> reciters = [];
   List<Reciter> advancedSearchResult = [];
   List<String> mushafSurahs = [];
   List<Reciter> searchByNameResult = [];
+
+  AudioPlayer audioPlayer = AudioPlayer();
+
   AudiosBloc() : super(AudiosInitial()) {
     on<AudiosEvent>((event, emit) async {
       if (event is GetAllRecitersEvent) {
@@ -57,8 +60,8 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
             emit(GetReciterErrorState(l));
           }, (r) {
             Reciter reciter = reciters.firstWhere((element) => element.data.id == event.reciterId);
+            reciter.moshafs = [];
             for (var element in r) {
-              reciter.moshafs = [];
               reciter.moshafs?.add(Moshaf(element));
             }
             emit(GetReciterSuccessState());
@@ -71,11 +74,30 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
         searchByNameResult
             .addAll(reciters.where((element) => (element.data.name.contains(event.name))));
         emit(GetSearchByNameResult(searchByNameResult));
+      } else if (event is GetMoshafDetailsEvent) {
+        emit(GetMoshafDetailsLoadingState());
+        var response = await repository.getMoshafDetails(moshafId: event.moshafId);
+        response.fold((l) {
+          emit(GetMoshafDetailsErrorState(l));
+        }, (r) {
+          print(r);
+          _addMoshafDetails(r, event.moshafId);
+          emit(GetMoshafDetailsSuccessState(r));
+        });
       }
     });
   }
   bool _isReciterEmpty(int id) {
     Reciter reciter = reciters.firstWhere((element) => element.data.id == id);
     return reciter.moshafs == null;
+  }
+
+  void _addMoshafDetails(MoshafDetails r, int moshafId) {
+    reciters
+        .firstWhere((element) =>
+            element.moshafs?.where((element) => element.moshafData.id == moshafId).length != 0)
+        .moshafs
+        ?.firstWhere((element) => false)
+        .moshafDetails = r;
   }
 }

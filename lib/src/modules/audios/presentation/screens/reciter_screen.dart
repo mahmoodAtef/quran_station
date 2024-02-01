@@ -26,7 +26,7 @@ class ReciterScreen extends StatelessWidget {
               centerTitle: true,
               title: Text(
                 reciter.data.name,
-                style: TextStylesManager.blackTitle,
+                style: TextStylesManager.appBarTitle,
               ),
             ),
             body: state is GetReciterLoadingState || reciter.moshafs == null
@@ -38,8 +38,9 @@ class ReciterScreen extends StatelessWidget {
                     child: ListView.separated(
                         addAutomaticKeepAlives: true,
                         shrinkWrap: true,
-                        itemBuilder: (context, index) =>
-                            MoshafWidget(moshaf: reciter.moshafs![index]),
+                        itemBuilder: (context, index) => MoshafWidget(
+                              moshaf: reciter.moshafs![index],
+                            ),
                         separatorBuilder: (context, index) => SizedBox(
                               height: 10,
                             ),

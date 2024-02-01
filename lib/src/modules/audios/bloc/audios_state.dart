@@ -85,3 +85,22 @@ class GetReciterErrorState extends AudiosState {
   @override
   List<Object?> get props => [];
 }
+
+class GetMoshafDetailsLoadingState extends AudiosState {
+  @override
+  List<Object?> get props => [];
+}
+
+class GetMoshafDetailsSuccessState extends AudiosState {
+  final MoshafDetails moshafDetails;
+  const GetMoshafDetailsSuccessState(this.moshafDetails);
+  @override
+  List<Object?> get props => [];
+}
+
+class GetMoshafDetailsErrorState extends AudiosState {
+  final Exception exception;
+  const GetMoshafDetailsErrorState(this.exception);
+  @override
+  List<Object?> get props => [];
+}

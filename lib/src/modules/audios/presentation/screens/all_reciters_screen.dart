@@ -35,7 +35,7 @@ class AllRecitersScreen extends StatelessWidget {
         centerTitle: true,
         title: const Text(
           'القراء',
-          style: TextStylesManager.blackTitle,
+          style: TextStylesManager.appBarTitle,
         ),
         actions: [
           IconButton(

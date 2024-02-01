@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_function_literals_in_foreach_calls
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,18 +7,16 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:quran_station/src/core/remote/dio_helper.dart';
-import 'package:quran_station/src/modules/audios/data/api_helper/api_constance.dart';
-import 'package:quran_station/src/modules/audios/data/models/moshaf.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf_data.dart';
+import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
 import 'package:quran_station/src/modules/audios/data/models/reciter_data.dart';
-import 'package:quran_station/src/modules/audios/data/models/reciter_details.dart';
 
 abstract class BaseAudiosRemoteDataSource {
   // Future<Either<Exception, List<Reciter>>> getAllReciters();
   // Future<Either<Exception, List<Reciter>>> advancedSearch({int? surahId, int? rewayaId});
   Future<Either<Exception, List<ReciterData>>> getRecitersData();
   Future<Either<Exception, List<MoshafData>>> getReciterDetails({required int reciterId});
+  Future<Either<Exception, MoshafDetails>> getMoshafDetails({required int moshafId});
 }
 
 class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
@@ -37,8 +37,6 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
       });
       debugPrint(recitersData.length.toString());
       return Right(recitersData);
-    } on DioError catch (e) {
-      return Left(e);
     } on Exception catch (e) {
       return Left(e);
     }
@@ -66,22 +64,15 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
     }
   }
 
-  String getReciterid(String docId) {
-    String reciterRemoved = docId.replaceAll("reciter_", "");
-    String moshafRemoved = reciterRemoved.split("-")[0];
-    return moshafRemoved;
-  }
-
-  Future editMoshafs() async {
-    await firestore.collection("moshafs_data").get().then((value) {
-      value.docs.forEach((element) async {
-        String reciterId = getReciterid(element.id);
-        await firestore
-            .collection("moshafs_data")
-            .doc(element.id)
-            .update({"reciter_id": int.parse(reciterId)});
-      });
-    });
+  @override
+  Future<Either<Exception, MoshafDetails>> getMoshafDetails({required int moshafId}) async {
+    try {
+      var response = await firestore.collection("moshafs_details").doc("$moshafId").get();
+      MoshafDetails moshafDetails = MoshafDetails.fromJson(response.data()!);
+      return Right(moshafDetails);
+    } on Exception catch (e) {
+      return Left(e);
+    }
   }
 }
 

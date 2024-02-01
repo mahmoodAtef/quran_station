@@ -21,7 +21,7 @@ class TextStylesManager {
   static const TextStyle titleStyle = TextStyle();
   static final TextStyle titleBoldStyle =
       TextStyle(fontWeight: FontWeightManager.bold, color: ColorManager.primary, fontSize: 20.sp);
-  static const TextStyle blackTitle = TextStyle(
+  static const TextStyle appBarTitle = TextStyle(
     color: ColorManager.black,
     fontWeight: FontWeightManager.bold,
   );

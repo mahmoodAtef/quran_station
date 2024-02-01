@@ -57,6 +57,7 @@ dependencies:
   cloud_firestore:
   firebase_messaging:
   graphql:
+  audioplayers:
 #localization
   flutter_localizations:
     sdk: flutter
