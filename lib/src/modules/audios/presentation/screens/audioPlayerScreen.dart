@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
+import 'package:sizer/sizer.dart';
 
 class AudioPlayerScreen extends StatefulWidget {
   final String audioUrl;
@@ -32,6 +34,15 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
       ),
       body: Column(
         children: [
+          Expanded(
+              child: Center(
+                  child: SizedBox(
+            height: 40.h,
+            width: 90.w,
+            child: CachedNetworkImage(
+                imageUrl:
+                    "https://images.pexels.com/photos/2746823/pexels-photo-2746823.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
+          ))),
           PlayerWidget(
             player: bloc.audioPlayer,
           ),
@@ -158,6 +169,22 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        Slider(
+          onChanged: (value) {
+            final duration = _duration;
+            if (duration == null) {
+              return;
+            }
+            final position = value * duration.inMilliseconds;
+            player.seek(Duration(milliseconds: position.round()));
+          },
+          value: (_position != null &&
+                  _duration != null &&
+                  _position!.inMilliseconds > 0 &&
+                  _position!.inMilliseconds < _duration!.inMilliseconds)
+              ? _position!.inMilliseconds / _duration!.inMilliseconds
+              : 0.0,
+        ),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -183,22 +210,6 @@ class _PlayerWidgetState extends State<PlayerWidget> {
               color: color,
             ),
           ],
-        ),
-        Slider(
-          onChanged: (value) {
-            final duration = _duration;
-            if (duration == null) {
-              return;
-            }
-            final position = value * duration.inMilliseconds;
-            player.seek(Duration(milliseconds: position.round()));
-          },
-          value: (_position != null &&
-                  _duration != null &&
-                  _position!.inMilliseconds > 0 &&
-                  _position!.inMilliseconds < _duration!.inMilliseconds)
-              ? _position!.inMilliseconds / _duration!.inMilliseconds
-              : 0.0,
         ),
         Text(
           _position != null

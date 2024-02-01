@@ -213,9 +213,10 @@ class SurahItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(surahId);
     return Card(
       child: ListTile(
-        title: Text(ConstanceManager.quranSurahsNames[surahId]),
+        title: Text(ConstanceManager.quranSurahsNames[surahId - 1]),
       ),
     );
   }

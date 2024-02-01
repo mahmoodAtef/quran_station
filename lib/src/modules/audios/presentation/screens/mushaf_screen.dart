@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/core/utils/constance_manager.dart';
@@ -32,56 +33,55 @@ class MoshafScreen extends StatelessWidget {
             bloc: bloc,
             listener: (context, state) {
               if (state is GetMoshafDetailsSuccessState) {
+                print(state.moshafDetails.server);
                 moshaf.moshafDetails = state.moshafDetails;
               }
             },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView.separated(
-                  addAutomaticKeepAlives: true,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => InkWell(
-                        onTap: () {
-                          print(_getSurahUrl(index));
-                          context.push(AudioPlayerScreen(
-                              audioUrl: _getSurahUrl(index),
-                              title:
-                                  "سورة ${ConstanceManager.quranSurahsNames[index]}-${moshaf.moshafData.name}"));
+            child: moshaf.moshafDetails != null
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.separated(
+                        addAutomaticKeepAlives: true,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          int surahId = moshaf.moshafDetails!.surahsIds[index];
+                          return InkWell(
+                            onTap: () {
+                              if (kDebugMode) {
+                                print(_getSurahUrl(surahId));
+                              }
+                              context.push(AudioPlayerScreen(
+                                  audioUrl: _getSurahUrl(surahId),
+                                  title:
+                                      "سورة ${ConstanceManager.quranSurahsNames[surahId - 1]}-${moshaf.moshafData.name}"));
+                            },
+                            child: SurahItem(
+                              surahId: surahId,
+                            ),
+                          );
                         },
-                        child: SurahItem(
-                          surahId: index,
-                        ),
-                      ),
-                  separatorBuilder: (context, index) => SizedBox(
-                        height: 10,
-                      ),
-                  itemCount: moshaf.moshafData.surahTotal),
-            ),
+                        separatorBuilder: (context, index) => SizedBox(
+                              height: 10,
+                            ),
+                        itemCount: moshaf.moshafData.surahTotal),
+                  )
+                : const LinearProgressIndicator(),
           );
         },
       ),
     );
   }
 
-  List<int> _getSurahsIndexesFromString(String surahsString) {
-    List<int> surahs = [];
-    debugPrint("https://server6.mp3quran.net/akdr/002.mp3");
-    List<String> surahsStringList = surahsString.split(",");
-    for (var element in surahsStringList) {
-      surahs.add(int.parse(element) - 1);
-    }
-    return surahs;
-  }
-
-  String _getSurahUrl(int index) {
+  String _getSurahUrl(int surahId) {
     String surahUrl = "";
+
     String surahsString = "";
-    if (index < 10) {
-      surahsString = "00${index + 1}";
-    } else if (index < 100) {
-      surahsString = "0${index + 1}";
+    if (surahId < 10) {
+      surahsString = "00$surahId";
+    } else if (surahId < 100) {
+      surahsString = "0${surahId}";
     } else {
-      surahsString = "${index + 1}";
+      surahsString = "$surahId";
     }
     surahUrl = "${moshaf.moshafDetails?.server}/$surahsString.mp3";
 

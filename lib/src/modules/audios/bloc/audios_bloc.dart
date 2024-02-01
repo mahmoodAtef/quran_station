@@ -21,7 +21,7 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
 
   /// get all reciters
   /// get reciter moshafs
-  // get reciter moshaf surahs
+  /// get reciter moshaf surahs
   // search for reciter by name
   // search for surah by name
   // play surah
@@ -44,9 +44,7 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
           response.fold((l) {
             emit(GetAllRecitersErrorState(l));
           }, (r) {
-            //   reciters.clear();
             for (var element in r) {
-              debugPrint(element.name);
               reciters.add(Reciter(element));
             }
             emit(GetAllRecitersSuccessState());
@@ -59,10 +57,11 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
           response.fold((l) {
             emit(GetReciterErrorState(l));
           }, (r) {
-            Reciter reciter = reciters.firstWhere((element) => element.data.id == event.reciterId);
-            reciter.moshafs = [];
+            int reciterIndex = searchForReciterById(event.reciterId);
+            print("reciter index is $reciterIndex");
+            reciters[reciterIndex].moshafs = [];
             for (var element in r) {
-              reciter.moshafs?.add(Moshaf(element));
+              reciters[reciterIndex].moshafs?.add(Moshaf(element));
             }
             emit(GetReciterSuccessState());
           });
@@ -78,9 +77,10 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
         emit(GetMoshafDetailsLoadingState());
         var response = await repository.getMoshafDetails(moshafId: event.moshafId);
         response.fold((l) {
+          print(l);
           emit(GetMoshafDetailsErrorState(l));
         }, (r) {
-          print(r);
+          print(r.surahsIds);
           _addMoshafDetails(r, event.moshafId);
           emit(GetMoshafDetailsSuccessState(r));
         });
@@ -92,12 +92,29 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
     return reciter.moshafs == null;
   }
 
+  int searchForReciterById(int id) {
+    print(reciters[223].data.name);
+    return reciters.indexWhere((element) => element.data.id == id);
+  }
+
   void _addMoshafDetails(MoshafDetails r, int moshafId) {
-    reciters
-        .firstWhere((element) =>
-            element.moshafs?.where((element) => element.moshafData.id == moshafId).length != 0)
-        .moshafs
-        ?.firstWhere((element) => false)
-        .moshafDetails = r;
+    int reciterIndex = _searchForReciterByMoshafId(moshafId);
+    int moshafIndex = _searchForMoshafById(reciterIndex, moshafId);
+    reciters[reciterIndex].moshafs![moshafIndex].moshafDetails = r;
+    print(reciters[reciterIndex].moshafs![moshafIndex].moshafDetails);
+  }
+
+  int _searchForReciterByMoshafId(int moshafId) {
+    print(moshafId);
+    int reciterIndex = reciters.indexWhere((element) => (element.moshafs != null &&
+        element.moshafs!.indexWhere((element) => element.moshafData.id == moshafId) != -1));
+    print("reciter is ${reciters[reciterIndex].data.name}");
+    return reciterIndex;
+  }
+
+  int _searchForMoshafById(int reciterIndex, int moshafId) {
+    return reciters[reciterIndex]
+        .moshafs!
+        .indexWhere((element) => element.moshafData.id == moshafId);
   }
 }
