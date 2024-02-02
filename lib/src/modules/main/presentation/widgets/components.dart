@@ -28,10 +28,11 @@ Drawer appDrawer = Drawer(
 );
 
 class HeightSeparator extends StatelessWidget {
-  const HeightSeparator({super.key});
+  final double? height;
+  const HeightSeparator({super.key, this.height});
   @override
   Widget build(BuildContext context) {
-    return SizedBox(height: 2.h);
+    return SizedBox(height: height ?? 2.h);
   }
 }
 
@@ -107,6 +108,58 @@ class MainScreenItemWidget extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class DefaultTextFeild extends StatelessWidget {
+  final TextEditingController controller;
+  final String? hintText;
+  final TextInputType? keyboardType;
+  final bool? obscureText;
+  final String? labelText;
+  final void Function(String)? onChanged;
+  final void Function()? onTap;
+  final void Function(String)? onFieldSubmitted;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final bool? readOnly;
+  final bool? enabled;
+  const DefaultTextFeild(
+      {super.key,
+      required this.controller,
+      this.hintText,
+      this.keyboardType,
+      this.obscureText,
+      this.labelText,
+      this.onChanged,
+      this.onTap,
+      this.onFieldSubmitted,
+      this.suffixIcon,
+      this.prefixIcon,
+      this.readOnly,
+      this.enabled});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText ?? false,
+      onChanged: onChanged,
+      onTap: onTap,
+      onSubmitted: onFieldSubmitted,
+      decoration: InputDecoration(
+        hintText: hintText,
+        labelText: labelText,
+        suffixIcon: suffixIcon,
+        prefixIcon: prefixIcon,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.sp),
+        ),
+      ),
+      readOnly: readOnly ?? false,
+      enabled: enabled ?? true,
     );
   }
 }

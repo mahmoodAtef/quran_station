@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
-import 'package:quran_station/src/modules/audios/presentation/screens/all_reciters_screen.dart';
+import 'package:quran_station/src/modules/audios/presentation/screens/audios_main_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/ui_entities/main_screen_item.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
@@ -20,7 +20,7 @@ class MainScreen extends StatelessWidget {
           Icons.headphones,
           size: 35,
         ),
-        screen: AllRecitersScreen(),
+        screen: AudiosMainScreen(),
       ),
       MainScreenItem(
         title: "قراءة",
@@ -28,7 +28,7 @@ class MainScreen extends StatelessWidget {
           Icons.menu_book_rounded,
           size: 35,
         ),
-        screen: AllRecitersScreen(),
+        screen: AudiosMainScreen(),
       ),
       MainScreenItem(
         title: "حفظ القرآن",
@@ -36,7 +36,7 @@ class MainScreen extends StatelessWidget {
           Icons.person,
           size: 35,
         ),
-        screen: AllRecitersScreen(),
+        screen: AudiosMainScreen(),
       ),
       MainScreenItem(
         title: "الملف الشخصي",
@@ -44,7 +44,7 @@ class MainScreen extends StatelessWidget {
           Icons.person,
           size: 35,
         ),
-        screen: AllRecitersScreen(),
+        screen: AudiosMainScreen(),
       ),
     ];
     GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();

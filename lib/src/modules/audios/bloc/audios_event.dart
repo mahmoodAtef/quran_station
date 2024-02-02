@@ -60,3 +60,8 @@ class ChangeTabEvent extends AudiosEvent {
   @override
   List<Object?> get props => [index];
 }
+
+class GetMostPopularRecitersEvent extends AudiosEvent {
+  @override
+  List<Object?> get props => [];
+}

@@ -12,14 +12,16 @@ import 'package:quran_station/src/modules/audios/presentation/widgets/pages/all_
 import 'package:quran_station/src/modules/audios/presentation/widgets/pages/favourites_reciters_page.dart';
 
 import '../data/models/reciter_model.dart';
+import '../presentation/widgets/pages/most_popular_reciters_page.dart';
 
 part 'audios_event.dart';
 part 'audios_state.dart';
 
 class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
-  static AudiosBloc bloc = AudiosBloc();
+  static AudiosBloc? bloc;
   factory AudiosBloc.get() {
-    return bloc;
+    bloc = bloc ?? AudiosBloc();
+    return bloc!;
   }
 
   /// get all reciters
@@ -27,11 +29,12 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   /// get reciter moshaf surahs
   /// add reciter to favorite
   /// remove reciter from favorite
-  // search for reciter by name
-  // search for surah by name
-  // play surah
+  /// most popular reciters
+  /// play surah
+  /// search for reciter by name
   // play quarn radio
   // download surah
+
   AudiosRepository repository = AudiosRepository();
   List<Reciter> reciters = [];
   List<Reciter> advancedSearchResult = [];
@@ -40,29 +43,27 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   List<Reciter> favoriteReciters = [];
   AudioPlayer audioPlayer = AudioPlayer();
   String? currentSurahUrl;
-  List<String> tabs = const [" كل القراء ", " قرائي المفضلين "];
+  List<String> tabs = const [" كل القراء ", " قرائي المفضلين ", "أبرز القراء "];
   List<Widget> audioTabsWidgets = const [
     AllRecitersPage(),
     FavouritesRecitersPage(),
+    MostPopularRecitersPage(),
   ];
   int currentTab = 0;
-
+  List<Reciter> mostPopularReciters = [];
+  List<int> mostPopularRecitersIds = [];
   AudiosBloc() : super(AudiosInitial()) {
     on<AudiosEvent>((event, emit) async {
       if (event is GetAllRecitersEvent) {
         if (reciters.isEmpty) {
           emit(GetAllRecitersLoadingState());
-          var response = await repository.getReciterData();
+          var response = await repository.getRecitersData();
           response.fold((l) {
             emit(GetAllRecitersErrorState(l));
           }, (r) {
-            for (var element in r) {
-              reciters.add(Reciter(element));
-            }
+            reciters = r.map((e) => Reciter(e)).toList();
             emit(GetAllRecitersSuccessState());
           });
-        } else {
-          emit(GetAllRecitersSuccessState());
         }
       } else if (event is GetReciterEvent) {
         emit(GetReciterLoadingState());
@@ -71,18 +72,14 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
           response.fold((l) {
             emit(GetReciterErrorState(l));
           }, (r) {
-            int reciterIndex = searchForReciterById(event.reciterId);
-            print("reciter index is $reciterIndex");
+            int reciterIndex = _getReciterIndex(event.reciterId);
             reciters[reciterIndex].moshafs = [];
-            for (var element in r) {
-              reciters[reciterIndex].moshafs?.add(Moshaf(element));
-            }
+            reciters[reciterIndex].moshafs!.addAll(r.map((e) => Moshaf(e)).toList());
             emit(GetReciterSuccessState());
           });
-        } else {
-          emit(GetReciterSuccessState());
         }
       } else if (event is SearchByNameEvent) {
+        emit(GetSearchByNameLoadingState());
         searchByNameResult.clear();
         searchByNameResult
             .addAll(reciters.where((element) => (element.data.name.contains(event.name))));
@@ -91,17 +88,16 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
         emit(GetMoshafDetailsLoadingState());
         var response = await repository.getMoshafDetails(moshafId: event.moshafId);
         response.fold((l) {
-          print(l);
           emit(GetMoshafDetailsErrorState(l));
         }, (r) {
-          print(r.surahsIds);
           _addMoshafDetails(r, event.moshafId);
           emit(GetMoshafDetailsSuccessState(r));
         });
       } else if (event is GetFavoriteRecitersEvent) {
-        if (favoriteReciters.isEmpty) {
+        if (favoriteReciters.isEmpty && reciters.isNotEmpty) {
+          emit(GetFavoriteRecitersLoadingState());
           await CacheHelper.getData(key: "favoriteReciters").then((value) {
-            if (value != null) {
+            if (value != null || value != []) {
               favoriteReciters.clear();
               for (var e in value) {
                 favoriteReciters
@@ -126,16 +122,27 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
       } else if (event is ChangeTabEvent) {
         currentTab = event.index;
         emit(ChangeTabState(currentTab));
+      } else if (event is GetMostPopularRecitersEvent) {
+        if (mostPopularReciters.isEmpty) {
+          emit(GetMostPopularRecitersLoadingState());
+          var response = await repository.getMostPopularReciters();
+          response.fold((l) {
+            emit(GetMostPopularRecitersErrorState(l));
+          }, (r) {
+            mostPopularReciters.addAll(reciters.where((element) => r.contains(element.data.id)));
+            emit(GetMostPopularRecitersSuccessState());
+          });
+        }
       }
     });
   }
+
   bool _isReciterEmpty(int id) {
     Reciter reciter = reciters.firstWhere((element) => element.data.id == id);
     return reciter.moshafs == null;
   }
 
-  int searchForReciterById(int id) {
-    print(reciters[223].data.name);
+  int _getReciterIndex(int id) {
     return reciters.indexWhere((element) => element.data.id == id);
   }
 
@@ -143,11 +150,9 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
     int reciterIndex = _searchForReciterByMoshafId(moshafId);
     int moshafIndex = _searchForMoshafById(reciterIndex, moshafId);
     reciters[reciterIndex].moshafs![moshafIndex].moshafDetails = r;
-    print(reciters[reciterIndex].moshafs![moshafIndex].moshafDetails);
   }
 
   int _searchForReciterByMoshafId(int moshafId) {
-    print(moshafId);
     int reciterIndex = reciters.indexWhere((element) => (element.moshafs != null &&
         element.moshafs!.indexWhere((element) => element.moshafData.id == moshafId) != -1));
     print("reciter is ${reciters[reciterIndex].data.name}");

@@ -11,17 +11,14 @@ class FavouritesRecitersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AudiosBloc bloc = AudiosBloc.get();
-    return BlocListener<AudiosBloc, AudiosState>(
-      listener: (context, state) {
-        if (state is GetAllRecitersErrorState) {
-          ExceptionManager(state.exception).showMessages(context);
-        }
+    AudiosBloc bloc = AudiosBloc.get()..add(GetFavoriteRecitersEvent());
+    return BlocBuilder<AudiosBloc, AudiosState>(
+      bloc: bloc,
+      builder: (context, state) {
+        return state is GetFavoriteRecitersLoadingState
+            ? const LinearProgressIndicator()
+            : RecitersList(reciters: bloc.favoriteReciters);
       },
-      child: Padding(
-        padding: EdgeInsets.all(5.0.w),
-        child: RecitersList(reciters: bloc.favoriteReciters),
-      ),
     );
   }
 }

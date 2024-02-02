@@ -56,8 +56,13 @@ class GetMushafSurahsSuccessState extends AudiosState {
 }
 
 class GetMushafSurahsErrorState extends AudiosState {
-  String errorMessage;
-  GetMushafSurahsErrorState(this.errorMessage);
+  Exception exception;
+  GetMushafSurahsErrorState(this.exception);
+  @override
+  List<Object?> get props => [];
+}
+
+class GetSearchByNameLoadingState extends AudiosState {
   @override
   List<Object?> get props => [];
 }
@@ -121,6 +126,11 @@ class RemoveReciterFromFavoritesSuccessState extends AudiosState {
   List<Object?> get props => [];
 }
 
+class GetFavoriteRecitersLoadingState extends AudiosState {
+  @override
+  List<Object?> get props => [];
+}
+
 class GetFavoriteRecitersSuccessState extends AudiosState {
   @override
   List<Object?> get props => [];
@@ -131,4 +141,21 @@ class ChangeTabState extends AudiosState {
   const ChangeTabState(this.index);
   @override
   List<Object?> get props => [index];
+}
+
+class GetMostPopularRecitersLoadingState extends AudiosState {
+  @override
+  List<Object?> get props => [];
+}
+
+class GetMostPopularRecitersSuccessState extends AudiosState {
+  @override
+  List<Object?> get props => [];
+}
+
+class GetMostPopularRecitersErrorState extends AudiosState {
+  final Exception exception;
+  const GetMostPopularRecitersErrorState(this.exception);
+  @override
+  List<Object?> get props => [];
 }

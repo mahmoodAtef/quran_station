@@ -9,7 +9,7 @@ import '../models/moshaf_data.dart';
 
 class AudiosRepository {
   final BaseAudiosRemoteDataSource baseAudiosRemoteDataSource = AudiosRemoteDataSource();
-  Future<Either<Exception, List<ReciterData>>> getReciterData() async {
+  Future<Either<Exception, List<ReciterData>>> getRecitersData() async {
     return baseAudiosRemoteDataSource.getRecitersData();
   }
 
@@ -19,5 +19,9 @@ class AudiosRepository {
 
   Future<Either<Exception, MoshafDetails>> getMoshafDetails({required int moshafId}) {
     return baseAudiosRemoteDataSource.getMoshafDetails(moshafId: moshafId);
+  }
+
+  Future<Either<Exception, List<int>>> getMostPopularReciters() {
+    return baseAudiosRemoteDataSource.getMostPopularReciters();
   }
 }

@@ -1,10 +1,7 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls
 
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf_data.dart';
@@ -17,6 +14,7 @@ abstract class BaseAudiosRemoteDataSource {
   Future<Either<Exception, List<ReciterData>>> getRecitersData();
   Future<Either<Exception, List<MoshafData>>> getReciterDetails({required int reciterId});
   Future<Either<Exception, MoshafDetails>> getMoshafDetails({required int moshafId});
+  Future<Either<Exception, List<int>>> getMostPopularReciters();
 }
 
 class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
@@ -29,9 +27,6 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
       await firestore.collection("reciters").get().then((value) {
         value.docs.forEach((element) async {
           ReciterData data = ReciterData.fromJson(element.data());
-          if (kDebugMode) {
-            print(data.name);
-          }
           recitersData.add(data);
         });
       });
@@ -57,8 +52,6 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
         });
       });
       return Right(moshafsData);
-    } on DioError catch (e) {
-      return Left(e);
     } on Exception catch (e) {
       return Left(e);
     }
@@ -70,6 +63,16 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
       var response = await firestore.collection("moshafs_details").doc("$moshafId").get();
       MoshafDetails moshafDetails = MoshafDetails.fromJson(response.data()!);
       return Right(moshafDetails);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Exception, List<int>>> getMostPopularReciters() async {
+    try {
+      var response = await firestore.collection("most_popular").doc("most_popular").get();
+      return Right(List<int>.from(response.data()!["id's"]));
     } on Exception catch (e) {
       return Left(e);
     }

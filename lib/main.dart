@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,10 +6,7 @@ import 'package:quran_station/generated/l10n.dart';
 import 'package:quran_station/src/core/local/shared_prefrences.dart';
 import 'package:quran_station/src/core/services/bloc_observer.dart';
 import 'package:quran_station/src/core/utils/theme_manager.dart';
-
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
-import 'package:quran_station/src/modules/audios/data/data_sources/audios_remote_data_source.dart';
-import 'package:quran_station/src/modules/audios/presentation/screens/all_reciters_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/screens/main_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/screens/onboarding.dart';
 import 'package:sizer/sizer.dart';
@@ -33,6 +29,9 @@ Future<void> main() async {
     },
     blocObserver: MyBlocObserver(),
   );
+  // runApp(MyApp(
+  //   firstScreen: firstScreen,
+  // ));
 }
 
 class MyApp extends StatelessWidget {

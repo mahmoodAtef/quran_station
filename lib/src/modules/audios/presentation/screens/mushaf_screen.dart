@@ -51,7 +51,8 @@ class MoshafScreen extends StatelessWidget {
                                 print(_getSurahUrl(surahId));
                               }
                               context.push(AudioPlayerScreen(
-                                  audioUrl: _getSurahUrl(surahId),
+                                  audioType: AudioType.url,
+                                  audioAddress: _getSurahUrl(surahId),
                                   title:
                                       "سورة ${ConstanceManager.quranSurahsNames[surahId - 1]}-${moshaf.moshafData.name}"));
                             },
@@ -60,7 +61,7 @@ class MoshafScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        separatorBuilder: (context, index) => SizedBox(
+                        separatorBuilder: (context, index) => const SizedBox(
                               height: 10,
                             ),
                         itemCount: moshaf.moshafData.surahTotal),
