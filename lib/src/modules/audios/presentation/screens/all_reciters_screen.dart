@@ -9,6 +9,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../../core/utils/color_manager.dart';
 import '../../../main/presentation/widgets/components.dart';
+import '../widgets/pages/all_reciters_page.dart';
 
 class AllRecitersScreen extends StatelessWidget {
   const AllRecitersScreen({super.key});
@@ -16,7 +17,9 @@ class AllRecitersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    AudiosBloc bloc = AudiosBloc.get()..add(GetAllRecitersEvent());
+    AudiosBloc bloc = AudiosBloc.get()
+      ..add(GetAllRecitersEvent())
+      ..add(GetFavoriteRecitersEvent());
 
     return Scaffold(
       key: scaffoldKey,
@@ -46,21 +49,38 @@ class AllRecitersScreen extends StatelessWidget {
               )),
         ],
       ),
-      body: BlocListener<AudiosBloc, AudiosState>(
-        listener: (context, state) {
-          if (state is GetAllRecitersErrorState) {
-            ExceptionManager(state.exception).showMessages(context);
-          }
-        },
+      body: SingleChildScrollView(
         child: BlocBuilder<AudiosBloc, AudiosState>(
           bloc: bloc,
           builder: (context, state) {
-            return state is GetAllRecitersLoadingState
-                ? const LinearProgressIndicator()
-                : Padding(
-                    padding: EdgeInsets.all(5.0.w),
-                    child: RecitersList(reciters: bloc.reciters),
-                  );
+            return Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(5.0.w),
+                  child: SizedBox(
+                    height: 6.h,
+                    width: 90.w,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) =>
+                          TabWidget(title: bloc.tabs[index], index: index),
+                      separatorBuilder: (context, index) => SizedBox(
+                        width: 5.0.w,
+                      ),
+                      itemCount: bloc.tabs.length,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 1.0.h,
+                ),
+                state is GetAllRecitersLoadingState
+                    ? const LinearProgressIndicator()
+                    : bloc.audioTabsWidgets[bloc.currentTab]
+              ],
+            );
           },
         ),
       ),

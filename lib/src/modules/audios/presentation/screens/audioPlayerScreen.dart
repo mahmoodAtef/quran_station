@@ -19,11 +19,21 @@ class AudioPlayerScreen extends StatefulWidget {
 
 class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
   @override
+  void initState() {
+    AudiosBloc bloc = AudiosBloc.get();
+    if (bloc.currentSurahUrl != widget.audioUrl) {
+      bloc.currentSurahUrl = widget.audioUrl;
+      playAudio(bloc);
+    }
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Initial playback. Preloaded playback information
     AudiosBloc bloc = AudiosBloc.get();
 
-    playAudio(bloc);
     debugPrint("Audio Url: ${widget.audioUrl}");
     return Scaffold(
       appBar: AppBar(
@@ -45,6 +55,7 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
           ))),
           PlayerWidget(
             player: bloc.audioPlayer,
+            audioUrl: widget.audioUrl,
           ),
         ],
       ),
@@ -95,10 +106,11 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
 // This code is also used in the example.md. Please keep it up to date.
 class PlayerWidget extends StatefulWidget {
   final AudioPlayer player;
-
+  final String audioUrl;
   const PlayerWidget({
     required this.player,
     super.key,
+    required this.audioUrl,
   });
 
   @override
@@ -120,7 +132,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   bool get _isPlaying => _playerState == PlayerState.playing;
 
   bool get _isPaused => _playerState == PlayerState.paused;
-
+  bool get _isCompleted => _playerState == PlayerState.completed;
+  bool _willRepeat = false;
   String get _durationText => _duration?.toString().split('.').first ?? '';
 
   String get _positionText => _position?.toString().split('.').first ?? '';
@@ -140,6 +153,9 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     player.getCurrentPosition().then(
           (value) => setState(() {
             _position = value;
+            if (_willRepeat && _isCompleted) {
+              _repeat();
+            }
           }),
         );
     _initStreams();
@@ -169,6 +185,14 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        Text(
+          _position != null
+              ? '$_positionText / $_durationText'
+              : _duration != null
+                  ? _durationText
+                  : '',
+          style: const TextStyle(fontSize: 16.0),
+        ),
         Slider(
           onChanged: (value) {
             final duration = _duration;
@@ -189,18 +213,16 @@ class _PlayerWidgetState extends State<PlayerWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              key: const Key('play_button'),
-              onPressed: _isPlaying ? null : _play,
+              onPressed: _changeRepeatState,
               iconSize: 48.0,
-              icon: const Icon(Icons.play_arrow),
-              color: color,
+              icon: Icon(
+                Icons.replay,
+                color: _willRepeat ? color : null,
+              ),
             ),
-            IconButton(
-              key: const Key('pause_button'),
-              onPressed: _isPlaying ? _pause : null,
-              iconSize: 48.0,
-              icon: const Icon(Icons.pause),
-              color: color,
+            FloatingActionButton(
+              onPressed: _isPlaying ? _pause : _play,
+              child: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
             ),
             IconButton(
               key: const Key('stop_button'),
@@ -210,14 +232,6 @@ class _PlayerWidgetState extends State<PlayerWidget> {
               color: color,
             ),
           ],
-        ),
-        Text(
-          _position != null
-              ? '$_positionText / $_durationText'
-              : _duration != null
-                  ? _durationText
-                  : '',
-          style: const TextStyle(fontSize: 16.0),
         ),
       ],
     );
@@ -236,6 +250,11 @@ class _PlayerWidgetState extends State<PlayerWidget> {
       setState(() {
         _playerState = PlayerState.stopped;
         _position = Duration.zero;
+        if (_willRepeat) {
+          _repeat();
+        } else {
+          _initStreams();
+        }
       });
     });
 
@@ -247,7 +266,11 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   }
 
   Future<void> _play() async {
-    await player.resume();
+    if (_isPaused) {
+      await player.resume();
+    } else {
+      await _repeat();
+    }
     setState(() => _playerState = PlayerState.playing);
   }
 
@@ -261,6 +284,18 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     setState(() {
       _playerState = PlayerState.stopped;
       _position = Duration.zero;
+    });
+  }
+
+  Future<void> _repeat() async {
+    await player.play(UrlSource(widget.audioUrl));
+    player.play(player.source!);
+    setState(() => _playerState = PlayerState.playing);
+  }
+
+  void _changeRepeatState() {
+    setState(() {
+      _willRepeat = !_willRepeat;
     });
   }
 }

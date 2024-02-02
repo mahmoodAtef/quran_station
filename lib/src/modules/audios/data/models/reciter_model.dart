@@ -11,5 +11,7 @@ class Reciter extends Equatable {
   Reciter(this.data, {this.moshafs});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        data.id,
+      ];
 }

@@ -34,3 +34,29 @@ class GetMoshafDetailsEvent extends AudiosEvent {
   @override
   List<Object?> get props => [moshafId];
 }
+
+class AddReciterToFavoritesEvent extends AudiosEvent {
+  final int reciterId;
+  const AddReciterToFavoritesEvent(this.reciterId);
+  @override
+  List<Object?> get props => [reciterId];
+}
+
+class RemoveReciterFromFavoritesEvent extends AudiosEvent {
+  final int reciterId;
+  const RemoveReciterFromFavoritesEvent(this.reciterId);
+  @override
+  List<Object?> get props => [reciterId];
+}
+
+class GetFavoriteRecitersEvent extends AudiosEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class ChangeTabEvent extends AudiosEvent {
+  final int index;
+  const ChangeTabEvent(this.index);
+  @override
+  List<Object?> get props => [index];
+}

@@ -3,10 +3,13 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:quran_station/src/core/local/shared_prefrences.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
 import 'package:quran_station/src/modules/audios/data/repositories/audios_repository.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/pages/all_reciters_page.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/pages/favourites_reciters_page.dart';
 
 import '../data/models/reciter_model.dart';
 
@@ -22,6 +25,8 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   /// get all reciters
   /// get reciter moshafs
   /// get reciter moshaf surahs
+  /// add reciter to favorite
+  /// remove reciter from favorite
   // search for reciter by name
   // search for surah by name
   // play surah
@@ -32,8 +37,15 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   List<Reciter> advancedSearchResult = [];
   List<String> mushafSurahs = [];
   List<Reciter> searchByNameResult = [];
-
+  List<Reciter> favoriteReciters = [];
   AudioPlayer audioPlayer = AudioPlayer();
+  String? currentSurahUrl;
+  List<String> tabs = const [" كل القراء ", " قرائي المفضلين "];
+  List<Widget> audioTabsWidgets = const [
+    AllRecitersPage(),
+    FavouritesRecitersPage(),
+  ];
+  int currentTab = 0;
 
   AudiosBloc() : super(AudiosInitial()) {
     on<AudiosEvent>((event, emit) async {
@@ -49,6 +61,8 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
             }
             emit(GetAllRecitersSuccessState());
           });
+        } else {
+          emit(GetAllRecitersSuccessState());
         }
       } else if (event is GetReciterEvent) {
         emit(GetReciterLoadingState());
@@ -84,6 +98,34 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
           _addMoshafDetails(r, event.moshafId);
           emit(GetMoshafDetailsSuccessState(r));
         });
+      } else if (event is GetFavoriteRecitersEvent) {
+        if (favoriteReciters.isEmpty) {
+          await CacheHelper.getData(key: "favoriteReciters").then((value) {
+            if (value != null) {
+              favoriteReciters.clear();
+              for (var e in value) {
+                favoriteReciters
+                    .add(reciters.firstWhere((element) => element.data.id == int.parse(e)));
+              }
+            }
+          });
+          emit(GetFavoriteRecitersSuccessState());
+        }
+      } else if (event is AddReciterToFavoritesEvent) {
+        favoriteReciters.add(reciters.firstWhere((element) => element.data.id == event.reciterId));
+        emit(AddReciterToFavoritesSuccessState(event.reciterId));
+        await CacheHelper.saveData(
+            key: "favoriteReciters",
+            value: favoriteReciters.map((e) => e.data.id.toString()).toList());
+      } else if (event is RemoveReciterFromFavoritesEvent) {
+        favoriteReciters.removeWhere((element) => element.data.id == event.reciterId);
+        emit(RemoveReciterFromFavoritesSuccessState(event.reciterId));
+        await CacheHelper.saveData(
+            key: "favoriteReciters",
+            value: favoriteReciters.map((e) => e.data.id.toString()).toList());
+      } else if (event is ChangeTabEvent) {
+        currentTab = event.index;
+        emit(ChangeTabState(currentTab));
       }
     });
   }

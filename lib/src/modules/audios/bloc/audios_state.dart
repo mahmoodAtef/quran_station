@@ -104,3 +104,31 @@ class GetMoshafDetailsErrorState extends AudiosState {
   @override
   List<Object?> get props => [];
 }
+
+class AddReciterToFavoritesSuccessState extends AudiosState {
+  final int reciterId;
+  const AddReciterToFavoritesSuccessState(this.reciterId);
+  @override
+  List<Object?> get props => [
+        reciterId,
+      ];
+}
+
+class RemoveReciterFromFavoritesSuccessState extends AudiosState {
+  final int reciterId;
+  const RemoveReciterFromFavoritesSuccessState(this.reciterId);
+  @override
+  List<Object?> get props => [];
+}
+
+class GetFavoriteRecitersSuccessState extends AudiosState {
+  @override
+  List<Object?> get props => [];
+}
+
+class ChangeTabState extends AudiosState {
+  final int index;
+  const ChangeTabState(this.index);
+  @override
+  List<Object?> get props => [index];
+}

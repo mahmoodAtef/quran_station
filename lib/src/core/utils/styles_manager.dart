@@ -25,4 +25,12 @@ class TextStylesManager {
     color: ColorManager.black,
     fontWeight: FontWeightManager.bold,
   );
+  static const TextStyle selectedTabStyle = TextStyle(
+    color: ColorManager.white,
+    fontWeight: FontWeightManager.bold,
+  );
+  static const TextStyle unSelectedTabStyle = TextStyle(
+    color: ColorManager.black,
+    fontWeight: FontWeightManager.bold,
+  );
 }

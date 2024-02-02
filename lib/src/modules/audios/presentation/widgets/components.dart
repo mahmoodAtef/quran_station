@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/constance_manager.dart';
@@ -6,6 +7,7 @@ import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/reciter_screen.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../core/utils/styles_manager.dart';
+import '../../bloc/audios_bloc.dart';
 import '../../data/models/moshaf.dart';
 import '../../data/models/reciter_model.dart';
 import '../screens/mushaf_screen.dart';
@@ -50,6 +52,8 @@ class RecitersList extends StatelessWidget {
     Map<String, List<Reciter>> groupedReciters = groupRecitersByLetter(reciters);
 
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: groupedReciters.length,
       itemBuilder: (context, index) {
         String letter = groupedReciters.keys.elementAt(index);
@@ -96,9 +100,9 @@ class RecitersList extends StatelessWidget {
 class ReciterItem extends StatelessWidget {
   final Reciter reciter;
   const ReciterItem({super.key, required this.reciter});
-
   @override
   Widget build(BuildContext context) {
+    AudiosBloc bloc = AudiosBloc.get();
     return InkWell(
       onTap: () {
         print(reciter.data.id);
@@ -131,19 +135,48 @@ class ReciterItem extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: Column(
+            child: Row(
               children: [
-                ListTile(
-                  title: Text(
-                    reciter.data.name,
-                    style: TextStylesManager.regularBoldWhiteStyle,
+                Expanded(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          reciter.data.name,
+                          style: TextStylesManager.regularBoldWhiteStyle,
+                        ),
+                        subtitle: Text(
+                          '${reciter.data.rewayasCount}'
+                          ' قراءة / ${reciter.data.surahsCount} تسجيل ',
+                          style: TextStylesManager.regularWhiteStyle,
+                        ),
+                        // trailing: Text(reciter.count.toString()),
+                      ),
+                    ],
                   ),
-                  subtitle: Text(
-                    '${reciter.data.rewayasCount}'
-                    ' قراءة / ${reciter.data.surahsCount} تسجيل ',
-                    style: TextStylesManager.regularWhiteStyle,
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0.sp),
+                  child: BlocBuilder<AudiosBloc, AudiosState>(
+                    bloc: bloc,
+                    builder: (context, state) {
+                      return IconButton(
+                        onPressed: () {
+                          if (bloc.favoriteReciters.contains(reciter)) {
+                            bloc.add(RemoveReciterFromFavoritesEvent(reciter.data.id));
+                          } else {
+                            bloc.add(AddReciterToFavoritesEvent(reciter.data.id));
+                          }
+                        },
+                        icon: Icon(
+                          Icons.favorite,
+                          color: bloc.favoriteReciters.contains(reciter)
+                              ? ColorManager.secondary
+                              : ColorManager.white,
+                        ),
+                      );
+                    },
                   ),
-                  // trailing: Text(reciter.count.toString()),
                 ),
               ],
             )),
@@ -213,10 +246,47 @@ class SurahItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(surahId);
+    int surahIndex = surahId - 1;
     return Card(
       child: ListTile(
-        title: Text(ConstanceManager.quranSurahsNames[surahId - 1]),
+        title: Text(ConstanceManager.quranSurahsNames[surahIndex]),
+      ),
+    );
+  }
+}
+
+class TabWidget extends StatelessWidget {
+  final String title;
+  final int index;
+  const TabWidget({super.key, required this.title, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    AudiosBloc bloc = AudiosBloc.get();
+    return InkWell(
+      onTap: () {
+        bloc.add(ChangeTabEvent(index));
+      },
+      child: Container(
+        height: 5.0.h,
+        constraints: BoxConstraints(
+          minWidth: 20.w,
+          maxWidth: 80.w,
+        ),
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.sp),
+          color: bloc.currentTab == index ? ColorManager.primary : ColorManager.grey1,
+        ),
+        child: Text(
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          title,
+          style: bloc.currentTab == index
+              ? TextStylesManager.selectedTabStyle
+              : TextStylesManager.unSelectedTabStyle,
+        ),
       ),
     );
   }
