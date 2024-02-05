@@ -42,8 +42,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-              create: (BuildContext context) => AudiosBloc() //..add(const GetMyDataEvent()),
-              ),
+            create: (BuildContext context) => AudiosBloc.get(),
+          ),
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
           return MaterialApp(

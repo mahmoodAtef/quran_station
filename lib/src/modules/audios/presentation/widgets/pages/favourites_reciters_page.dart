@@ -15,9 +15,7 @@ class FavouritesRecitersPage extends StatelessWidget {
     return BlocBuilder<AudiosBloc, AudiosState>(
       bloc: bloc,
       builder: (context, state) {
-        return state is GetFavoriteRecitersLoadingState
-            ? const LinearProgressIndicator()
-            : RecitersList(reciters: bloc.favoriteReciters);
+        return RecitersList(reciters: bloc.favoriteReciters);
       },
     );
   }

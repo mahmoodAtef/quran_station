@@ -18,13 +18,13 @@ class AudiosMainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    AudiosBloc bloc = AudiosBloc.get()..add(GetAllRecitersEvent());
+    AudiosBloc bloc = AudiosBloc.get();
 
     return Scaffold(
       key: scaffoldKey,
       drawer: appDrawer,
       appBar: CustomAppBar(
-        height: 10.h,
+        height: 9.h,
         leadingWidth: 10.w,
         leading: IconButton(
             onPressed: () async {
@@ -50,56 +50,61 @@ class AudiosMainScreen extends StatelessWidget {
               )),
         ],
       ),
-      body: SingleChildScrollView(
-        child: BlocListener<AudiosBloc, AudiosState>(
-          listener: (context, state) {
-            _handleExceptionS(context, state);
-            if (state is GetAllRecitersSuccessState) {
-              bloc.add(GetFavoriteRecitersEvent());
-            }
-          },
-          child: BlocBuilder<AudiosBloc, AudiosState>(
-            bloc: bloc,
-            builder: (context, state) {
-              return Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(5.0.w),
-                    child: SizedBox(
-                      height: 6.h,
-                      width: 90.w,
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) => InkWell(
-                          onTap: () {
-                            bloc.add(ChangeTabEvent(index));
-                          },
-                          child: TabWidget(
-                            title: bloc.tabs[index],
-                            index: index,
-                            bloc: bloc,
+      body: BlocListener<AudiosBloc, AudiosState>(
+        bloc: bloc,
+        listener: (context, state) {
+          _handleExceptionS(context, state);
+          if (state is GetAllRecitersSuccessState) {
+            print(bloc.reciters.length);
+            bloc.add(GetFavoriteRecitersEvent());
+          }
+        },
+        child: BlocBuilder<AudiosBloc, AudiosState>(
+         bloc: bloc,
+          builder: (context, state) {
+            return Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(5.0.w),
+                  child: SizedBox(
+                    height: 6.h,
+                    width: 90.w,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) =>
+                          InkWell(
+                            onTap: () {
+                              bloc.add(ChangeTabEvent(index));
+                            },
+                            child: TabWidget(
+                              index: index,
+                            ),
                           ),
-                        ),
-                        separatorBuilder: (context, index) => SizedBox(
-                          width: 5.0.w,
-                        ),
-                        itemCount: bloc.tabs.length,
-                      ),
+                      separatorBuilder: (context, index) =>
+                          SizedBox(
+                            width: 5.0.w,
+                          ),
+                      itemCount: bloc.tabs.length,
                     ),
                   ),
-                  SizedBox(
-                    height: 1.0.h,
-                  ),
-                  Padding(
+                ),
+                (state is GetAllRecitersLoadingState || state is GetFavoriteRecitersLoadingState || state is GetMostPopularRecitersLoadingState   ) ? const LinearProgressIndicator() :
+                Expanded(
+                  child: Padding(
                     padding: EdgeInsets.all(6.w),
-                    child: bloc.audioTabsWidgets[bloc.currentTab],
-                  )
-                ],
-              );
-            },
-          ),
+                    child: BlocBuilder<AudiosBloc, AudiosState>(
+                      bloc: bloc,
+                      builder: (context, state) {
+                        return bloc.audioTabsWidgets[bloc.currentTab];
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

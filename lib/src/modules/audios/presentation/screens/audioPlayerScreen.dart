@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:sizer/sizer.dart';
-
 import '../widgets/components.dart';
 
 enum AudioType { url, file, radio }
@@ -74,7 +73,6 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
         mode: PlayerMode.mediaPlayer,
         ctx: const AudioContext(
             android: AudioContextAndroid(
-              stayAwake: true,
               usageType: AndroidUsageType.media,
             ),
             iOS: AudioContextIOS(

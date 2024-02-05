@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -46,40 +47,52 @@ void errorToast({
   );
 }
 
-class RecitersList extends StatelessWidget {
+class RecitersList extends StatefulWidget {
   final List<Reciter> reciters;
   const RecitersList({super.key, required this.reciters});
 
   @override
-  Widget build(BuildContext context) {
-    Map<String, List<Reciter>> groupedReciters = groupRecitersByLetter(reciters);
+  State<RecitersList> createState() => _RecitersListState();
+}
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: groupedReciters.length,
-      itemBuilder: (context, index) {
-        String letter = groupedReciters.keys.elementAt(index);
-        List<Reciter> recitersInGroup = groupedReciters[letter]!;
-        return Column(
-          children: [
-            ListTile(
-              title: Text(letter),
-            ),
-            ListView(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              children: recitersInGroup.map((reciter) {
-                return ReciterItem(reciter: reciter);
-              }).toList(),
-            ),
-          ],
-        );
-      },
-    );
+class _RecitersListState extends State<RecitersList> {
+  List<MapEntry<String, List<Reciter>>> groupedRecitersList = [];
+  int displayedGroupes = 2;
+  ScrollController? _scrollController;
+
+  @override
+  void initState() {
+    groupedRecitersList = groupRecitersByLetter(widget.reciters);
+    super.initState();
+    if (_isLongList()) {
+      _scrollController = ScrollController();
+      _scrollController!.addListener(_scrollListener);
+    }
   }
 
-  Map<String, List<Reciter>> groupRecitersByLetter(List<Reciter> reciters) {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        controller: _scrollController,
+        shrinkWrap: true,
+        itemCount: _isLongList() ? displayedGroupes + 1 : groupedRecitersList.length,
+        itemBuilder: (context, index) {
+          print(index);
+          if (index > displayedGroupes - 1 && _isLongList()) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsetsDirectional.all(1.sp),
+                child: const SizedBox(),
+              ),
+            );
+          } else {
+            return RecitersGroup(
+                letter: groupedRecitersList[index].key, reciters: groupedRecitersList[index].value);
+          }
+        });
+  }
+
+  List<MapEntry<String, List<Reciter>>> groupRecitersByLetter(List<Reciter> reciters) {
     Map<String, List<Reciter>> groupedReciters = {};
 
     reciters.sort((a, b) => a.data.letter.compareTo(b.data.letter));
@@ -93,10 +106,62 @@ class RecitersList extends StatelessWidget {
 
       groupedReciters[letter]!.add(reciter);
     }
+
     groupedReciters.forEach((key, value) {
       value.sort((a, b) => a.data.name.compareTo(b.data.name));
     });
-    return groupedReciters;
+    print("len :${groupedRecitersList.length}");
+    return groupedReciters.entries.toList();
+  }
+
+  Future _getMoreLetters() async {
+    int remaining = groupedRecitersList.length - displayedGroupes;
+    print("gerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+    if (remaining > 5) {
+      setState(() {
+        displayedGroupes += 5;
+      });
+    } else {
+      setState(() {
+        displayedGroupes += remaining;
+      });
+    }
+  }
+
+  void _scrollListener() async {
+    if (_scrollController?.offset == _scrollController?.position.maxScrollExtent) {
+      _getMoreLetters();
+    } else {}
+  }
+
+  bool _isLongList() {
+    print("is long ? : ${groupedRecitersList.length > 5}");
+    return groupedRecitersList.length > 5;
+  }
+}
+
+class RecitersGroup extends StatelessWidget {
+  final String letter;
+  final List<Reciter> reciters;
+
+  const RecitersGroup({super.key, required this.letter, required this.reciters});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          title: Text(letter),
+        ),
+        ListView.builder(
+          itemBuilder: (context, int index) => ReciterItem(reciter: reciters[index]),
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: reciters.length,
+        ),
+      ],
+    );
   }
 }
 
@@ -214,9 +279,6 @@ class MoshafWidget extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   ColorManager.darkBlue.withOpacity(0.8),
-                  // ColorManager.darkBlue.withOpacity(0.7),
-                  // ColorManager.darkBlue.withOpacity(0.8),
-                  // ColorManager.darkBlue.withOpacity(0.9),
                   ColorManager.darkBlue,
                 ],
                 begin: Alignment.topLeft,
@@ -259,33 +321,42 @@ class SurahItem extends StatelessWidget {
 }
 
 class TabWidget extends StatelessWidget {
-  final String title;
   final int index;
-  final AudiosBloc bloc;
-  const TabWidget({super.key, required this.title, required this.index, required this.bloc});
+  const TabWidget({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      height: 5.0.h,
-      // constraints: BoxConstraints(
-      //   minWidth: 20.w,
-      //   maxWidth: 80.w,
-      // ),
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.sp),
-        color: bloc.currentTab == index ? ColorManager.primary : ColorManager.grey1,
-      ),
-      child: Text(
-        textAlign: TextAlign.center,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        "$title  ",
-        style: bloc.currentTab == index
-            ? TextStylesManager.selectedTabStyle
-            : TextStylesManager.unSelectedTabStyle,
+    AudiosBloc bloc = AudiosBloc.get();
+    return InkWell(
+      onTap: () {
+        bloc.add(ChangeTabEvent(index));
+      },
+      child: BlocBuilder<AudiosBloc, AudiosState>(
+        bloc: bloc,
+        builder: (context, state) {
+          return Container(
+            alignment: Alignment.center,
+            height: 4.0.h,
+            // constraints: BoxConstraints(
+            //   minWidth: 20.w,
+            //   maxWidth: 80.w,
+            // ),
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.sp),
+              color: bloc.currentTab == index ? ColorManager.primary : ColorManager.grey1,
+            ),
+            child: Text(
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              "${bloc.tabs[index]}  ",
+              style: bloc.currentTab == index
+                  ? TextStylesManager.selectedTabStyle
+                  : TextStylesManager.unSelectedTabStyle,
+            ),
+          );
+        },
       ),
     );
   }

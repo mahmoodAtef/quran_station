@@ -13,9 +13,7 @@ class MostPopularRecitersPage extends StatelessWidget {
     return BlocBuilder<AudiosBloc, AudiosState>(
       bloc: bloc,
       builder: (context, state) {
-        return state is GetMostPopularRecitersLoadingState
-            ? const LinearProgressIndicator()
-            : RecitersList(reciters: bloc.mostPopularReciters);
+        return  RecitersList(reciters: bloc.mostPopularReciters);
       },
     );
   }

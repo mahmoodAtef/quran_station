@@ -18,10 +18,9 @@ part 'audios_event.dart';
 part 'audios_state.dart';
 
 class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
-  static AudiosBloc? bloc;
+  static AudiosBloc bloc = AudiosBloc();
   factory AudiosBloc.get() {
-    bloc = bloc ?? AudiosBloc();
-    return bloc!;
+    return bloc;
   }
 
   /// get all reciters
@@ -61,7 +60,9 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
           response.fold((l) {
             emit(GetAllRecitersErrorState(l));
           }, (r) {
+            print("reciters length is ${r.map((e) => Reciter(e)).toList().length}");
             reciters = r.map((e) => Reciter(e)).toList();
+            print(reciters);
             emit(GetAllRecitersSuccessState());
           });
         }
@@ -97,7 +98,7 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
         if (favoriteReciters.isEmpty && reciters.isNotEmpty) {
           emit(GetFavoriteRecitersLoadingState());
           await CacheHelper.getData(key: "favoriteReciters").then((value) {
-            if (value != null || value != []) {
+            if (value != null && value != []) {
               favoriteReciters.clear();
               for (var e in value) {
                 favoriteReciters
@@ -121,6 +122,7 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
             value: favoriteReciters.map((e) => e.data.id.toString()).toList());
       } else if (event is ChangeTabEvent) {
         currentTab = event.index;
+
         emit(ChangeTabState(currentTab));
       } else if (event is GetMostPopularRecitersEvent) {
         if (mostPopularReciters.isEmpty) {
