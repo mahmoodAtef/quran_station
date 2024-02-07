@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
-
-import '../components.dart';
+import '../reciters_list.dart';
 
 class MostPopularRecitersPage extends StatelessWidget {
   const MostPopularRecitersPage({super.key});
@@ -13,7 +12,7 @@ class MostPopularRecitersPage extends StatelessWidget {
     return BlocBuilder<AudiosBloc, AudiosState>(
       bloc: bloc,
       builder: (context, state) {
-        return  RecitersList(reciters: bloc.mostPopularReciters);
+        return RecitersList(reciters: bloc.mostPopularReciters);
       },
     );
   }

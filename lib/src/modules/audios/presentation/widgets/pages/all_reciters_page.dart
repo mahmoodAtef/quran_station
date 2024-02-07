@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
-import '../components.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/reciters_list.dart';
 
 class AllRecitersPage extends StatelessWidget {
   const AllRecitersPage({super.key});
@@ -9,7 +9,6 @@ class AllRecitersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AudiosBloc bloc = AudiosBloc.get()..add(GetAllRecitersEvent());
-    print("AllRecitersPage");
     return BlocBuilder<AudiosBloc, AudiosState>(
       bloc: bloc,
       builder: (context, state) {

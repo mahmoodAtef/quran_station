@@ -159,3 +159,20 @@ class GetMostPopularRecitersErrorState extends AudiosState {
   @override
   List<Object?> get props => [];
 }
+
+class GetAllRadiosLoading extends AudiosState {
+  @override
+  List<Object?> get props => [];
+}
+
+class GetRadiosSuccessfulState extends AudiosState {
+  @override
+  List<Object?> get props => [];
+}
+
+class GetRadiosErrorState extends AudiosState {
+  final Exception exception;
+  const GetRadiosErrorState(this.exception);
+  @override
+  List<Object?> get props => [];
+}

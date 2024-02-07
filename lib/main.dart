@@ -7,6 +7,7 @@ import 'package:quran_station/src/core/local/shared_prefrences.dart';
 import 'package:quran_station/src/core/services/bloc_observer.dart';
 import 'package:quran_station/src/core/utils/theme_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
+import 'package:quran_station/src/modules/audios/presentation/screens/audioPlayerScreen.dart';
 import 'package:quran_station/src/modules/main/presentation/screens/main_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/screens/onboarding.dart';
 import 'package:sizer/sizer.dart';
@@ -86,3 +87,4 @@ class Test extends StatelessWidget {
     );
   }
 }
+// flutter run --release --cache-sksl --purge-persistent-cache

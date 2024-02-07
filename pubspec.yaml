@@ -49,6 +49,8 @@ dependencies:
   bloc:
   flutter_bloc:
   just_audio: ^0.9.36
+  simple_audio:
+  permission_handler:
 
     # firebase
   firebase_storage:

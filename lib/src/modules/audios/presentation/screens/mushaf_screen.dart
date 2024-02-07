@@ -80,13 +80,11 @@ class MoshafScreen extends StatelessWidget {
     if (surahId < 10) {
       surahsString = "00$surahId";
     } else if (surahId < 100) {
-      surahsString = "0${surahId}";
+      surahsString = "0$surahId";
     } else {
       surahsString = "$surahId";
     }
     surahUrl = "${moshaf.moshafDetails?.server}/$surahsString.mp3";
-
-    print(surahUrl);
     return surahUrl;
   }
 }

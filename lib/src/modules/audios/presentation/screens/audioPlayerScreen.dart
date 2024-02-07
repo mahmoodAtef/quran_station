@@ -1,9 +1,14 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
+import 'package:simple_audio/simple_audio.dart';
 import 'package:sizer/sizer.dart';
+import '../widgets/audio_player.dart';
 import '../widgets/components.dart';
 
 enum AudioType { url, file, radio }
@@ -35,8 +40,8 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
   Widget build(BuildContext context) {
     // Initial playback. Preloaded playback information
     AudiosBloc bloc = AudiosBloc.get();
-
     debugPrint("Audio Url: ${widget.audioAddress}");
+    print(widget.audioAddress);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -56,6 +61,7 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
           Padding(
             padding: EdgeInsetsDirectional.only(bottom: 5.h),
             child: PlayerWidget(
+              audioType: widget.audioType,
               player: bloc.audioPlayer,
               audioUrl: widget.audioAddress,
             ),
@@ -69,11 +75,17 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
     await bloc.audioPlayer.stop();
     if (bloc.audioPlayer.state != PlayerState.playing) {
       await bloc.audioPlayer.play(
-        UrlSource(widget.audioAddress),
+        UrlSource(
+          widget.audioAddress,
+        ),
         mode: PlayerMode.mediaPlayer,
         ctx: const AudioContext(
             android: AudioContextAndroid(
               usageType: AndroidUsageType.media,
+              audioMode: AndroidAudioMode.normal,
+              audioFocus: AndroidAudioFocus.gain,
+              stayAwake: true,
+              contentType: AndroidContentType.music,
             ),
             iOS: AudioContextIOS(
               options: [
@@ -81,6 +93,7 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
                 AVAudioSessionOptions.allowAirPlay,
                 AVAudioSessionOptions.allowBluetoothA2DP,
                 AVAudioSessionOptions.defaultToSpeaker,
+                AVAudioSessionOptions.overrideMutedMicrophoneInterruption
               ],
             )),
       );

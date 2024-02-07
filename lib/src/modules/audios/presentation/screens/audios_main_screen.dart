@@ -36,7 +36,7 @@ class AudiosMainScreen extends StatelessWidget {
             )),
         centerTitle: true,
         title: const Text(
-          'القراء',
+          'الصوتيات',
           style: TextStylesManager.appBarTitle,
         ),
         actions: [
@@ -60,7 +60,7 @@ class AudiosMainScreen extends StatelessWidget {
           }
         },
         child: BlocBuilder<AudiosBloc, AudiosState>(
-         bloc: bloc,
+          bloc: bloc,
           builder: (context, state) {
             return Column(
               children: [
@@ -73,35 +73,34 @@ class AudiosMainScreen extends StatelessWidget {
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) =>
-                          InkWell(
-                            onTap: () {
-                              bloc.add(ChangeTabEvent(index));
-                            },
-                            child: TabWidget(
-                              index: index,
-                            ),
-                          ),
-                      separatorBuilder: (context, index) =>
-                          SizedBox(
-                            width: 5.0.w,
-                          ),
+                      itemBuilder: (context, index) => InkWell(
+                        onTap: () {
+                          bloc.add(ChangeTabEvent(index));
+                        },
+                        child: TabWidget(
+                          index: index,
+                        ),
+                      ),
+                      separatorBuilder: (context, index) => SizedBox(
+                        width: 5.0.w,
+                      ),
                       itemCount: bloc.tabs.length,
                     ),
                   ),
                 ),
-                (state is GetAllRecitersLoadingState || state is GetFavoriteRecitersLoadingState || state is GetMostPopularRecitersLoadingState   ) ? const LinearProgressIndicator() :
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(6.w),
-                    child: BlocBuilder<AudiosBloc, AudiosState>(
-                      bloc: bloc,
-                      builder: (context, state) {
-                        return bloc.audioTabsWidgets[bloc.currentTab];
-                      },
-                    ),
-                  ),
-                ),
+                isLoading(state)
+                    ? const LinearProgressIndicator()
+                    : Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(6.w),
+                          child: BlocBuilder<AudiosBloc, AudiosState>(
+                            bloc: bloc,
+                            builder: (context, state) {
+                              return bloc.audioTabsWidgets[bloc.currentTab];
+                            },
+                          ),
+                        ),
+                      ),
               ],
             );
           },
@@ -129,4 +128,11 @@ class AudiosMainScreen extends StatelessWidget {
       ).showMessages(context);
     }
   }
+}
+
+bool isLoading(AudiosState state) {
+  return state is GetAllRecitersLoadingState ||
+      state is GetFavoriteRecitersLoadingState ||
+      state is GetMostPopularRecitersLoadingState ||
+      state is GetAllRadiosLoading;
 }

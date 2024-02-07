@@ -2,16 +2,15 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 import 'package:quran_station/src/core/local/shared_prefrences.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
+import 'package:quran_station/src/modules/audios/data/models/radio.dart';
 import 'package:quran_station/src/modules/audios/data/repositories/audios_repository.dart';
-import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
-import 'package:quran_station/src/modules/audios/presentation/widgets/pages/all_reciters_page.dart';
-import 'package:quran_station/src/modules/audios/presentation/widgets/pages/favourites_reciters_page.dart';
-
+import 'package:quran_station/src/modules/audios/presentation/widgets/pages/radios_page.dart';
 import '../data/models/reciter_model.dart';
+import '../presentation/widgets/pages/all_reciters_page.dart';
+import '../presentation/widgets/pages/favourites_reciters_page.dart';
 import '../presentation/widgets/pages/most_popular_reciters_page.dart';
 
 part 'audios_event.dart';
@@ -42,15 +41,17 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   List<Reciter> favoriteReciters = [];
   AudioPlayer audioPlayer = AudioPlayer();
   String? currentSurahUrl;
-  List<String> tabs = const [" كل القراء ", " قرائي المفضلين ", "أبرز القراء "];
+  List<String> tabs = const [" كل القراء ", " قرائي المفضلين ", "أبرز القراء ", "الإذاعات"];
   List<Widget> audioTabsWidgets = const [
     AllRecitersPage(),
     FavouritesRecitersPage(),
     MostPopularRecitersPage(),
+    RadiosPage()
   ];
   int currentTab = 0;
   List<Reciter> mostPopularReciters = [];
   List<int> mostPopularRecitersIds = [];
+  List<RadioModel> radios = [];
   AudiosBloc() : super(AudiosInitial()) {
     on<AudiosEvent>((event, emit) async {
       if (event is GetAllRecitersEvent) {
@@ -60,15 +61,13 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
           response.fold((l) {
             emit(GetAllRecitersErrorState(l));
           }, (r) {
-            print("reciters length is ${r.map((e) => Reciter(e)).toList().length}");
             reciters = r.map((e) => Reciter(e)).toList();
-            print(reciters);
             emit(GetAllRecitersSuccessState());
           });
         }
       } else if (event is GetReciterEvent) {
-        emit(GetReciterLoadingState());
         if (_isReciterEmpty(event.reciterId)) {
+          emit(GetReciterLoadingState());
           var response = await repository.getReciterDetails(reciterId: event.reciterId);
           response.fold((l) {
             emit(GetReciterErrorState(l));
@@ -78,6 +77,8 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
             reciters[reciterIndex].moshafs!.addAll(r.map((e) => Moshaf(e)).toList());
             emit(GetReciterSuccessState());
           });
+        } else {
+          DoNothingAction();
         }
       } else if (event is SearchByNameEvent) {
         emit(GetSearchByNameLoadingState());
@@ -135,6 +136,17 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
             emit(GetMostPopularRecitersSuccessState());
           });
         }
+      } else if (event is GetAllRadiosEvent) {
+        if (radios.isEmpty) {
+          emit(GetAllRadiosLoading());
+          var response = await repository.getRadios();
+          response.fold((l) {
+            emit(GetRadiosErrorState(l));
+          }, (r) {
+            radios = r;
+            emit(GetRadiosSuccessfulState());
+          });
+        }
       }
     });
   }
@@ -157,7 +169,6 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   int _searchForReciterByMoshafId(int moshafId) {
     int reciterIndex = reciters.indexWhere((element) => (element.moshafs != null &&
         element.moshafs!.indexWhere((element) => element.moshafData.id == moshafId) != -1));
-    print("reciter is ${reciters[reciterIndex].data.name}");
     return reciterIndex;
   }
 

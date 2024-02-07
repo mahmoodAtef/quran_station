@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf_data.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
+import 'package:quran_station/src/modules/audios/data/models/radio.dart';
 import 'package:quran_station/src/modules/audios/data/models/reciter_data.dart';
 
 abstract class BaseAudiosRemoteDataSource {
@@ -15,6 +16,7 @@ abstract class BaseAudiosRemoteDataSource {
   Future<Either<Exception, List<MoshafData>>> getReciterDetails({required int reciterId});
   Future<Either<Exception, MoshafDetails>> getMoshafDetails({required int moshafId});
   Future<Either<Exception, List<int>>> getMostPopularReciters();
+  Future<Either<Exception, List<RadioModel>>> getRadios();
 }
 
 class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
@@ -73,6 +75,29 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
     try {
       var response = await firestore.collection("most_popular").doc("most_popular").get();
       return Right(List<int>.from(response.data()!["id's"]));
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  Future _saveRadios() async {
+    radios.forEach((radio) async {
+      await firestore.collection("radios").doc(radio.id.toString()).set(radio.toJson());
+    });
+  }
+
+  @override
+  Future<Either<Exception, List<RadioModel>>> getRadios() async {
+    try {
+      List<RadioModel> radios = [];
+      await firestore.collection("radios").get().then((value) {
+        value.docs.forEach((element) {
+          RadioModel radio = RadioModel.fromJson(element.data());
+          print(radio);
+          radios.add(radio);
+        });
+      });
+      return Right(radios);
     } on Exception catch (e) {
       return Left(e);
     }

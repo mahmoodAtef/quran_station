@@ -1,10 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:quran_station/src/modules/audios/data/data_sources/audios_remote_data_source.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
+import 'package:quran_station/src/modules/audios/data/models/radio.dart';
 import 'package:quran_station/src/modules/audios/data/models/reciter_data.dart';
-import 'package:quran_station/src/modules/audios/data/models/reciter_model.dart';
 
-import '../models/moshaf.dart';
 import '../models/moshaf_data.dart';
 
 class AudiosRepository {
@@ -23,5 +22,9 @@ class AudiosRepository {
 
   Future<Either<Exception, List<int>>> getMostPopularReciters() {
     return baseAudiosRemoteDataSource.getMostPopularReciters();
+  }
+
+  Future<Either<Exception, List<RadioModel>>> getRadios() async {
+    return baseAudiosRemoteDataSource.getRadios();
   }
 }

@@ -65,3 +65,8 @@ class GetMostPopularRecitersEvent extends AudiosEvent {
   @override
   List<Object?> get props => [];
 }
+
+class GetAllRadiosEvent extends AudiosEvent {
+  @override
+  List<Object?> get props => [];
+}
