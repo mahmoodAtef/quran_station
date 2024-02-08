@@ -30,8 +30,8 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   /// most popular reciters
   /// play surah
   /// search for reciter by name
-  // play quarn radio
-  // download surah
+  /// play quarn radio
+  // download surah and play local audios
 
   AudiosRepository repository = AudiosRepository();
   List<Reciter> reciters = [];

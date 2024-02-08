@@ -56,7 +56,9 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
                   child: SizedBox(
             height: 40.h,
             width: 90.w,
-            child: Image.asset("assets/images/audio.jpeg"),
+            child: Image.asset(widget.audioType == AudioType.radio
+                ? "assets/images/radio.jpg"
+                : "assets/images/audio.jpeg"),
           ))),
           Padding(
             padding: EdgeInsetsDirectional.only(bottom: 5.h),
@@ -83,7 +85,6 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
             android: AudioContextAndroid(
               usageType: AndroidUsageType.media,
               audioMode: AndroidAudioMode.normal,
-              audioFocus: AndroidAudioFocus.gain,
               stayAwake: true,
               contentType: AndroidContentType.music,
             ),
