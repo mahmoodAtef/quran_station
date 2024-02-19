@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:quran_station/src/core/remote/dio_helper.dart';
 import 'package:quran_station/src/modules/audios/data/models/radio/radio.dart';
@@ -25,6 +26,7 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
   Future<Either<Exception, List<ReciterData>>> getRecitersData() async {
     List<ReciterData> recitersData = [];
     try {
+      // await downloadPages();
       await firestore.collection("reciters").get().then((value) {
         value.docs.forEach((element) async {
           ReciterData data = ReciterData.fromJson(element.data());
@@ -121,6 +123,13 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
       return Right(tafsir);
     } on Exception catch (e) {
       return Left(e);
+    }
+  }
+
+  Future downloadPages() async {
+    Dio dio = Dio(BaseOptions(baseUrl: "https://maknoon.com/quran/hafs/"));
+    for (int i = 1; i <= 604; i++) {
+      await dio.download("https://maknoon.com/quran/hafs/$i.svgz", "svg/i.svgz");
     }
   }
 }
