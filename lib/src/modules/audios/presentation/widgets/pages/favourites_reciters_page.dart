@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
+import '../../../../main/presentation/widgets/connectivity.dart';
 import '../reciters_list.dart';
 
 class FavouritesRecitersPage extends StatelessWidget {
@@ -12,7 +13,7 @@ class FavouritesRecitersPage extends StatelessWidget {
     return BlocBuilder<AudiosBloc, AudiosState>(
       bloc: bloc,
       builder: (context, state) {
-        return RecitersList(reciters: bloc.favoriteReciters);
+        return ConnectionWidget(child: RecitersList(reciters: bloc.favoriteReciters));
       },
     );
   }

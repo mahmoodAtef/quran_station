@@ -73,6 +73,7 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
     on<AudiosEvent>((event, emit) async {
       if (event is GetAllRecitersEvent) {
         if (reciters.isEmpty) {
+          print("))))))))))))))))))))");
           emit(GetAllRecitersLoadingState());
           var response = await repository.getRecitersData();
           response.fold((l) {

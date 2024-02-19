@@ -4,6 +4,7 @@ import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/main/presentation/widgets/connectivity.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../core/utils/color_manager.dart';
@@ -44,13 +45,20 @@ class SearchForReciterScreen extends StatelessWidget {
       body: BlocBuilder<AudiosBloc, AudiosState>(
         bloc: bloc,
         builder: (context, state) {
-          return Padding(
-            padding: EdgeInsets.all(6.0.w),
-            child: ListView.separated(
-                itemBuilder: (context, index) =>
-                    ReciterItem(reciter: bloc.searchByNameResult[index]),
-                separatorBuilder: (context, index) => const HeightSeparator(),
-                itemCount: bloc.searchByNameResult.length),
+          return ConnectionWidget(
+            onRetry: () {
+              if (controller.text != "") {
+                bloc.add(SearchByNameEvent(controller.text));
+              }
+            },
+            child: Padding(
+              padding: EdgeInsets.all(6.0.w),
+              child: ListView.separated(
+                  itemBuilder: (context, index) =>
+                      ReciterItem(reciter: bloc.searchByNameResult[index]),
+                  separatorBuilder: (context, index) => const HeightSeparator(),
+                  itemCount: bloc.searchByNameResult.length),
+            ),
           );
         },
       ),

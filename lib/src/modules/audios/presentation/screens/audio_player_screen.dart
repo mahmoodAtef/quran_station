@@ -6,6 +6,7 @@ import 'package:quran_station/src/core/utils/images_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/audio_player.dart';
+import 'package:quran_station/src/modules/main/presentation/widgets/connectivity.dart';
 import 'package:sizer/sizer.dart';
 
 enum AudioType { url, file, radio }
@@ -44,18 +45,34 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
           style: TextStylesManager.appBarTitle,
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildImage(),
-          PlayerWidget(
-            player: _audioPlayer,
-            audioAddress: widget.audioAddress,
-            title: widget.title,
-            audioType: widget.audioType,
-          )
-        ],
-      ),
+      body: widget.audioType != AudioType.file
+          ? ConnectionWidget(
+              onRetry: () {},
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildImage(),
+                  PlayerWidget(
+                    player: _audioPlayer,
+                    audioAddress: widget.audioAddress,
+                    title: widget.title,
+                    audioType: widget.audioType,
+                  )
+                ],
+              ),
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildImage(),
+                PlayerWidget(
+                  player: _audioPlayer,
+                  audioAddress: widget.audioAddress,
+                  title: widget.title,
+                  audioType: widget.audioType,
+                )
+              ],
+            ),
     );
   }
 

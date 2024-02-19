@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/reciters_list.dart';
+import 'package:quran_station/src/modules/main/presentation/widgets/connectivity.dart';
 
 class AllRecitersPage extends StatelessWidget {
   const AllRecitersPage({super.key});
@@ -12,7 +13,11 @@ class AllRecitersPage extends StatelessWidget {
     return BlocBuilder<AudiosBloc, AudiosState>(
       bloc: bloc,
       builder: (context, state) {
-        return RecitersList(reciters: bloc.reciters);
+        return ConnectionWidget(
+            onRetry: () {
+              bloc.add(GetAllRecitersEvent());
+            },
+            child: RecitersList(reciters: bloc.reciters));
       },
     );
   }

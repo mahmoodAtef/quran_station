@@ -7,6 +7,7 @@ import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/audio_player_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/main/presentation/widgets/connectivity.dart';
 
 import '../../data/models/moshaf/moshaf.dart';
 
@@ -27,49 +28,54 @@ class MoshafScreen extends StatelessWidget {
           style: TextStylesManager.appBarTitle,
         ),
       ),
-      body: BlocBuilder<AudiosBloc, AudiosState>(
-        bloc: bloc,
-        builder: (context, state) {
-          return BlocListener<AudiosBloc, AudiosState>(
-            bloc: bloc,
-            listener: (context, state) {
-              if (state is GetMoshafDetailsSuccessState) {
-                print(state.moshafDetails.server);
-                moshaf.moshafDetails = state.moshafDetails;
-              }
-            },
-            child: moshaf.moshafDetails != null
-                ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListView.separated(
-                        addAutomaticKeepAlives: true,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          int surahId = moshaf.moshafDetails!.surahsIds[index];
-                          return InkWell(
-                            onTap: () {
-                              if (kDebugMode) {
-                                print(_getSurahUrl(surahId));
-                              }
-                              context.push(AudioPlayerScreen(
-                                  audioType: AudioType.url,
-                                  audioAddress: _getSurahUrl(surahId),
-                                  title:
-                                      "سورة ${ConstanceManager.quranSurahsNames[surahId - 1]}-${moshaf.moshafData.name}"));
-                            },
-                            child: SurahItem(
-                              surahId: surahId,
-                            ),
-                          );
-                        },
-                        separatorBuilder: (context, index) => const SizedBox(
-                              height: 10,
-                            ),
-                        itemCount: moshaf.moshafData.surahTotal),
-                  )
-                : const LinearProgressIndicator(),
-          );
+      body: ConnectionWidget(
+        onRetry: () {
+          bloc.add(GetMoshafDetailsEvent(moshaf.moshafData.id));
         },
+        child: BlocBuilder<AudiosBloc, AudiosState>(
+          bloc: bloc,
+          builder: (context, state) {
+            return BlocListener<AudiosBloc, AudiosState>(
+              bloc: bloc,
+              listener: (context, state) {
+                if (state is GetMoshafDetailsSuccessState) {
+                  print(state.moshafDetails.server);
+                  moshaf.moshafDetails = state.moshafDetails;
+                }
+              },
+              child: moshaf.moshafDetails != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.separated(
+                          addAutomaticKeepAlives: true,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            int surahId = moshaf.moshafDetails!.surahsIds[index];
+                            return InkWell(
+                              onTap: () {
+                                if (kDebugMode) {
+                                  print(_getSurahUrl(surahId));
+                                }
+                                context.push(AudioPlayerScreen(
+                                    audioType: AudioType.url,
+                                    audioAddress: _getSurahUrl(surahId),
+                                    title:
+                                        "سورة ${ConstanceManager.quranSurahsNames[surahId - 1]}-${moshaf.moshafData.name}"));
+                              },
+                              child: SurahItem(
+                                surahId: surahId,
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) => const SizedBox(
+                                height: 10,
+                              ),
+                          itemCount: moshaf.moshafData.surahTotal),
+                    )
+                  : const LinearProgressIndicator(),
+            );
+          },
+        ),
       ),
     );
   }

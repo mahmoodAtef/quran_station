@@ -60,7 +60,7 @@ dependencies:
   firebase_messaging:
   graphql:
   audioplayers:
-
+  connectivity:
 
   #localization
   flutter_localizations:

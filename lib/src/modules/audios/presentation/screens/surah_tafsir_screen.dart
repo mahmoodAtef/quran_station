@@ -5,6 +5,7 @@ import 'package:quran_station/src/modules/audios/data/models/tafsir/surah_tafsir
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/main/presentation/widgets/connectivity.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../core/utils/color_manager.dart';
@@ -46,16 +47,21 @@ class SurahTafsirScreen extends StatelessWidget {
           builder: (context, state) {
             return state is GetSurahTafsirLoading || surahTafsir.tafsir == null
                 ? const LinearProgressIndicator()
-                : Padding(
-                    padding: EdgeInsets.all(5.w),
-                    child: ListView.separated(
-                        itemBuilder: (context, index) {
-                          return TafsirItem(tafsir: surahTafsir.tafsir![index]);
-                        },
-                        separatorBuilder: (context, index) {
-                          return const Divider();
-                        },
-                        itemCount: surahTafsir.tafsir!.length),
+                : ConnectionWidget(
+                    onRetry: () {
+                      bloc.add(GetSurahTafsir(surahId));
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.all(5.w),
+                      child: ListView.separated(
+                          itemBuilder: (context, index) {
+                            return TafsirItem(tafsir: surahTafsir.tafsir![index]);
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider();
+                          },
+                          itemCount: surahTafsir.tafsir!.length),
+                    ),
                   );
           }),
     );
