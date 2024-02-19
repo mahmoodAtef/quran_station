@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:quran_station/src/modules/audios/data/data_sources/audios_remote_data_source.dart';
-import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
-import 'package:quran_station/src/modules/audios/data/models/radio.dart';
-import 'package:quran_station/src/modules/audios/data/models/reciter_data.dart';
-
-import '../models/moshaf_data.dart';
+import 'package:quran_station/src/modules/audios/data/models/moshaf/moshaf_data.dart';
+import 'package:quran_station/src/modules/audios/data/models/moshaf/moshaf_details.dart';
+import 'package:quran_station/src/modules/audios/data/models/radio/radio.dart';
+import 'package:quran_station/src/modules/audios/data/models/reciter/reciter_data.dart';
+import '../models/tafsir/tafsir.dart';
 
 class AudiosRepository {
   final BaseAudiosRemoteDataSource baseAudiosRemoteDataSource = AudiosRemoteDataSource();
@@ -26,5 +26,9 @@ class AudiosRepository {
 
   Future<Either<Exception, List<RadioModel>>> getRadios() async {
     return baseAudiosRemoteDataSource.getRadios();
+  }
+
+  Future<Either<Exception, List<Tafsir>>> getSurahTafsir(int surahId) {
+    return baseAudiosRemoteDataSource.getSurahTafsir(surahId);
   }
 }

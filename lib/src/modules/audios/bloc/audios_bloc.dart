@@ -4,15 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:quran_station/src/core/exceptions/exception_manager.dart';
 import 'package:quran_station/src/core/local/shared_prefrences.dart';
-import 'package:quran_station/src/modules/audios/data/models/moshaf.dart';
-import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
-import 'package:quran_station/src/modules/audios/data/models/radio.dart';
+import 'package:quran_station/src/core/utils/constance_manager.dart';
+import 'package:quran_station/src/modules/audios/data/models/moshaf/moshaf.dart';
+import 'package:quran_station/src/modules/audios/data/models/radio/radio.dart';
+import 'package:quran_station/src/modules/audios/data/models/reciter/reciter_model.dart';
+import 'package:quran_station/src/modules/audios/data/models/tafsir/surah_tafsir.dart';
 import 'package:quran_station/src/modules/audios/data/repositories/audios_repository.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/pages/radios_page.dart';
-import '../data/models/reciter_model.dart';
+import '../data/models/moshaf/moshaf_details.dart';
 import '../presentation/widgets/pages/all_reciters_page.dart';
 import '../presentation/widgets/pages/favourites_reciters_page.dart';
 import '../presentation/widgets/pages/most_popular_reciters_page.dart';
+import '../presentation/widgets/pages/tafsir_page.dart';
 
 part 'audios_event.dart';
 part 'audios_state.dart';
@@ -32,6 +35,7 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   /// play surah
   /// search for reciter by name
   /// play quarn radio
+  /// get surah tafsir
   // download surah and play local audios
 
   AudiosRepository repository = AudiosRepository();
@@ -42,13 +46,23 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   List<Reciter> favoriteReciters = [];
   AudioPlayer audioPlayer = AudioPlayer();
   String? currentSurahUrl;
-  List<String> tabs = const [" كل القراء ", " قرائي المفضلين ", "أبرز القراء ", "الإذاعات"];
+  List<String> tabs = const [
+    " كل القراء ",
+    " قرائي المفضلين ",
+    "أبرز القراء ",
+    " الإذاعات ",
+    " تفسير الطبري "
+  ];
   List<Widget> audioTabsWidgets = const [
     AllRecitersPage(),
     FavouritesRecitersPage(),
     MostPopularRecitersPage(),
-    RadiosPage()
+    RadiosPage(),
+    TafsirPage()
   ];
+  List<SurahTafsir> quranTafsir = List<SurahTafsir>.from(ConstanceManager.quranSurahsNames.map((e) {
+    return SurahTafsir.fromId(ConstanceManager.quranSurahsNames.indexOf(e) + 1);
+  }));
   int currentTab = 0;
   late String currentReciter;
   late String currentMoshaf;
@@ -150,6 +164,17 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
             emit(GetRadiosSuccessfulState());
           });
         }
+      } else if (event is GetSurahTafsir) {
+        if (_isSurahTafsirEmpty(event.surahId)) {
+          emit(GetSurahTafsirLoading());
+          var response = await repository.getSurahTafsir(event.surahId);
+          response.fold((l) {
+            emit(GetSurahTafsirErrorState(l));
+          }, (r) {
+            quranTafsir.firstWhere((element) => element.surahId == event.surahId).tafsir = r;
+            emit(GetSurahTafsirSuccessfulState());
+          });
+        }
       }
     });
   }
@@ -179,5 +204,10 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
     return reciters[reciterIndex]
         .moshafs!
         .indexWhere((element) => element.moshafData.id == moshafId);
+  }
+
+  bool _isSurahTafsirEmpty(int id) {
+    SurahTafsir surahTafsir = quranTafsir.firstWhere((element) => element.surahId == id);
+    return surahTafsir.tafsir == null;
   }
 }

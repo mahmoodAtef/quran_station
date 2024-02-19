@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
-import 'package:quran_station/src/modules/audios/data/models/reciter_model.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../core/utils/styles_manager.dart';
+import '../../data/models/reciter/reciter_model.dart';
 
 class ReciterScreen extends StatelessWidget {
   final int reciterID;

@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:quran_station/src/core/utils/images_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/audio_player.dart';
@@ -45,15 +47,7 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-              child: Center(
-                  child: SizedBox(
-            height: 40.h,
-            width: 90.w,
-            child: Image.asset(widget.audioType == AudioType.radio
-                ? "assets/images/radio.jpg"
-                : "assets/images/audio.jpeg"),
-          ))),
+          _buildImage(),
           PlayerWidget(
             player: _audioPlayer,
             audioAddress: widget.audioAddress,
@@ -63,6 +57,34 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildImage() {
+    if (widget.audioType == AudioType.radio) {
+      return Expanded(
+          child: Center(
+              child: SizedBox(
+        height: 40.h,
+        width: 90.w,
+        child: CachedNetworkImage(fit: BoxFit.cover, imageUrl: ImagesManager.radioGif),
+      )));
+    } else if (widget.audioType == AudioType.url) {
+      return Expanded(
+          child: Center(
+              child: SizedBox(
+        height: 40.h,
+        width: 90.w,
+        child: CachedNetworkImage(fit: BoxFit.cover, imageUrl: ImagesManager.audioGif),
+      )));
+    }
+
+    return Expanded(
+        child: Center(
+            child: SizedBox(
+      height: 40.h,
+      width: 90.w,
+      child: CachedNetworkImage(imageUrl: ImagesManager.audioGif),
+    )));
   }
 }
 

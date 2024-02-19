@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 
-import '../../data/models/reciter_model.dart';
+import '../../data/models/reciter/reciter_model.dart';
 
 class RecitersGroup extends StatelessWidget {
   final String letter;

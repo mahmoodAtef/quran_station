@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:quran_station/src/modules/audios/data/models/reciter_model.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/reciters_group.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
+
+import '../../data/models/reciter/reciter_model.dart';
 
 class RecitersList extends StatefulWidget {
   final List<Reciter> reciters;

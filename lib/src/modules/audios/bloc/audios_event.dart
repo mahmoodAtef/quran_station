@@ -71,6 +71,13 @@ class GetAllRadiosEvent extends AudiosEvent {
   List<Object?> get props => [];
 }
 
+class GetSurahTafsir extends AudiosEvent {
+  final int surahId;
+  const GetSurahTafsir(this.surahId);
+  @override
+  List<Object?> get props => [surahId];
+}
+
 class DownLoadSurah extends AudiosEvent {
   @override
   List<Object?> get props => [];

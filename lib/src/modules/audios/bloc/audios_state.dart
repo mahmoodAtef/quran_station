@@ -187,3 +187,19 @@ class GetRadiosErrorState extends AudiosError {
   @override
   List<Object?> get props => [];
 }
+
+class GetSurahTafsirLoading extends AudiosLoading {
+  @override
+  List<Object?> get props => [];
+}
+
+class GetSurahTafsirSuccessfulState extends AudiosState {
+  @override
+  List<Object?> get props => [];
+}
+
+class GetSurahTafsirErrorState extends AudiosError {
+  const GetSurahTafsirErrorState(super.exception);
+  @override
+  List<Object?> get props => [];
+}

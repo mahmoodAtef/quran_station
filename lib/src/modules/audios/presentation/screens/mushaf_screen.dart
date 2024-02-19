@@ -8,7 +8,7 @@ import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/audio_player_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 
-import '../../data/models/moshaf.dart';
+import '../../data/models/moshaf/moshaf.dart';
 
 class MoshafScreen extends StatelessWidget {
   final Moshaf moshaf;

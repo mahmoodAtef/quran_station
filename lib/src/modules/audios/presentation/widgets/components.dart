@@ -4,14 +4,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/constance_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
-import 'package:quran_station/src/modules/audios/data/models/radio.dart';
+import 'package:quran_station/src/modules/audios/data/models/radio/radio.dart';
+import 'package:quran_station/src/modules/audios/data/models/tafsir/tafsir.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/audio_player_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/reciter_screen.dart';
+import 'package:quran_station/src/modules/audios/presentation/screens/surah_tafsir_screen.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../core/utils/styles_manager.dart';
 import '../../bloc/audios_bloc.dart';
-import '../../data/models/moshaf.dart';
-import '../../data/models/reciter_model.dart';
+import '../../data/models/moshaf/moshaf.dart';
+import '../../data/models/reciter/reciter_model.dart';
 import '../screens/mushaf_screen.dart';
 
 void defaultToast({
@@ -287,6 +289,141 @@ class RadioItem extends StatelessWidget {
                       ListTile(
                         title: Text(
                           radio.name,
+                          style: TextStylesManager.regularBoldWhiteStyle,
+                        ),
+                        // trailing: Text(reciter.count.toString()),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )),
+      ),
+    );
+  }
+}
+
+class SurahTafsirItem extends StatelessWidget {
+  final int index;
+  const SurahTafsirItem({super.key, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    String surahName = ConstanceManager.quranSurahsNames[index];
+    return InkWell(
+      onTap: () {
+        context.push(SurahTafsirScreen(
+          surahId: index + 1,
+          surahName: surahName,
+        ));
+        // context.push(AudioPlayerScreen(
+        //     audioAddress: radio.url, title: radio.name, audioType: AudioType.radio));
+      },
+      child: Card(
+        surfaceTintColor: ColorManager.error,
+        shape: ShapeBorder.lerp(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.sp),
+          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
+          1,
+        ),
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.sp),
+              color: ColorManager.darkBlue,
+              gradient: LinearGradient(
+                colors: [
+                  ColorManager.darkBlue.withOpacity(0.8),
+                  // ColorManager.darkBlue.withOpacity(0.7),
+                  // ColorManager.darkBlue.withOpacity(0.8),
+                  // ColorManager.darkBlue.withOpacity(0.9),
+                  ColorManager.darkBlue,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Row(
+              children: [
+                // Padding(
+                //   padding: EdgeInsetsDirectional.only(start: 5.sp),
+                //   child: const Icon(
+                //     Icons.ht,
+                //     color: ColorManager.white,
+                //   ),
+                // ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          "تفسير سورة $surahName",
+                          style: TextStylesManager.regularBoldWhiteStyle,
+                        ),
+                        // trailing: Text(reciter.count.toString()),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )),
+      ),
+    );
+  }
+}
+
+class TafsirItem extends StatelessWidget {
+  final Tafsir tafsir;
+  const TafsirItem({super.key, required this.tafsir});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        context.push(AudioPlayerScreen(
+            audioAddress: tafsir.url, title: tafsir.name, audioType: AudioType.url));
+      },
+      child: Card(
+        surfaceTintColor: ColorManager.error,
+        shape: ShapeBorder.lerp(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.sp),
+          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
+          1,
+        ),
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.sp),
+              color: ColorManager.darkBlue,
+              gradient: LinearGradient(
+                colors: [
+                  ColorManager.darkBlue.withOpacity(0.8),
+                  // ColorManager.darkBlue.withOpacity(0.7),
+                  // ColorManager.darkBlue.withOpacity(0.8),
+                  // ColorManager.darkBlue.withOpacity(0.9),
+                  ColorManager.darkBlue,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsetsDirectional.only(start: 5.sp),
+                  child: const Icon(
+                    Icons.mic,
+                    color: ColorManager.white,
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          tafsir.name,
                           style: TextStylesManager.regularBoldWhiteStyle,
                         ),
                         // trailing: Text(reciter.count.toString()),

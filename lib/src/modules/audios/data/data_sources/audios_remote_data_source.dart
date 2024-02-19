@@ -3,10 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:quran_station/src/core/remote/dio_helper.dart';
-import 'package:quran_station/src/modules/audios/data/models/moshaf_data.dart';
-import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
-import 'package:quran_station/src/modules/audios/data/models/radio.dart';
-import 'package:quran_station/src/modules/audios/data/models/reciter_data.dart';
+import 'package:quran_station/src/modules/audios/data/models/radio/radio.dart';
+import 'package:quran_station/src/modules/audios/data/models/reciter/reciter_data.dart';
+import 'package:quran_station/src/modules/audios/data/models/tafsir/tafsir.dart';
+import '../models/moshaf/moshaf_data.dart';
+import '../models/moshaf/moshaf_details.dart';
 
 abstract class BaseAudiosRemoteDataSource {
   Future<Either<Exception, List<ReciterData>>> getRecitersData();
@@ -14,6 +15,7 @@ abstract class BaseAudiosRemoteDataSource {
   Future<Either<Exception, MoshafDetails>> getMoshafDetails({required int moshafId});
   Future<Either<Exception, List<int>>> getMostPopularReciters();
   Future<Either<Exception, List<RadioModel>>> getRadios();
+  Future<Either<Exception, List<Tafsir>>> getSurahTafsir(int surahId);
 }
 
 class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
@@ -101,6 +103,22 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
       return Right(radios);
     } on FirebaseException catch (e) {
       return Left(e);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Exception, List<Tafsir>>> getSurahTafsir(int surahId) async {
+    try {
+      List<Tafsir> tafsir = [];
+      await firestore.collection("tafsir").where("sura_id", isEqualTo: surahId).get().then((value) {
+        value.docs.forEach((doc) {
+          print(Tafsir.fromJson(doc.data()).url);
+          tafsir.add(Tafsir.fromJson(doc.data()));
+        });
+      });
+      return Right(tafsir);
     } on Exception catch (e) {
       return Left(e);
     }
