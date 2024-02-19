@@ -1,7 +1,8 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:quran_station/src/core/exceptions/exception_manager.dart';
 import 'package:quran_station/src/core/local/shared_prefrences.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf_details.dart';
@@ -49,6 +50,8 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
     RadiosPage()
   ];
   int currentTab = 0;
+  late String currentReciter;
+  late String currentMoshaf;
   List<Reciter> mostPopularReciters = [];
   List<int> mostPopularRecitersIds = [];
   List<RadioModel> radios = [];

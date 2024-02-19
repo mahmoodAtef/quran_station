@@ -5,7 +5,7 @@ import 'package:quran_station/src/core/utils/constance_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
-import 'package:quran_station/src/modules/audios/presentation/screens/audioPlayerScreen.dart';
+import 'package:quran_station/src/modules/audios/presentation/screens/audio_player_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 
 import '../../data/models/moshaf.dart';
@@ -19,6 +19,7 @@ class MoshafScreen extends StatelessWidget {
     // debugPrint("moshaf name is ${moshaf.surahList}");
 
     AudiosBloc bloc = AudiosBloc.get()..add(GetMoshafDetailsEvent(moshaf.moshafData.id));
+    bloc.currentMoshaf = moshaf.moshafData.name;
     return Scaffold(
       appBar: AppBar(
         title: Text(

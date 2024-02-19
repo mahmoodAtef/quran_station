@@ -1,86 +1,148 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
+import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
+import 'package:sizer/sizer.dart';
 
-import '../screens/audioPlayerScreen.dart';
+import '../screens/audio_player_screen.dart';
 
 class PlayerWidget extends StatefulWidget {
-  final AudioPlayer player;
-  final String audioUrl;
+  final String audioAddress;
+  final String title;
   final AudioType audioType;
+  final AudioPlayer player;
+
   const PlayerWidget({
-    required this.player,
-    super.key,
-    required this.audioUrl,
+    Key? key,
+    required this.audioAddress,
+    required this.title,
     required this.audioType,
-  });
+    required this.player,
+  }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return _PlayerWidgetState();
-  }
+  _PlayerWidgetState createState() => _PlayerWidgetState();
 }
 
 class _PlayerWidgetState extends State<PlayerWidget> {
-  PlayerState? _playerState;
-  Duration? _duration;
+  late AudioPlayer _audioPlayer;
+  bool get _isPlaying => _audioPlayer.playing;
+  IconData get _playPauseIcon => _audioPlayer.playing ? Icons.pause : Icons.play_arrow;
+  late IconData _stopIcon;
+  Duration? get _duration => _audioPlayer.duration;
   Duration? _position;
-
-  StreamSubscription? _durationSubscription;
-  StreamSubscription? _positionSubscription;
-  StreamSubscription? _playerCompleteSubscription;
-  StreamSubscription? _playerStateChangeSubscription;
-
-  bool get _isPlaying => _playerState == PlayerState.playing;
-  bool _isLoading = false;
-  bool get _isPaused => _playerState == PlayerState.paused;
-  bool get _isCompleted => _playerState == PlayerState.completed;
-  bool _willRepeat = false;
-  String get _durationText => _duration?.toString().split('.').first ?? '';
-
-  String get _positionText => _position?.toString().split('.').first ?? '';
-
-  AudioPlayer get player => widget.player;
+  late StreamSubscription<Duration?> _durationSubscription;
+  AudiosBloc bloc = AudiosBloc.get();
+  bool _isRepeating = false;
 
   @override
   void initState() {
     super.initState();
-    // Use initial values from player
-    _playerState = player.state;
-    player.getDuration().then(
-          (value) => setState(() {
-            _duration = value;
-          }),
-        );
-    player.getCurrentPosition().then(
-          (value) => setState(() {
-            _position = value;
-            if (_willRepeat && _isCompleted) {
-              _repeat();
-            }
-          }),
-        );
-    _initStreams();
-  }
+    _audioPlayer = widget.player;
+    _stopIcon = Icons.stop;
+    _position = Duration.zero;
 
-  @override
-  void setState(VoidCallback fn) {
-    // Subscriptions only can be closed asynchronously,
-    // therefore events can occur after widget has been disposed.
-    if (mounted) {
-      super.setState(fn);
-    }
+    _initAudio();
+
+    _durationSubscription = _audioPlayer.positionStream.listen((position) {
+      setState(() {
+        _position = position;
+      });
+    });
+
+    // Subscribe to audio player completion event
+    _audioPlayer.playerStateStream.listen((playerState) {
+      if (playerState.processingState == ProcessingState.completed) {
+        _onCompleted();
+      }
+    });
   }
 
   @override
   void dispose() {
-    _durationSubscription?.cancel();
-    _positionSubscription?.cancel();
-    _playerCompleteSubscription?.cancel();
-    _playerStateChangeSubscription?.cancel();
+    _durationSubscription.cancel();
     super.dispose();
+  }
+
+  Future<void> _initAudio() async {
+    if (widget.audioAddress != bloc.currentSurahUrl) {
+      try {
+        switch (widget.audioType) {
+          case AudioType.url:
+            await _audioPlayer.setUrl(widget.audioAddress);
+            bloc.currentSurahUrl = widget.audioAddress;
+            break;
+          case AudioType.file:
+            await _audioPlayer.setFilePath(widget.audioAddress);
+            bloc.currentSurahUrl = widget.audioAddress;
+            break;
+          case AudioType.radio:
+            await _audioPlayer.setUrl(widget.audioAddress);
+            bloc.currentSurahUrl = widget.audioAddress;
+            break;
+        }
+        AudioService.start(backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint);
+      } catch (e) {
+        print("Error initializing audio: $e");
+      }
+    }
+  }
+
+  void _audioPlayerTaskEntrypoint() {
+    AudioServiceBackground.run(() => AudioPlayerTask(audioPlayer: _audioPlayer));
+  }
+
+  Future<void> _togglePlayback() async {
+    if (_isPlaying) {
+      await _audioPlayer.pause();
+      setState(() {});
+    } else {
+      if (_isRepeating) {
+        await _audioPlayer.setLoopMode(LoopMode.one);
+      } else {
+        await _audioPlayer.setLoopMode(LoopMode.off);
+      }
+      await _audioPlayer.play();
+      setState(() {});
+    }
+  }
+
+  Future<void> _stopPlayback() async {
+    await _audioPlayer.seek(Duration.zero);
+    setState(() {});
+  }
+
+  Future<void> _onCompleted() async {
+    await _audioPlayer.stop();
+    if (_isRepeating) {
+      await _audioPlayer.seek(Duration.zero);
+      await _audioPlayer.play();
+    } else {
+      await _audioPlayer.seek(Duration.zero);
+      setState(() {
+        _position = Duration.zero;
+      });
+    }
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
+
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    String twoDigitHours = twoDigits(duration.inHours);
+
+    if (duration.inHours == 0) {
+      return "$twoDigitMinutes:$twoDigitSeconds";
+    } else {
+      return "$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds";
+    }
   }
 
   @override
@@ -88,16 +150,12 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        widget.audioType != AudioType.radio
-            ? Text(
-                _position != null
-                    ? '$_positionText / $_durationText'
-                    : _duration != null
-                        ? _durationText
-                        : '',
-                style: const TextStyle(fontSize: 16.0),
-              )
-            : const SizedBox(),
+        Text(
+          _position != null && _duration != null
+              ? '${_formatDuration(_position!)} / ${_formatDuration(_duration!)}'
+              : '',
+          style: const TextStyle(fontSize: 16.0),
+        ),
         Slider(
           onChanged: (value) {
             final duration = _duration;
@@ -105,130 +163,42 @@ class _PlayerWidgetState extends State<PlayerWidget> {
               return;
             }
             final position = value * duration.inMilliseconds;
-            player.seek(Duration(milliseconds: position.round()));
+            _audioPlayer.seek(Duration(milliseconds: position.round()));
           },
           value: (_position != null &&
                   _duration != null &&
                   _position!.inMilliseconds > 0 &&
                   _position!.inMilliseconds < _duration!.inMilliseconds)
               ? _position!.inMilliseconds / _duration!.inMilliseconds
-              : 1.0,
+              : 0.0,
         ),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (widget.audioType != AudioType.radio)
-              ActionButton(
-                  onPressed: _changeRepeatState, iconData: Icons.repeat, enabled: _willRepeat),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isRepeating = !_isRepeating;
+                  });
+                },
+                icon: Icon(_isRepeating ? Icons.repeat_one : Icons.repeat),
+              ),
             FloatingActionButton(
-              onPressed: _isPlaying ? _pause : _play,
-              child: _isLoading
-                  ? const CircularProgressIndicator(
-                      color: ColorManager.white,
-                    )
-                  : Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+              onPressed: _togglePlayback,
+              child: Icon(_playPauseIcon),
             ),
-            ActionButton(
-                onPressed: _isPlaying || _isPaused ? _stop : null,
-                iconData: Icons.stop,
-                enabled: _isPlaying || _isPaused)
+            IconButton(
+              onPressed: _stopPlayback,
+              icon: Icon(_stopIcon),
+              color: _isPlaying ? ColorManager.primary : ColorManager.grey2,
+            ),
           ],
         ),
+        SizedBox(
+          height: 3.h,
+        )
       ],
-    );
-  }
-
-  void _initStreams() {
-    _durationSubscription = player.onDurationChanged.listen((duration) {
-      setState(() => _duration = duration);
-    });
-
-    _positionSubscription = player.onPositionChanged.listen(
-      (p) => setState(() => _position = p),
-    );
-
-    _playerCompleteSubscription = player.onPlayerComplete.listen((event) {
-      setState(() {
-        _playerState = PlayerState.stopped;
-        _position = Duration.zero;
-        if (_willRepeat) {
-          _repeat();
-        } else {
-          _initStreams();
-        }
-      });
-    });
-
-    _playerStateChangeSubscription = player.onPlayerStateChanged.listen((state) {
-      setState(() {
-        _playerState = state;
-      });
-    });
-  }
-
-  Future<void> _play() async {
-    _changeLoadingState();
-    await _playPlayer();
-    setState(() => _playerState = PlayerState.playing);
-    _changeLoadingState();
-  }
-
-  Future<void> _pause() async {
-    await player.pause();
-    setState(() => _playerState = PlayerState.paused);
-  }
-
-  Future<void> _stop() async {
-    await player.stop();
-    setState(() {
-      _playerState = PlayerState.stopped;
-      _position = Duration.zero;
-    });
-  }
-
-  Future<void> _repeat() async {
-    await player.play(UrlSource(widget.audioUrl));
-    player.play(player.source!);
-    setState(() => _playerState = PlayerState.playing);
-  }
-
-  void _changeRepeatState() {
-    setState(() {
-      _willRepeat = !_willRepeat;
-    });
-  }
-
-  void _changeLoadingState() {
-    setState(() {
-      _isLoading = !_isLoading;
-    });
-  }
-
-  Future _playPlayer() async {
-    if (_isPaused) {
-      await player.resume().then((value) {});
-    } else {
-      await _repeat();
-    }
-  }
-}
-
-class ActionButton extends StatelessWidget {
-  final void Function()? onPressed;
-  final IconData iconData;
-  final bool enabled;
-  const ActionButton(
-      {super.key, required this.onPressed, required this.iconData, required this.enabled});
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: onPressed,
-      iconSize: 48.0,
-      icon: Icon(
-        iconData,
-        color: enabled ? ColorManager.primary : ColorManager.grey2,
-      ),
     );
   }
 }

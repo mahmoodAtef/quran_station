@@ -88,7 +88,7 @@ class AudiosMainScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                isLoading(state)
+                _isLoading(state)
                     ? const LinearProgressIndicator()
                     : Expanded(
                         child: Padding(
@@ -110,29 +110,12 @@ class AudiosMainScreen extends StatelessWidget {
   }
 
   void _handleExceptionS(BuildContext context, AudiosState state) {
-    if (state is GetAllRecitersErrorState) {
-      ExceptionManager(
-        state.exception,
-      ).showMessages(context);
-    } else if (state is GetMoshafDetailsErrorState) {
-      ExceptionManager(
-        state.exception,
-      ).showMessages(context);
-    } else if (state is GetMostPopularRecitersErrorState) {
-      ExceptionManager(
-        state.exception,
-      ).showMessages(context);
-    } else if (state is GetMushafSurahsErrorState) {
-      ExceptionManager(
-        state.exception,
-      ).showMessages(context);
+    if (state is AudiosError) {
+      state.handle(context);
     }
   }
-}
 
-bool isLoading(AudiosState state) {
-  return state is GetAllRecitersLoadingState ||
-      state is GetFavoriteRecitersLoadingState ||
-      state is GetMostPopularRecitersLoadingState ||
-      state is GetAllRadiosLoading;
+  bool _isLoading(AudiosState state) {
+    return state is AudiosLoading;
+  }
 }

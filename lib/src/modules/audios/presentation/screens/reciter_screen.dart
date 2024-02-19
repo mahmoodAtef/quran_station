@@ -18,6 +18,7 @@ class ReciterScreen extends StatelessWidget {
     AudiosBloc bloc = AudiosBloc.get()..add(GetReciterEvent(reciterID));
     // print(reciter.moshaf.first.server);
     Reciter reciter = bloc.reciters.firstWhere((element) => element.data.id == reciterID);
+    bloc.currentReciter = reciter.data.name;
     return BlocBuilder<AudiosBloc, AudiosState>(
       bloc: bloc,
       builder: (context, state) {

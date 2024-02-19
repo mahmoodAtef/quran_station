@@ -23,6 +23,16 @@ Drawer appDrawer = Drawer(
         title: const Text("الاشتراك"),
         onTap: () {},
       ),
+      const Spacer(),
+      Padding(
+        padding: EdgeInsetsDirectional.all(5.w),
+        child: Container(
+          decoration: BoxDecoration(border: Border.all(color: ColorManager.black, width: .5)),
+          height: 20.h,
+          width: double.infinity,
+          child: const Center(child: Text("مساحة مخصصة للإعلانات")),
+        ),
+      )
     ],
   ),
 );

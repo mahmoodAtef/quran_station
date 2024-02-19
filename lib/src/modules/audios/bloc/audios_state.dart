@@ -11,7 +11,25 @@ class AudiosInitial extends AudiosState {
   List<Object> get props => [];
 }
 
-class GetAllRecitersLoadingState extends AudiosState {
+/// all audios loading states extend this class
+class AudiosLoading extends AudiosState {
+  @override
+  List<Object?> get props => [];
+}
+
+/// all audios Exception states extend this class
+class AudiosError extends AudiosState {
+  final Exception exception;
+  const AudiosError(this.exception);
+  void handle(BuildContext context) {
+    ExceptionManager(exception).showMessages();
+  }
+
+  @override
+  List<Object?> get props => [];
+}
+
+class GetAllRecitersLoadingState extends AudiosLoading {
   @override
   List<Object?> get props => [];
 }
@@ -21,14 +39,13 @@ class GetAllRecitersSuccessState extends AudiosState {
   List<Object?> get props => [];
 }
 
-class GetAllRecitersErrorState extends AudiosState {
-  Exception exception;
-  GetAllRecitersErrorState(this.exception);
+class GetAllRecitersErrorState extends AudiosError {
+  const GetAllRecitersErrorState(super.exception);
   @override
   List<Object?> get props => [];
 }
 
-class AdvancedSearchLoadingState extends AudiosState {
+class AdvancedSearchLoadingState extends AudiosLoading {
   @override
   List<Object?> get props => [];
 }
@@ -38,14 +55,13 @@ class AdvancedSearchSuccessState extends AudiosState {
   List<Object?> get props => [];
 }
 
-class AdvancedSearchErrorState extends AudiosState {
-  final Exception exception;
-  const AdvancedSearchErrorState(this.exception);
+class AdvancedSearchErrorState extends AudiosError {
+  const AdvancedSearchErrorState(super.exception);
   @override
   List<Object?> get props => [];
 }
 
-class GetMushafSurahsLoadingState extends AudiosState {
+class GetMushafSurahsLoadingState extends AudiosLoading {
   @override
   List<Object?> get props => [];
 }
@@ -55,14 +71,13 @@ class GetMushafSurahsSuccessState extends AudiosState {
   List<Object?> get props => [];
 }
 
-class GetMushafSurahsErrorState extends AudiosState {
-  Exception exception;
-  GetMushafSurahsErrorState(this.exception);
+class GetMushafSurahsErrorState extends AudiosError {
+  const GetMushafSurahsErrorState(super.exception);
   @override
   List<Object?> get props => [];
 }
 
-class GetSearchByNameLoadingState extends AudiosState {
+class GetSearchByNameLoadingState extends AudiosLoading {
   @override
   List<Object?> get props => [];
 }
@@ -74,7 +89,7 @@ class GetSearchByNameResult extends AudiosState {
   List<Object?> get props => [result];
 }
 
-class GetReciterLoadingState extends AudiosState {
+class GetReciterLoadingState extends AudiosLoading {
   @override
   List<Object?> get props => [];
 }
@@ -84,14 +99,13 @@ class GetReciterSuccessState extends AudiosState {
   List<Object?> get props => [];
 }
 
-class GetReciterErrorState extends AudiosState {
-  final Exception exception;
-  const GetReciterErrorState(this.exception);
+class GetReciterErrorState extends AudiosError {
+  const GetReciterErrorState(super.exception);
   @override
   List<Object?> get props => [];
 }
 
-class GetMoshafDetailsLoadingState extends AudiosState {
+class GetMoshafDetailsLoadingState extends AudiosLoading {
   @override
   List<Object?> get props => [];
 }
@@ -103,9 +117,8 @@ class GetMoshafDetailsSuccessState extends AudiosState {
   List<Object?> get props => [];
 }
 
-class GetMoshafDetailsErrorState extends AudiosState {
-  final Exception exception;
-  const GetMoshafDetailsErrorState(this.exception);
+class GetMoshafDetailsErrorState extends AudiosError {
+  const GetMoshafDetailsErrorState(super.exception);
   @override
   List<Object?> get props => [];
 }
@@ -126,7 +139,7 @@ class RemoveReciterFromFavoritesSuccessState extends AudiosState {
   List<Object?> get props => [];
 }
 
-class GetFavoriteRecitersLoadingState extends AudiosState {
+class GetFavoriteRecitersLoadingState extends AudiosLoading {
   @override
   List<Object?> get props => [];
 }
@@ -143,7 +156,7 @@ class ChangeTabState extends AudiosState {
   List<Object?> get props => [index];
 }
 
-class GetMostPopularRecitersLoadingState extends AudiosState {
+class GetMostPopularRecitersLoadingState extends AudiosLoading {
   @override
   List<Object?> get props => [];
 }
@@ -153,14 +166,13 @@ class GetMostPopularRecitersSuccessState extends AudiosState {
   List<Object?> get props => [];
 }
 
-class GetMostPopularRecitersErrorState extends AudiosState {
-  final Exception exception;
-  const GetMostPopularRecitersErrorState(this.exception);
+class GetMostPopularRecitersErrorState extends AudiosError {
+  const GetMostPopularRecitersErrorState(super.exception);
   @override
   List<Object?> get props => [];
 }
 
-class GetAllRadiosLoading extends AudiosState {
+class GetAllRadiosLoading extends AudiosLoading {
   @override
   List<Object?> get props => [];
 }
@@ -170,9 +182,8 @@ class GetRadiosSuccessfulState extends AudiosState {
   List<Object?> get props => [];
 }
 
-class GetRadiosErrorState extends AudiosState {
-  final Exception exception;
-  const GetRadiosErrorState(this.exception);
+class GetRadiosErrorState extends AudiosError {
+  const GetRadiosErrorState(super.exception);
   @override
   List<Object?> get props => [];
 }

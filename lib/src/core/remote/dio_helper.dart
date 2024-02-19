@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 class DioHelper {
   static late Dio dio;
+
   DioHelper();
   init({required String baseUrl}) {
     dio = Dio(

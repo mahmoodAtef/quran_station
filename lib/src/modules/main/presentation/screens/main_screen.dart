@@ -6,6 +6,7 @@ import 'package:quran_station/src/modules/audios/presentation/screens/audios_mai
 import 'package:quran_station/src/modules/main/presentation/ui_entities/main_screen_item.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/reading/presentation/screens/moshaf_screen.dart';
 import 'package:sizer/sizer.dart';
 
 class MainScreen extends StatelessWidget {
@@ -23,25 +24,33 @@ class MainScreen extends StatelessWidget {
         screen: AudiosMainScreen(),
       ),
       MainScreenItem(
-        title: "قراءة",
+        title: "المصحف",
         icon: Icon(
           Icons.menu_book_rounded,
           size: 35,
         ),
-        screen: AudiosMainScreen(),
+        screen: MoshafScreen(),
       ),
       MainScreenItem(
-        title: "حفظ القرآن",
+        title: "التجويد",
         icon: Icon(
-          Icons.person,
+          Icons.record_voice_over_outlined,
           size: 35,
         ),
         screen: AudiosMainScreen(),
       ),
+      // MainScreenItem(
+      //   title: "التفسير",
+      //   icon: Icon(
+      //     Icons.text_snippet,
+      //     size: 35,
+      //   ),
+      //   screen: AudiosMainScreen(),
+      // ),
       MainScreenItem(
-        title: "الملف الشخصي",
+        title: "اختبر نفسك",
         icon: Icon(
-          Icons.person,
+          Icons.question_mark,
           size: 35,
         ),
         screen: AudiosMainScreen(),
@@ -68,29 +77,40 @@ class MainScreen extends StatelessWidget {
         ),
       ),
       drawer: appDrawer,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(5.0.w),
-          child: Column(
-            children: [
-              Container(
-                height: 20.h,
-                width: double.infinity,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.sp),
-                  color: ColorManager.primary,
-                ),
-                child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    imageUrl:
-                        "https://images.pexels.com/photos/7249191/pexels-photo-7249191.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
+      body: Padding(
+        padding: EdgeInsets.all(5.0.w),
+        child: Column(
+          children: [
+            Container(
+              height: 20.h,
+              width: double.infinity,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.sp),
+                color: ColorManager.primary,
               ),
-              SizedBox(height: 5.h),
-              GridView.builder(
+              child: CachedNetworkImage(
+                  color: ColorManager.grey1,
+                  filterQuality: FilterQuality.medium,
+                  errorWidget: (context, string, error) {
+                    return FittedBox(
+                      fit: BoxFit.fill,
+                      child: Container(
+                        color: ColorManager.grey2,
+                      ),
+                    );
+                  },
+                  fadeInCurve: Curves.bounceIn,
+                  fit: BoxFit.cover,
+                  imageUrl:
+                      "https://images.pexels.com/photos/7249191/pexels-photo-7249191.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
+            ),
+            SizedBox(height: 5.h),
+            Expanded(
+              child: GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: 4,
+                itemCount: items.length,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 200,
                     childAspectRatio: 1,
@@ -102,8 +122,15 @@ class MainScreen extends StatelessWidget {
                   );
                 },
               ),
-            ],
-          ),
+            ),
+            const HeightSeparator(),
+            Container(
+              decoration: BoxDecoration(border: Border.all(color: ColorManager.black, width: .5)),
+              height: 10.h,
+              width: double.infinity,
+              child: const Center(child: Text("مساحة مخصصة للإعلانات")),
+            ),
+          ],
         ),
       ),
     );

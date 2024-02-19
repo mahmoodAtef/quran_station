@@ -5,7 +5,7 @@ import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/constance_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/audios/data/models/radio.dart';
-import 'package:quran_station/src/modules/audios/presentation/screens/audioPlayerScreen.dart';
+import 'package:quran_station/src/modules/audios/presentation/screens/audio_player_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/reciter_screen.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../core/utils/styles_manager.dart';

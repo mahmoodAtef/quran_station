@@ -70,3 +70,8 @@ class GetAllRadiosEvent extends AudiosEvent {
   @override
   List<Object?> get props => [];
 }
+
+class DownLoadSurah extends AudiosEvent {
+  @override
+  List<Object?> get props => [];
+}

@@ -49,10 +49,10 @@ dependencies:
   bloc:
   flutter_bloc:
   just_audio: ^0.9.36
-  simple_audio:
+  audio_service:
   permission_handler:
 
-    # firebase
+  # firebase
   firebase_storage:
   firebase_auth:
   firebase_core:
@@ -62,7 +62,7 @@ dependencies:
   audioplayers:
 
 
-#localization
+  #localization
   flutter_localizations:
     sdk: flutter
   intl:
