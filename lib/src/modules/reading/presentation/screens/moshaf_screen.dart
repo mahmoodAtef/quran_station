@@ -1,15 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
-import 'package:quran/quranText.dart';
-import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
 import 'package:sizer/sizer.dart';
-import 'package:quran/quran.dart';
 
 class MoshafScreen extends StatelessWidget {
   const MoshafScreen({super.key});
@@ -51,7 +47,7 @@ class _QuranPageState extends State<QuranPage> {
   }
 
   Future<void> _loadQuranData() async {
-    String jsonString = await rootBundle.loadString("assets/hafs_smart_v8.json");
+    String jsonString = await rootBundle.loadString("assets/quran_data/hafs_smart_v8.json");
     setState(() {
       _quranData = json.decode(jsonString);
     });
@@ -73,11 +69,21 @@ class _QuranPageState extends State<QuranPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(5.w),
-      child: Text(
-        maxLines: 15,
-        _getQuranTextForPage(widget.pageNumber),
-        textAlign: TextAlign.center,
-        style: TextStyle(fontFamily: "hafs", fontSize: 15.sp),
+      child: SizedBox(
+        height: double.infinity,
+        width: double.infinity,
+        child: Column(
+          children: [
+            Expanded(
+              child: Text(
+                maxLines: 15,
+                _getQuranTextForPage(widget.pageNumber),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontFamily: "hafs", fontSize: 15.sp),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
