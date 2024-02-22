@@ -246,6 +246,8 @@ class RadioItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        AudiosBloc bloc = AudiosBloc.get();
+        bloc.currentReciter = "راديو";
         context.push(AudioPlayerScreen(
             audioAddress: radio.url, title: radio.name, audioType: AudioType.radio));
       },
@@ -381,6 +383,8 @@ class TafsirItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        AudiosBloc bloc = AudiosBloc.get();
+        bloc.currentReciter = "الخلاصة من تفسير الطبري";
         context.push(AudioPlayerScreen(
             audioAddress: tafsir.url, title: tafsir.name, audioType: AudioType.url));
       },

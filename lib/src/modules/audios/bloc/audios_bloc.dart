@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +11,7 @@ import 'package:quran_station/src/modules/audios/data/models/radio/radio.dart';
 import 'package:quran_station/src/modules/audios/data/models/reciter/reciter_model.dart';
 import 'package:quran_station/src/modules/audios/data/models/tafsir/surah_tafsir.dart';
 import 'package:quran_station/src/modules/audios/data/repositories/audios_repository.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/audio_player.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/pages/radios_page.dart';
 import '../data/models/moshaf/moshaf_details.dart';
 import '../presentation/widgets/pages/all_reciters_page.dart';
@@ -64,11 +66,12 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
     return SurahTafsir.fromId(ConstanceManager.quranSurahsNames.indexOf(e) + 1);
   }));
   int currentTab = 0;
-  late String currentReciter;
+  String? currentReciter;
   late String currentMoshaf;
   List<Reciter> mostPopularReciters = [];
   List<int> mostPopularRecitersIds = [];
   List<RadioModel> radios = [];
+  AudioPlayerHandler? handler;
   AudiosBloc() : super(AudiosInitial()) {
     on<AudiosEvent>((event, emit) async {
       if (event is GetAllRecitersEvent) {
@@ -210,5 +213,13 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   bool _isSurahTafsirEmpty(int id) {
     SurahTafsir surahTafsir = quranTafsir.firstWhere((element) => element.surahId == id);
     return surahTafsir.tafsir == null;
+  }
+
+  void setHandler({required String title}) {
+    handler = AudioPlayerHandler(id: "currentSurahUrl", audioPlayer: audioPlayer, title: title);
+  }
+
+  Future updateMediaItem(MediaItem item) async {
+    await handler!.updateItem(item);
   }
 }

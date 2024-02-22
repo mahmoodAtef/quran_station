@@ -107,12 +107,12 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
 
 class AudioPlayerTask extends BackgroundAudioTask {
   final AudioPlayer audioPlayer;
-
-  AudioPlayerTask({required this.audioPlayer});
+  final MediaItem item;
+  AudioPlayerTask({required this.audioPlayer, required this.item});
 
   @override
   Future<void> onStart(Map<String, dynamic>? params) async {
-    AudioServiceBackground.setQueue([]);
+    await AudioServiceBackground.setQueue([item]);
 
     AudioServiceBackground.setState(
       controls: [
@@ -158,6 +158,23 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onUpdateMediaItem(MediaItem mediaItem) async {
+    await AudioServiceBackground.setQueue([mediaItem]);
+    audioPlayer.playerStateStream.listen((playerState) {
+      if (playerState.processingState == ProcessingState.completed) {
+        audioPlayer.stop();
+      }
+      AudioServiceBackground.setState(
+        controls: [
+          if (playerState.playing) MediaControl.pause else MediaControl.play,
+          MediaControl.stop,
+        ],
+        playing: playerState.playing ?? false,
+        position: audioPlayer.position ?? Duration.zero,
+        bufferedPosition: audioPlayer.bufferedPosition ?? Duration.zero,
+        speed: audioPlayer.speed ?? 1.0,
+        updateTime: DateTime.now(),
+      );
+    });
     audioPlayer.play();
   }
 

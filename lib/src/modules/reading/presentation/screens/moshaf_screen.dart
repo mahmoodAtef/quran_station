@@ -16,9 +16,6 @@ class MoshafScreen extends StatelessWidget {
 
     return Scaffold(
         drawer: appDrawer,
-        appBar: CustomAppBar(
-          height: 1.h,
-        ),
         body: SizedBox(
           height: 100.h,
           width: 100.w,
@@ -70,19 +67,70 @@ class _QuranPageState extends State<QuranPage> {
     return Padding(
       padding: EdgeInsets.all(5.w),
       child: SizedBox(
-        height: double.infinity,
+        height: 90.h,
         width: double.infinity,
-        child: Column(
-          children: [
-            Expanded(
-              child: Text(
-                maxLines: 15,
-                _getQuranTextForPage(widget.pageNumber),
-                textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: "hafs", fontSize: 15.sp),
-              ),
-            ),
-          ],
+        child: TextDividerWidget(text: _getQuranTextForPage(widget.pageNumber)),
+      ),
+    );
+  }
+
+  // String withExtraNextLineCharacters(String text, int count) {
+  //   String nextLineCharacters = "";
+  //   for (int index = 0; index < (count - 1); index++) {
+  //     nextLineCharacters += "\n";
+  //   }
+  //   return text + nextLineCharacters;
+  // }
+
+  String splitTextIntoLines(String text, int maxLines) {
+    List<String> lines = [];
+    List<String> words = text.split(' ');
+
+    String line = '';
+    for (String word in words) {
+      if ((line + word).length > 70) {
+        // Assuming a maximum line length of 30 characters
+        lines.add(line.trim());
+        line = '';
+        if (lines.length == maxLines) break;
+      }
+      line += (line.isNotEmpty ? ' ' : '') + word;
+    }
+
+    if (line.isNotEmpty) {
+      lines.add(line.trim());
+    }
+
+    return lines.join('\n');
+  }
+}
+
+class TextDividerWidget extends StatelessWidget {
+  final String text;
+
+  TextDividerWidget({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    List<String> words = text.split(' ');
+    List<String> lines = [];
+    int wordsPerLine = (words.length / 15).ceil();
+
+    for (int i = 0; i < words.length; i += wordsPerLine) {
+      int end = i + wordsPerLine;
+      if (end > words.length) end = words.length;
+      lines.add(words.sublist(i, end).join(' '));
+    }
+
+    return SafeArea(
+      child: Text(
+        textAlign: TextAlign.justify,
+        lines.join(
+          " ",
+        ),
+        style: TextStyle(
+          fontSize: 22,
+          fontFamily: "hafs",
         ),
       ),
     );

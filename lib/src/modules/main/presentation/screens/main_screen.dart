@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
+import 'package:quran_station/src/core/utils/images_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/audios_main_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/ui_entities/main_screen_item.dart';
@@ -90,8 +91,7 @@ class MainScreen extends StatelessWidget {
                 color: ColorManager.primary,
               ),
               child: CachedNetworkImage(
-                  color: ColorManager.grey1,
-                  filterQuality: FilterQuality.medium,
+                  filterQuality: FilterQuality.high,
                   errorWidget: (context, string, error) {
                     return FittedBox(
                       fit: BoxFit.fill,
@@ -100,10 +100,8 @@ class MainScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  fadeInCurve: Curves.bounceIn,
                   fit: BoxFit.cover,
-                  imageUrl:
-                      "https://images.pexels.com/photos/7249191/pexels-photo-7249191.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
+                  imageUrl: ImagesManager.mainScreenImage),
             ),
             SizedBox(height: 5.h),
             Expanded(

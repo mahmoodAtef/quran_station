@@ -64,6 +64,8 @@ dependencies:
   quran:
   quran_sharif:
   pdf:
+  svg_flutter:
+  flutter_pdfview:
   #localization
   flutter_localizations:
     sdk: flutter
