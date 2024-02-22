@@ -65,7 +65,7 @@ class AudiosMainScreen extends StatelessWidget {
             return Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(5.0.w),
+                  padding: EdgeInsets.all(4.0.w),
                   child: SizedBox(
                     height: 6.h,
                     width: 90.w,
@@ -82,7 +82,7 @@ class AudiosMainScreen extends StatelessWidget {
                         ),
                       ),
                       separatorBuilder: (context, index) => SizedBox(
-                        width: 5.0.w,
+                        width: 2.0.w,
                       ),
                       itemCount: bloc.tabs.length,
                     ),

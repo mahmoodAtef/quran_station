@@ -7,6 +7,8 @@ import 'package:quran_station/src/core/remote/dio_helper.dart';
 import 'package:quran_station/src/modules/audios/data/models/radio/radio.dart';
 import 'package:quran_station/src/modules/audios/data/models/reciter/reciter_data.dart';
 import 'package:quran_station/src/modules/audios/data/models/tafsir/tafsir.dart';
+import 'package:quran_station/src/modules/quiz/data/data_source/quiz_remote_data_source.dart';
+import 'package:quran_station/src/modules/quiz/data/models/questoin.dart';
 import '../models/moshaf/moshaf_data.dart';
 import '../models/moshaf/moshaf_details.dart';
 
@@ -27,6 +29,7 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
     List<ReciterData> recitersData = [];
     try {
       // await downloadPages();
+      await QuizRemoteDataSource().getQuiz();
       await firestore.collection("reciters").get().then((value) {
         value.docs.forEach((element) async {
           ReciterData data = ReciterData.fromJson(element.data());
