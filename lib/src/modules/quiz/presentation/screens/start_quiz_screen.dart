@@ -174,6 +174,17 @@ class StartQuizScreen extends StatelessWidget {
                                               child: const Text("إنهاء الاختبار")),
                                         ),
                                       ),
+                                    if (cubit.quizCompleted)
+                                      Expanded(
+                                        child: SizedBox(
+                                          height: 5.h,
+                                          child: ElevatedButton(
+                                              onPressed: () {
+                                                cubit.restartQuiz();
+                                              },
+                                              child: const Text("إعادة الاختبار")),
+                                        ),
+                                      ),
                                     IconButton(
                                         onPressed: () {
                                           if (cubit.currentpage != 19) {

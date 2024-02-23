@@ -58,4 +58,9 @@ class QuizCubit extends Cubit<QuizState> {
     currentpage = index;
     emit(ChangePageState());
   }
+
+  Future restartQuiz() async {
+    qestions.clear();
+    await getQuestions();
+  }
 }

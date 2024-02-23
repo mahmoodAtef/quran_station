@@ -124,11 +124,12 @@ class TextDividerWidget extends StatelessWidget {
 
     return SafeArea(
       child: Text(
+        textWidthBasis: TextWidthBasis.parent,
         textAlign: TextAlign.justify,
         lines.join(
           " ",
         ),
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 22,
           fontFamily: "hafs",
         ),
