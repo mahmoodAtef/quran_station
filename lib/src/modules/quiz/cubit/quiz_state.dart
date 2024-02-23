@@ -16,4 +16,6 @@ class GetQuizErrorState extends QuizState {
 
 class AnswerQuestionState extends QuizState {}
 
-class CheckAnswersState extends QuizState {}
+class QuizFinishedState extends QuizState {}
+
+class ChangePageState extends QuizState {}

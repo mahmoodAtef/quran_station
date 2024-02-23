@@ -9,6 +9,7 @@ class ColorManager {
   static const Color card = Color(0xffF3EAC0);
   static const Color darkBlue = Color(0xff1E2640);
   static Color grey1 = Colors.grey[200]!;
+  static const Color trueAnswer = Colors.green;
   static const Color grey2 = Colors.grey;
   static const Color white = Colors.white;
   static const Color black = Colors.black;

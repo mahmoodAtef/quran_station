@@ -70,7 +70,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl:
-
+  screenshot:
+  share_plus:
+  path_provider:
 dev_dependencies:
   flutter_test:
     sdk: flutter

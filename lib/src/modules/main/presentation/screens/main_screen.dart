@@ -7,6 +7,7 @@ import 'package:quran_station/src/modules/audios/presentation/screens/audios_mai
 import 'package:quran_station/src/modules/main/presentation/ui_entities/main_screen_item.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/quiz/presentation/screens/start_quiz_screen.dart';
 import 'package:quran_station/src/modules/reading/presentation/screens/moshaf_screen.dart';
 import 'package:sizer/sizer.dart';
 
@@ -54,7 +55,7 @@ class MainScreen extends StatelessWidget {
           Icons.question_mark,
           size: 35,
         ),
-        screen: AudiosMainScreen(),
+        screen: StartQuizScreen(),
       ),
     ];
     GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
