@@ -61,11 +61,10 @@ dependencies:
   graphql:
   audioplayers:
   connectivity:
-  quran:
+  quran: ^1.2.3
   quran_sharif:
-  pdf:
-  svg_flutter:
   flutter_pdfview:
+
   #localization
   flutter_localizations:
     sdk: flutter
@@ -73,6 +72,9 @@ dependencies:
   screenshot:
   share_plus:
   path_provider:
+  auto_size_text_field: ^2.2.2
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -82,7 +84,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
+  flutter_lints: 2.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -101,6 +103,7 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/quran_data/
+    - assets/quran_data/quran_images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
@@ -116,6 +119,9 @@ flutter:
     - family: hafs
       fonts:
         - asset: assets/fonts/HafsSmart_08.ttf
+    - family: hafs2
+      fonts:
+        - asset: assets/fonts/UthmanicHafs1Ver09.otf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

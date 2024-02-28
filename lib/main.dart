@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:quran_station/generated/l10n.dart';
 import 'package:quran_station/src/core/local/shared_prefrences.dart';
-import 'package:quran_station/src/core/services/bloc_observer.dart';
 import 'package:quran_station/src/core/utils/theme_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/main/presentation/screens/main_screen.dart';
@@ -22,14 +22,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // BlocOverrides.runZoned(
-  //   () {
-  //     runApp(MyApp(
-  //       firstScreen: firstScreen,
-  //     ));
-  //   },
-  //   blocObserver: MyBlocObserver(),
-  // );
+
   runApp(MyApp(
     firstScreen: firstScreen,
   ));
@@ -50,6 +43,8 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
+          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
           return MaterialApp(
             locale: const Locale('ar'),
             supportedLocales: S.delegate.supportedLocales,

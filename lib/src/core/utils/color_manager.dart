@@ -15,4 +15,5 @@ class ColorManager {
   static const Color black = Colors.black;
   static Color error = Colors.red.shade800;
   static const Color transparent = Colors.transparent;
+  static const Color quranPage = Color(0xfff6efce);
 }

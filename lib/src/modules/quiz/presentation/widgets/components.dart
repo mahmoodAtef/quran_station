@@ -6,7 +6,6 @@ import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/quiz/cubit/quiz_cubit.dart';
 import 'package:quran_station/src/modules/quiz/data/models/questoin.dart';
 import 'package:sizer/sizer.dart';
-import 'package:svg_flutter/svg.dart';
 
 class ProgressBar extends StatelessWidget {
   final int currentQuestion;

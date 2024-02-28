@@ -75,6 +75,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
         bloc.updateMediaItem(MediaItem(
             id: widget.title,
             title: widget.title,
+            duration: widget.player.duration,
             artist: bloc.currentReciter,
             artUri: Uri.parse(ImagesManager.notificationImage)));
         await AudioService.init(
@@ -96,6 +97,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
         await bloc.updateMediaItem(MediaItem(
             id: widget.title,
             title: widget.title,
+            duration: widget.player.duration,
             artist: bloc.currentReciter,
             artUri: Uri.parse(ImagesManager.notificationImage)));
         print(bloc.handler!.mediaItem.value?.title);

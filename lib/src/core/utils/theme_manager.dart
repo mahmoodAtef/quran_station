@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
-import 'package:sizer/sizer.dart';
 
 ThemeData lightTheme = ThemeData(
   appBarTheme: const AppBarTheme(

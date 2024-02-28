@@ -1,139 +1,154 @@
-import 'dart:convert';
+import 'dart:ui';
 
+import 'package:auto_size_text_field/auto_size_text_field.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pdf/pdf.dart';
-import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
-import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quran/quran.dart';
+import 'package:quran_station/src/core/utils/color_manager.dart';
+import 'package:quran_station/src/core/utils/font_manager.dart';
+import 'package:quran_station/src/core/utils/styles_manager.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:sizer/sizer.dart';
 
-class MoshafScreen extends StatelessWidget {
-  const MoshafScreen({super.key});
+import '../pages/quran_page.dart';
+
+class MoshafScreen extends StatefulWidget {
+  const MoshafScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    PdfDocument document = PdfDocument();
-
-    return Scaffold(
-        drawer: appDrawer,
-        body: SizedBox(
-          height: 100.h,
-          width: 100.w,
-          child: Center(
-            child: PageView.builder(
-                itemCount: 604, itemBuilder: (context, index) => QuranPage(pageNumber: index + 1)),
-          ),
-        ));
-  }
+  State<MoshafScreen> createState() => _MoshafScreenState();
 }
 
-class QuranPage extends StatefulWidget {
-  int pageNumber;
-  QuranPage({super.key, required this.pageNumber});
-  @override
-  _QuranPageState createState() => _QuranPageState();
-}
-
-class _QuranPageState extends State<QuranPage> {
-  List<dynamic> _quranData = [];
-
+class _MoshafScreenState extends State<MoshafScreen> {
+  bool _showPageData = false;
+  bool loading = true;
+  MoshafCubit cubit = MoshafCubit.get();
   @override
   void initState() {
+    _getInitialPage();
     super.initState();
-    _loadQuranData();
   }
 
-  Future<void> _loadQuranData() async {
-    String jsonString = await rootBundle.loadString("assets/quran_data/hafs_smart_v8.json");
+  Future _getInitialPage() async {
+    await cubit.getInitialPage();
     setState(() {
-      _quranData = json.decode(jsonString);
+      loading = false;
     });
   }
 
-  String _getQuranTextForPage(int pageNumber) {
-    String text = "";
-    for (var verse in _quranData) {
-      print(verse);
-      if (verse['page'] == pageNumber) {
-        text = text + verse["aya_text"].toString();
-      }
-    }
-    print(text);
-    return text;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(5.w),
-      child: SizedBox(
-        height: 90.h,
-        width: double.infinity,
-        child: TextDividerWidget(text: _getQuranTextForPage(widget.pageNumber)),
+    return Scaffold(
+      body: Container(
+        color: ColorManager.black,
+        child: SafeArea(
+          child: BlocBuilder<MoshafCubit, MoshafState>(
+            bloc: cubit,
+            builder: (context, state) {
+              return loading
+                  ? const SizedBox()
+                  : Stack(
+                      children: [
+                        Positioned.fill(
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _showPageData = !_showPageData;
+                              });
+                            },
+                            child: PageView.builder(
+                              onPageChanged: (page) {
+                                cubit.currentPage = page + 1;
+                              },
+                              controller: PageController(initialPage: cubit.currentPage - 1),
+                              itemCount: 604,
+                              itemBuilder: (context, index) {
+                                cubit.getCurrentPageData();
+                                return ColorFiltered(
+                                    colorFilter: ColorFilter.mode(
+                                        ColorManager.darkBlue.withOpacity(.7), BlendMode.dst),
+                                    child: QuranPage(pageNumber: index + 1));
+                              },
+                            ),
+                          ),
+                        ),
+                        if (_showPageData)
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Container(
+                              height: 5.h,
+                              width: 100.w,
+                              color: ColorManager.black.withOpacity(.7),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                          Icons.menu,
+                                          color: ColorManager.white,
+                                        )),
+                                    InkWell(
+                                      onTap: () {
+                                        errorToast(msg: "جاري العمل على هذه الميزة");
+                                      },
+                                      child: const Text(
+                                        "التفسير الميسر",
+                                        style: TextStylesManager.regularBoldWhiteStyle,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (_showPageData)
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              height: 5.h,
+                              width: 100.w,
+                              color: ColorManager.black.withOpacity(.7),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "الجزء ${cubit.currentJuz}",
+                                      style: TextStylesManager.regularBoldWhiteStyle,
+                                    ),
+                                    Text(
+                                      "${cubit.currentPage}",
+                                      style: TextStylesManager.regularBoldWhiteStyle,
+                                    ),
+                                    Text(
+                                      "سورة ${cubit.currentSura}",
+                                      style: TextStylesManager.regularBoldWhiteStyle,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                      ],
+                    );
+            },
+          ),
+        ),
       ),
     );
   }
 
-  // String withExtraNextLineCharacters(String text, int count) {
-  //   String nextLineCharacters = "";
-  //   for (int index = 0; index < (count - 1); index++) {
-  //     nextLineCharacters += "\n";
-  //   }
-  //   return text + nextLineCharacters;
-  // }
-
-  String splitTextIntoLines(String text, int maxLines) {
-    List<String> lines = [];
-    List<String> words = text.split(' ');
-
-    String line = '';
-    for (String word in words) {
-      if ((line + word).length > 70) {
-        // Assuming a maximum line length of 30 characters
-        lines.add(line.trim());
-        line = '';
-        if (lines.length == maxLines) break;
-      }
-      line += (line.isNotEmpty ? ' ' : '') + word;
-    }
-
-    if (line.isNotEmpty) {
-      lines.add(line.trim());
-    }
-
-    return lines.join('\n');
-  }
-}
-
-class TextDividerWidget extends StatelessWidget {
-  final String text;
-
-  TextDividerWidget({required this.text});
-
   @override
-  Widget build(BuildContext context) {
-    List<String> words = text.split(' ');
-    List<String> lines = [];
-    int wordsPerLine = (words.length / 15).ceil();
-
-    for (int i = 0; i < words.length; i += wordsPerLine) {
-      int end = i + wordsPerLine;
-      if (end > words.length) end = words.length;
-      lines.add(words.sublist(i, end).join(' '));
-    }
-
-    return SafeArea(
-      child: Text(
-        textWidthBasis: TextWidthBasis.parent,
-        textAlign: TextAlign.justify,
-        lines.join(
-          " ",
-        ),
-        style: const TextStyle(
-          fontSize: 22,
-          fontFamily: "hafs",
-        ),
-      ),
-    );
+  void dispose() {
+    cubit.saveCurrentPage();
+    super.dispose();
   }
 }

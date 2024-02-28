@@ -6,18 +6,24 @@ import 'package:quran_station/src/modules/quiz/data/models/questoin.dart';
 
 class QuizRemoteDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   Future<Either<Exception, List<Question>>> getQuiz() async {
     try {
       List<Question> questions = [];
       int documentCount = await _getDocumentCount();
-      int randomStartIndex = _generateRandomIndex(documentCount);
+      List<int> randomIndices = _generateRandomIndices(documentCount, 20);
+      print(randomIndices);
       var collection = _firestore.collection('quran_questions');
       var querySnapshot = await collection
-          .where("question_id",
-              isGreaterThanOrEqualTo: randomStartIndex, isLessThan: randomStartIndex + 20)
+          .where(
+            "question_id",
+            whereIn: randomIndices,
+          )
           .get();
+
       for (var doc in querySnapshot.docs) {
         var questionData = doc.data();
+        print(questionData);
         var question = Question.fromJson(questionData);
         questions.add(question);
       }
@@ -30,18 +36,18 @@ class QuizRemoteDataSource {
 
   Future<int> _getDocumentCount() async {
     var collection = _firestore.collection('quran_questions');
-    var agregateQuery = await collection.count().get();
-    int documentCount = agregateQuery.count!;
+    var aggregateQuery = await collection.get();
+    int documentCount = aggregateQuery.docs.length;
     print("num of questions : $documentCount");
     return documentCount;
   }
 
-  int _generateRandomIndex(int documentCount) {
-    int randomIndexRange = documentCount - 19;
-    int r = Random().nextInt(
-      randomIndexRange,
-    );
-    print("random number : $r");
-    return r == 0 ? 1 : r;
+  List<int> _generateRandomIndices(int documentCount, int count) {
+    Set<int> indicesSet = {};
+    while (indicesSet.length < count) {
+      int randomIndex = Random().nextInt(documentCount) + 1;
+      indicesSet.add(randomIndex);
+    }
+    return indicesSet.toList();
   }
 }

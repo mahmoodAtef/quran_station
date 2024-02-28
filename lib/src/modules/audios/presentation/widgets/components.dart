@@ -16,27 +16,6 @@ import '../../data/models/moshaf/moshaf.dart';
 import '../../data/models/reciter/reciter_model.dart';
 import '../screens/mushaf_screen.dart';
 
-void defaultToast({
-  required String msg,
-}) {
-  Fluttertoast.showToast(
-    backgroundColor: ColorManager.primary,
-    msg: msg,
-    toastLength: Toast.LENGTH_SHORT,
-  );
-}
-
-void warnToast({
-  required String msg,
-}) {
-  Fluttertoast.showToast(
-    msg: msg,
-    backgroundColor: ColorManager.secondary,
-    // textColor: ColorManager.white,
-    toastLength: Toast.LENGTH_SHORT,
-  );
-}
-
 void errorToast({
   required String msg,
 }) {
@@ -53,82 +32,37 @@ class ReciterItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AudiosBloc bloc = AudiosBloc.get();
-    return InkWell(
-      onTap: () {
+    return ItemWidget(
+      onPressed: () {
         context.push(ReciterScreen(
           reciterID: reciter.data.id,
         ));
       },
-      child: Card(
-        surfaceTintColor: ColorManager.error,
-        shape: ShapeBorder.lerp(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.sp),
-          ),
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
-          1,
-        ),
-        child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.sp),
-              color: ColorManager.darkBlue,
-              gradient: LinearGradient(
-                colors: [
-                  ColorManager.darkBlue.withOpacity(0.8),
-                  // ColorManager.darkBlue.withOpacity(0.7),
-                  // ColorManager.darkBlue.withOpacity(0.8),
-                  // ColorManager.darkBlue.withOpacity(0.9),
-                  ColorManager.darkBlue,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      title: reciter.data.name,
+      subTitle: '${reciter.data.rewayasCount}'
+          ' قراءة / ${reciter.data.surahsCount} تسجيل ',
+      suffix: Padding(
+        padding: EdgeInsets.all(8.0.sp),
+        child: BlocBuilder<AudiosBloc, AudiosState>(
+          bloc: bloc,
+          builder: (context, state) {
+            return IconButton(
+              onPressed: () {
+                if (bloc.favoriteReciters.contains(reciter)) {
+                  bloc.add(RemoveReciterFromFavoritesEvent(reciter.data.id));
+                } else {
+                  bloc.add(AddReciterToFavoritesEvent(reciter.data.id));
+                }
+              },
+              icon: Icon(
+                Icons.favorite,
+                color: bloc.favoriteReciters.contains(reciter)
+                    ? ColorManager.secondary
+                    : ColorManager.white,
               ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text(
-                          reciter.data.name,
-                          style: TextStylesManager.regularBoldWhiteStyle,
-                        ),
-                        subtitle: Text(
-                          '${reciter.data.rewayasCount}'
-                          ' قراءة / ${reciter.data.surahsCount} تسجيل ',
-                          style: TextStylesManager.regularWhiteStyle,
-                        ),
-                        // trailing: Text(reciter.count.toString()),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0.sp),
-                  child: BlocBuilder<AudiosBloc, AudiosState>(
-                    bloc: bloc,
-                    builder: (context, state) {
-                      return IconButton(
-                        onPressed: () {
-                          if (bloc.favoriteReciters.contains(reciter)) {
-                            bloc.add(RemoveReciterFromFavoritesEvent(reciter.data.id));
-                          } else {
-                            bloc.add(AddReciterToFavoritesEvent(reciter.data.id));
-                          }
-                        },
-                        icon: Icon(
-                          Icons.favorite,
-                          color: bloc.favoriteReciters.contains(reciter)
-                              ? ColorManager.secondary
-                              : ColorManager.white,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            )),
+            );
+          },
+        ),
       ),
     );
   }
@@ -140,47 +74,12 @@ class MoshafWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
+    return ItemWidget(
+      onPressed: () {
         context.push(MoshafScreen(moshaf: moshaf));
       },
-      child: Card(
-        surfaceTintColor: ColorManager.error,
-        shape: ShapeBorder.lerp(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.sp),
-          ),
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
-          1,
-        ),
-        child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.sp),
-              color: ColorManager.darkBlue,
-              gradient: LinearGradient(
-                colors: [
-                  ColorManager.darkBlue.withOpacity(0.8),
-                  ColorManager.darkBlue,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Column(
-              children: [
-                ListTile(
-                  title: Text(
-                    moshaf.moshafData.name,
-                    style: TextStylesManager.regularBoldWhiteStyle,
-                  ),
-                  subtitle: Text(
-                    '${moshaf.moshafData.surahTotal} تسجيل ',
-                    style: TextStylesManager.regularWhiteStyle,
-                  ),
-                ),
-              ],
-            )),
-      ),
+      title: moshaf.moshafData.name,
+      subTitle: '${moshaf.moshafData.surahTotal} تسجيل ',
     );
   }
 }
@@ -244,63 +143,15 @@ class RadioItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
+    return ItemWidget(
+      onPressed: () {
         AudiosBloc bloc = AudiosBloc.get();
         bloc.currentReciter = "راديو";
         context.push(AudioPlayerScreen(
             audioAddress: radio.url, title: radio.name, audioType: AudioType.radio));
       },
-      child: Card(
-        surfaceTintColor: ColorManager.error,
-        shape: ShapeBorder.lerp(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.sp),
-          ),
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
-          1,
-        ),
-        child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.sp),
-              color: ColorManager.darkBlue,
-              gradient: LinearGradient(
-                colors: [
-                  ColorManager.darkBlue.withOpacity(0.8),
-                  // ColorManager.darkBlue.withOpacity(0.7),
-                  // ColorManager.darkBlue.withOpacity(0.8),
-                  // ColorManager.darkBlue.withOpacity(0.9),
-                  ColorManager.darkBlue,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Row(
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.only(start: 5.sp),
-                  child: const Icon(
-                    Icons.radio,
-                    color: ColorManager.white,
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text(
-                          radio.name,
-                          style: TextStylesManager.regularBoldWhiteStyle,
-                        ),
-                        // trailing: Text(reciter.count.toString()),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )),
-      ),
+      title: radio.name,
+      icon: Icons.radio,
     );
   }
 }
@@ -381,15 +232,38 @@ class TafsirItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
+    return ItemWidget(
+      onPressed: () {
         AudiosBloc bloc = AudiosBloc.get();
         bloc.currentReciter = "الخلاصة من تفسير الطبري";
         context.push(AudioPlayerScreen(
             audioAddress: tafsir.url, title: tafsir.name, audioType: AudioType.url));
       },
+      title: tafsir.name,
+      icon: Icons.mic,
+    );
+  }
+}
+
+class ItemWidget extends StatelessWidget {
+  final void Function() onPressed;
+  final String title;
+  final IconData? icon;
+  final Widget? suffix;
+  final String? subTitle;
+  const ItemWidget(
+      {super.key,
+      required this.onPressed,
+      required this.title,
+      this.icon,
+      this.suffix,
+      this.subTitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
       child: Card(
-        surfaceTintColor: ColorManager.error,
         shape: ShapeBorder.lerp(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.sp),
@@ -415,26 +289,34 @@ class TafsirItem extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.only(start: 5.sp),
-                  child: const Icon(
-                    Icons.mic,
-                    color: ColorManager.white,
+                if (icon != null)
+                  Padding(
+                    padding: EdgeInsetsDirectional.only(start: 5.sp),
+                    child: Icon(
+                      icon!,
+                      color: ColorManager.white,
+                    ),
                   ),
-                ),
                 Expanded(
                   child: Column(
                     children: [
                       ListTile(
                         title: Text(
-                          tafsir.name,
+                          title,
                           style: TextStylesManager.regularBoldWhiteStyle,
                         ),
+                        subtitle: subTitle != null
+                            ? Text(
+                                subTitle!,
+                                style: TextStylesManager.regularWhiteStyle,
+                              )
+                            : null,
                         // trailing: Text(reciter.count.toString()),
                       ),
                     ],
                   ),
                 ),
+                if (suffix != null) suffix!
               ],
             )),
       ),
