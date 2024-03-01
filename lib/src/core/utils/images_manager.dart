@@ -6,5 +6,5 @@ class ImagesManager {
   static String notificationImage =
       "https://images.pexels.com/photos/15070484/pexels-photo-15070484/free-photo-of-man-reading-quran.jpeg?auto=compress&cs=tinysrgb&w=400";
   static String mainScreenImage =
-      "https://firebasestorage.googleapis.com/v0/b/quran-station-f943f.appspot.com/o/images%2Fmain_screen.png?alt=media&token=77e5d655-4c54-4040-b2f7-b2d83b765415";
+      "https://firebasestorage.googleapis.com/v0/b/quran-station-f943f.appspot.com/o/images%2FmainScreen.jpg?alt=media&token=13a0ec20-d3e9-4561-9bbe-3740689d7c34";
 }

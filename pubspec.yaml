@@ -35,10 +35,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  smooth_list_view:
   equatable:
   dio:
-  http:
+
   dartz:
   get_it:
   fluttertoast:
@@ -53,17 +52,17 @@ dependencies:
   permission_handler:
 
   # firebase
-  firebase_storage:
-  firebase_auth:
+
+
   firebase_core:
   cloud_firestore:
-  firebase_messaging:
-  graphql:
-  audioplayers:
+
+
+
   connectivity:
   quran: ^1.2.3
-  quran_sharif:
-  flutter_pdfview:
+
+
 
   #localization
   flutter_localizations:
@@ -72,7 +71,7 @@ dependencies:
   screenshot:
   share_plus:
   path_provider:
-  auto_size_text_field: ^2.2.2
+
 
 
 dev_dependencies:
@@ -118,11 +117,7 @@ flutter:
   fonts:
     - family: hafs
       fonts:
-        - asset: assets/fonts/HafsSmart_08.ttf
-    - family: hafs2
-      fonts:
-        - asset: assets/fonts/UthmanicHafs1Ver09.otf
-  #       - asset: fonts/Schyler-Italic.ttf
+         - asset: assets/fonts/uthmanic_hafs_v20.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

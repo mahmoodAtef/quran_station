@@ -3,6 +3,7 @@ import 'package:quran_station/src/core/utils/color_manager.dart';
 
 ThemeData lightTheme = ThemeData(
   appBarTheme: const AppBarTheme(
+    iconTheme: IconThemeData(color: ColorManager.black),
     centerTitle: true,
     elevation: 0,
     titleSpacing: 0,

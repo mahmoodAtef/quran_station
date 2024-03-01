@@ -12,12 +12,12 @@ import 'package:quran_station/src/modules/audios/data/models/reciter/reciter_mod
 import 'package:quran_station/src/modules/audios/data/models/tafsir/surah_tafsir.dart';
 import 'package:quran_station/src/modules/audios/data/repositories/audios_repository.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/audio_player.dart';
-import 'package:quran_station/src/modules/audios/presentation/widgets/pages/radios_page.dart';
 import '../data/models/moshaf/moshaf_details.dart';
-import '../presentation/widgets/pages/all_reciters_page.dart';
-import '../presentation/widgets/pages/favourites_reciters_page.dart';
-import '../presentation/widgets/pages/most_popular_reciters_page.dart';
-import '../presentation/widgets/pages/tafsir_page.dart';
+import '../presentation/pages/all_reciters_page.dart';
+import '../presentation/pages/favourites_reciters_page.dart';
+import '../presentation/pages/most_popular_reciters_page.dart';
+import '../presentation/pages/radios_page.dart';
+import '../presentation/pages/tafsir_page.dart';
 
 part 'audios_event.dart';
 part 'audios_state.dart';

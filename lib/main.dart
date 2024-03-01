@@ -10,6 +10,7 @@ import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/main/presentation/screens/main_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/screens/onboarding.dart';
 import 'package:quran_station/src/modules/quiz/cubit/quiz_cubit.dart';
+import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:sizer/sizer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -40,6 +41,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (BuildContext context) => QuizCubit.get(),
+          ),
+          BlocProvider(
+            create: (BuildContext context) => MoshafCubit.get(),
           ),
         ],
         child: Sizer(builder: (context, orientation, deviceType) {

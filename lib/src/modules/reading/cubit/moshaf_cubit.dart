@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:quran/quran.dart';
 import 'package:quran_station/src/core/local/shared_prefrences.dart';
+import 'package:quran_station/src/modules/reading/data/quran_data/sura_data.dart';
 
 import '../data/quran_data/juz_data.dart';
 import '../data/quran_data/sura_index.dart';
@@ -18,10 +21,13 @@ class MoshafCubit extends Cubit<MoshafState> {
   }
 
   int currentPage = 1;
+  int currentTafsirPage = 1;
   String currentSura = "";
   String currentJuz = "";
   String quranText = "";
   List<String> pageLines = [];
+  String tafsirString = "";
+  List<Map<String, dynamic>> currentTafsirPageData = [];
   MoshafCubit() : super(MoshafInitial());
   Future saveCurrentPage() async {
     await CacheHelper.saveData(key: "defaultBookMark", value: currentPage);
@@ -49,8 +55,8 @@ class MoshafCubit extends Cubit<MoshafState> {
 
   String _getCurrentSurah() {
     String currentSurah = "";
-    surahIndex.forEach((surah, page) {
-      if (page <= currentPage) {
+    suraData.forEach((surah, data) {
+      if (data['الصفحة'] <= currentPage) {
         currentSurah = surah;
       }
     });
@@ -58,13 +64,28 @@ class MoshafCubit extends Cubit<MoshafState> {
   }
 
   void getCurrentPageData() {
-    quranText = getVersesTextByPage(
-      currentPage,
-      surahSeperator: SurahSeperator.surahNameArabic,
-      verseEndSymbol: true,
-    ).join('\n');
     currentJuz = _getCurrentJuz();
     currentSura = _getCurrentSurah();
     emit(GetPageDataState());
+  }
+
+  Future<void> loadJsonData() async {
+    emit(LoadingTafsirJsonState());
+    tafsirString = await rootBundle.loadString('assets/quran_data/tafsir.json');
+    emit(TafsirJsonLoadedState());
+  }
+
+  void extractVersesAndTafsir(int pageNumber) {
+    emit(LoadPageTafsirState());
+    List<Map<String, dynamic>> result = [];
+
+    List<dynamic> data = json.decode(tafsirString);
+    for (var item in data) {
+      if (item['page'] == pageNumber.toString()) {
+        result.add({'verse': item['aya_text'], 'tafsir': item['aya_tafseer']});
+      }
+    }
+    currentTafsirPageData = result;
+    emit(GetPageTafsirState());
   }
 }

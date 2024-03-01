@@ -9,7 +9,7 @@
 
     <application
         android:name="${applicationName}"
-        android:label="quran_station"
+        android:label="كلام ربي"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
 
