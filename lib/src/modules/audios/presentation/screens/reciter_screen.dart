@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
-import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/connectivity.dart';
 import 'package:sizer/sizer.dart';
@@ -47,7 +46,7 @@ class ReciterScreen extends StatelessWidget {
                           itemBuilder: (context, index) => MoshafWidget(
                                 moshaf: reciter.moshafs![index],
                               ),
-                          separatorBuilder: (context, index) => SizedBox(
+                          separatorBuilder: (context, index) => const SizedBox(
                                 height: 10,
                               ),
                           itemCount: reciter.moshafs!.length),

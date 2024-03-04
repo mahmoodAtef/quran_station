@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 
 import '../../../main/presentation/widgets/connectivity.dart';

@@ -7,8 +7,7 @@ import 'package:quran_station/generated/l10n.dart';
 import 'package:quran_station/src/core/local/shared_prefrences.dart';
 import 'package:quran_station/src/core/utils/theme_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
-import 'package:quran_station/src/modules/main/presentation/screens/main_screen.dart';
-import 'package:quran_station/src/modules/main/presentation/screens/onboarding.dart';
+import 'package:quran_station/src/modules/main/presentation/screens/splash_screen.dart';
 import 'package:quran_station/src/modules/quiz/cubit/quiz_cubit.dart';
 import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:sizer/sizer.dart';
@@ -19,19 +18,17 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheHelper.init();
 
-  Widget firstScreen = await getFirstScreen();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(MyApp(
-    firstScreen: firstScreen,
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final Widget firstScreen;
-  const MyApp({super.key, required this.firstScreen});
+  const MyApp({
+    super.key,
+  });
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -60,33 +57,11 @@ class MyApp extends StatelessWidget {
             ],
             debugShowCheckedModeBanner: false,
             showSemanticsDebugger: false,
-            title: 'محطة القرآن الكريم',
+            title: 'كلامُ ربي',
             theme: lightTheme,
-            home: firstScreen,
+            home: const SplashScreen(),
           );
         }));
-  }
-}
-
-Future<Widget> getFirstScreen() async {
-  bool showSplash = await CacheHelper.getData(key: "showSplash") ?? true;
-  if (showSplash) {
-    return const OnBoardingScreen();
-  } else {
-    return const MainScreen();
-  }
-}
-
-class Test extends StatelessWidget {
-  const Test({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text("test"),
-      ),
-    );
   }
 }
 // flutter run --release --cache-sksl --purge-persistent-cache

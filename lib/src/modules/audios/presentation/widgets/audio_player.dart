@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
@@ -5,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
-import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../core/utils/images_manager.dart';
@@ -26,6 +27,7 @@ class PlayerWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _PlayerWidgetState createState() => _PlayerWidgetState();
 }
 
@@ -75,36 +77,17 @@ class _PlayerWidgetState extends State<PlayerWidget> {
         bloc.updateMediaItem(MediaItem(
             id: widget.title,
             title: widget.title,
-            duration: widget.player.duration,
             artist: bloc.currentReciter,
             artUri: Uri.parse(ImagesManager.notificationImage)));
         await AudioService.init(
           builder: () => bloc.handler!,
-          // config: const AudioServiceConfig(
-          //   androidNotificationChannelId: "widget.audioAddress",
-          //   androidNotificationChannelName: 'Audio playback',
-          //
-          //   //androidNotificationOngoing: false,
-          // ),
         );
       } else {
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-
         await bloc.updateMediaItem(MediaItem(
             id: widget.title,
             title: widget.title,
-            duration: widget.player.duration,
             artist: bloc.currentReciter,
             artUri: Uri.parse(ImagesManager.notificationImage)));
-        print(bloc.handler!.mediaItem.value?.title);
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
       }
       try {
         switch (widget.audioType) {
@@ -121,9 +104,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
             bloc.currentSurahUrl = widget.audioAddress;
             break;
         }
-      } catch (e) {
-        print("Error initializing audio: $e");
-      }
+      } catch (e) {}
     }
   }
 
@@ -253,9 +234,7 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
       ),
       artist: bloc.currentReciter,
     ));
-    mediaItem.listen((value) {
-      print("llllllllllllllllllllllllllllllllllllllllll");
-    });
+    mediaItem.listen((value) {});
   }
   Stream<MediaItem> getItem() async* {
     yield item!;

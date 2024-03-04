@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
+import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/quiz/cubit/quiz_cubit.dart';
 import 'package:quran_station/src/modules/quiz/presentation/widgets/components.dart';
 import 'package:share_plus/share_plus.dart';
@@ -25,23 +26,28 @@ class StartQuizScreen extends StatelessWidget {
     QuizCubit cubit = QuizCubit.get()..getQuestions();
     ScreenshotController screenshotController = ScreenshotController();
     ScreenshotController resultScreenshotController = ScreenshotController();
+    GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
     return BlocBuilder<QuizCubit, QuizState>(
       builder: (context, state) {
         return Screenshot(
           controller: screenshotController,
           child: Scaffold(
+            key: scaffoldKey,
+            drawer: appDrawer,
             appBar: AppBar(
-              // height: 10.h,
               leadingWidth: 10.w,
               leading: IconButton(
-                  onPressed: () async {},
+                  onPressed: () async {
+                    scaffoldKey.currentState!.openDrawer();
+                  },
                   icon: const Icon(
                     Icons.menu,
                     color: ColorManager.black,
                   )),
               centerTitle: true,
               title: const Text(
-                'محطة القرآن',
+                'كَلَامُ رَبِّي',
                 style: TextStylesManager.appBarTitle,
               ),
               actions: [
@@ -73,12 +79,13 @@ class StartQuizScreen extends StatelessWidget {
                               ),
                               Expanded(
                                 child: PageView.builder(
+                                    controller: cubit.quizConttoller,
                                     onPageChanged: (index) {
                                       cubit.changeQuestionPage(index);
                                     },
                                     itemCount: cubit.qestions.length,
                                     itemBuilder: (context, index) => QuestionCard(
-                                          question: cubit.qestions[cubit.currentpage],
+                                          question: cubit.qestions[index],
                                         )),
                               ),
                               Padding(
@@ -217,7 +224,9 @@ class StartQuizScreen extends StatelessWidget {
       pixelRatio: MediaQuery.of(context).devicePixelRatio,
     )
         .catchError((e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     });
 
     XFile? imageFile = await _convertBytesToXFile(imageBytes!);

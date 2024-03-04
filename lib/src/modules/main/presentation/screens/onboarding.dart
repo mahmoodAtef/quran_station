@@ -22,12 +22,12 @@ class OnBoardingScreen extends StatelessWidget {
             children: [
               SizedBox(height: 10.h),
               Text(
-                "محطة القرآن الكريم",
+                "كَلَامُ رَبِّي",
                 style: TextStylesManager.titleBoldStyle,
               ),
-              SizedBox(height: .5.h),
+              // SizedBox(height: .1.h),
               const Text(
-                "مَوْعِظَةٌ مِنْ رَبِّكُمْ وَشِفَاءٌ لِمَا فِي الصُّدُورِ ",
+                "تجربة قرآنية متكاملة",
                 style: TextStylesManager.regularBoldStyle,
               ),
               SizedBox(height: 1.h),

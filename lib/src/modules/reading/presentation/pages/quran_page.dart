@@ -62,19 +62,13 @@ class QuranPage extends StatelessWidget {
               ))),
       child: Padding(
         padding: EdgeInsets.all(4.w),
-        child: Column(
-          children: [
-            Expanded(
-              child: ColorFiltered(
-                colorFilter: const ColorFilter.srgbToLinearGamma(),
-                child: Image.asset(
-                  "assets/quran_data/quran_images/$pageNumber.webp",
-                  fit: pageNumber == 1 || pageNumber == 2 ? BoxFit.cover : BoxFit.fill,
-                  filterQuality: FilterQuality.high,
-                ),
-              ),
-            ),
-          ],
+        child: ColorFiltered(
+          colorFilter: const ColorFilter.srgbToLinearGamma(),
+          child: Image.asset(
+            "assets/quran_data/quran_images/$pageNumber.webp",
+            fit: BoxFit.fill,
+            filterQuality: FilterQuality.high,
+          ),
         ),
       ),
     );

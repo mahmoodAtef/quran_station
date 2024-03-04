@@ -10,8 +10,9 @@ class QuizRemoteDataSource {
   Future<Either<Exception, List<Question>>> getQuiz() async {
     try {
       List<Question> questions = [];
+
       int documentCount = await _getDocumentCount();
-      List<int> randomIndices = _generateRandomIndices(documentCount, 20);
+      List<int> randomIndices = _generateRandomIndexes(documentCount, 20);
       print(randomIndices);
       var collection = _firestore.collection('quran_questions');
       var querySnapshot = await collection
@@ -38,11 +39,10 @@ class QuizRemoteDataSource {
     var collection = _firestore.collection('quran_questions');
     var aggregateQuery = await collection.get();
     int documentCount = aggregateQuery.docs.length;
-    print("num of questions : $documentCount");
     return documentCount;
   }
 
-  List<int> _generateRandomIndices(int documentCount, int count) {
+  List<int> _generateRandomIndexes(int documentCount, int count) {
     Set<int> indicesSet = {};
     while (indicesSet.length < count) {
       int randomIndex = Random().nextInt(documentCount) + 1;

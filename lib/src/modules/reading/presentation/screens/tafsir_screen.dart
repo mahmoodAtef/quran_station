@@ -1,22 +1,10 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quran/quran.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
-import 'package:quran_station/src/core/utils/font_manager.dart';
-import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
-import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:quran_station/src/modules/reading/presentation/pages/tafsir_page.dart';
-import 'package:quran_station/src/modules/reading/presentation/screens/tafsir_screen.dart';
 import 'package:sizer/sizer.dart';
-
-import '../pages/quran_page.dart';
 
 class TafsirScreen extends StatefulWidget {
   const TafsirScreen({Key? key}) : super(key: key);
@@ -38,9 +26,8 @@ class _TafsirScreenState extends State<TafsirScreen> {
   Future _getInitialPage() async {
     await cubit.loadJsonData();
     setState(() {
-      controller = PageController(initialPage: cubit.currentPage);
       loading = false;
-      cubit.currentTafsirPage = cubit.currentPage;
+      controller = PageController(initialPage: cubit.currentPage - 1);
     });
   }
 
@@ -63,6 +50,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
                   return loading
                       ? const SizedBox()
                       : PageView.builder(
+                          itemCount: 604,
                           onPageChanged: (index) {
                             cubit.currentTafsirPage = index + 1;
                           },

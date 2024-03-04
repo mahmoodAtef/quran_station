@@ -76,7 +76,6 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
     on<AudiosEvent>((event, emit) async {
       if (event is GetAllRecitersEvent) {
         if (reciters.isEmpty) {
-          print("))))))))))))))))))))");
           emit(GetAllRecitersLoadingState());
           var response = await repository.getRecitersData();
           response.fold((l) {
@@ -216,7 +215,11 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   }
 
   void setHandler({required String title}) {
-    handler = AudioPlayerHandler(id: "currentSurahUrl", audioPlayer: audioPlayer, title: title);
+    handler = AudioPlayerHandler(
+      id: "currentSurahUrl",
+      audioPlayer: audioPlayer,
+      title: title,
+    );
   }
 
   Future updateMediaItem(MediaItem item) async {

@@ -3,8 +3,9 @@ import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/main/presentation/ui_entities/main_screen_item.dart';
-import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sizer/sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Drawer appDrawer = Drawer(
   child: Column(
@@ -20,19 +21,26 @@ Drawer appDrawer = Drawer(
           Icons.workspace_premium,
           color: ColorManager.primary,
         ),
-        title: const Text("الاشتراك"),
-        onTap: () {},
+        title: const Text("مشاركة التطبيق"),
+        onTap: () {
+          Share.share(
+            "استمتع بتجربة قرآنية مميزة مع تطبيق كلام ربي",
+          );
+        },
+      ),
+      ListTile(
+        leading: const Icon(
+          Icons.message,
+          color: ColorManager.primary,
+        ),
+        title: const Text("تواصل معنا"),
+        onTap: () async {
+          if (!await launchUrl(Uri.parse("mailto:tatweer.programming@gmail.com"))) {
+            throw Exception('Could not launch');
+          }
+        },
       ),
       const Spacer(),
-      Padding(
-        padding: EdgeInsetsDirectional.all(5.w),
-        child: Container(
-          decoration: BoxDecoration(border: Border.all(color: ColorManager.black, width: .5)),
-          height: 20.h,
-          width: double.infinity,
-          child: const Center(child: Text("مساحة مخصصة للإعلانات")),
-        ),
-      )
     ],
   ),
 );

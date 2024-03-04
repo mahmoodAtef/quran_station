@@ -2,11 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
-import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:quran_station/src/modules/reading/presentation/components.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../../../core/utils/color_manager.dart';
 
 class TextTafsirPage extends StatelessWidget {
   final int pageNumber;

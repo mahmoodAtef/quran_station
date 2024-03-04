@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quran_station/src/core/exceptions/exception_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/search_for_reciter_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
@@ -55,7 +54,6 @@ class AudiosMainScreen extends StatelessWidget {
         listener: (context, state) {
           _handleExceptionS(context, state);
           if (state is GetAllRecitersSuccessState) {
-            print(bloc.reciters.length);
             bloc.add(GetFavoriteRecitersEvent());
           }
         },

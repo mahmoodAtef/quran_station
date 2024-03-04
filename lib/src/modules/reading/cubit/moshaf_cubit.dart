@@ -1,15 +1,14 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
-import 'package:quran/quran.dart';
 import 'package:quran_station/src/core/local/shared_prefrences.dart';
 import 'package:quran_station/src/modules/reading/data/quran_data/sura_data.dart';
 
 import '../data/quran_data/juz_data.dart';
-import '../data/quran_data/sura_index.dart';
 
 part 'moshaf_state.dart';
 
@@ -20,6 +19,7 @@ class MoshafCubit extends Cubit<MoshafState> {
     return cubit!;
   }
 
+  PageController controller = PageController();
   int currentPage = 1;
   int currentTafsirPage = 1;
   String currentSura = "";
@@ -38,7 +38,7 @@ class MoshafCubit extends Cubit<MoshafState> {
           key: "defaultBookMark",
         ) ??
         1;
-    print(currentPage);
+    controller = PageController(initialPage: currentPage - 1);
   }
 
   String _getCurrentJuz() {
@@ -56,7 +56,7 @@ class MoshafCubit extends Cubit<MoshafState> {
   String _getCurrentSurah() {
     String currentSurah = "";
     suraData.forEach((surah, data) {
-      if (data['الصفحة'] <= currentPage) {
+      if (data['page_number'] <= currentPage) {
         currentSurah = surah;
       }
     });

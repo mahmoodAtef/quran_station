@@ -1,14 +1,11 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:quran_station/src/core/remote/dio_helper.dart';
 import 'package:quran_station/src/modules/audios/data/models/radio/radio.dart';
 import 'package:quran_station/src/modules/audios/data/models/reciter/reciter_data.dart';
 import 'package:quran_station/src/modules/audios/data/models/tafsir/tafsir.dart';
 import 'package:quran_station/src/modules/quiz/data/data_source/quiz_remote_data_source.dart';
-import 'package:quran_station/src/modules/quiz/data/models/questoin.dart';
 import '../models/moshaf/moshaf_data.dart';
 import '../models/moshaf/moshaf_details.dart';
 
@@ -23,7 +20,7 @@ abstract class BaseAudiosRemoteDataSource {
 
 class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  DioHelper dio = DioHelper();
+
   @override
   Future<Either<Exception, List<ReciterData>>> getRecitersData() async {
     List<ReciterData> recitersData = [];
@@ -119,20 +116,12 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
       List<Tafsir> tafsir = [];
       await firestore.collection("tafsir").where("sura_id", isEqualTo: surahId).get().then((value) {
         value.docs.forEach((doc) {
-          print(Tafsir.fromJson(doc.data()).url);
           tafsir.add(Tafsir.fromJson(doc.data()));
         });
       });
       return Right(tafsir);
     } on Exception catch (e) {
       return Left(e);
-    }
-  }
-
-  Future downloadPages() async {
-    Dio dio = Dio(BaseOptions(baseUrl: "https://maknoon.com/quran/hafs/"));
-    for (int i = 1; i <= 604; i++) {
-      await dio.download("https://maknoon.com/quran/hafs/$i.svgz", "svg/i.svgz");
     }
   }
 }

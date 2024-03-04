@@ -47,9 +47,10 @@
     <true/>
 
     <!-- ADD THESE LINES -->
-    <key>UIBackgroundModes</key>
+    <key>LSApplicationQueriesSchemes</key>
     <array>
-        <string>audio</string>
+        <string>sms</string>
+        <string>tel</string>
     </array>
 </dict>
 </plist>

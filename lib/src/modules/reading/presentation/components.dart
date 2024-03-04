@@ -31,7 +31,7 @@ class AyaTafsir extends StatelessWidget {
                 height: 2.h,
               ),
               Text(
-                tafsirText,
+                _removeAyaNumber(tafsirText),
                 style: TextStyle(
                   fontSize: 13.sp,
                   color: ColorManager.black,
@@ -43,5 +43,21 @@ class AyaTafsir extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _removeAyaNumber(String text) {
+    return text
+        .replaceAll("]", "")
+        .replaceAll("[", "")
+        .replaceAll("1", "")
+        .replaceAll("2", "")
+        .replaceAll("3", "")
+        .replaceAll("4", "")
+        .replaceAll("5", "")
+        .replaceAll("6", "")
+        .replaceAll("7", "")
+        .replaceAll("8", "")
+        .replaceAll("9", "")
+        .replaceAll("0", "");
   }
 }

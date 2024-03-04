@@ -5,16 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quran/quran.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
-import 'package:quran_station/src/core/utils/font_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
-import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
-import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:quran_station/src/modules/reading/presentation/screens/juz_index_screen.dart';
-import 'package:quran_station/src/modules/reading/presentation/screens/reading_quran_virtue_screen.dart';
+import 'package:quran_station/src/modules/reading/presentation/screens/quran_virtue_screen.dart';
 import 'package:quran_station/src/modules/reading/presentation/screens/surahs_index_screen.dart';
 import 'package:quran_station/src/modules/reading/presentation/screens/tafsir_screen.dart';
 import 'package:sizer/sizer.dart';
@@ -70,7 +66,7 @@ class _MoshafScreenState extends State<MoshafScreen> {
                               onPageChanged: (page) {
                                 cubit.currentPage = page + 1;
                               },
-                              controller: PageController(initialPage: cubit.currentPage - 1),
+                              controller: cubit.controller,
                               itemCount: 604,
                               itemBuilder: (context, index) {
                                 cubit.getCurrentPageData();
@@ -111,7 +107,7 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                                 )),
                                             InkWell(
                                               onTap: () {
-                                                context.push(TafsirScreen());
+                                                context.push(const TafsirScreen());
                                               },
                                               child: const Text(
                                                 "التفسير الميسر",
@@ -135,7 +131,7 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                               Expanded(
                                                 child: InkWell(
                                                   onTap: () {
-                                                    context.push(SurahsIndexScreen());
+                                                    context.push(const SurahsIndexScreen());
                                                   },
                                                   child: const Text(
                                                     "فهرس السور",
@@ -146,7 +142,7 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                               Expanded(
                                                 child: InkWell(
                                                   onTap: () {
-                                                    context.push(JuzIndexScreen());
+                                                    context.push(const JuzIndexScreen());
                                                   },
                                                   child: const Text(
                                                     "الأجزاء",
@@ -157,7 +153,7 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                               Expanded(
                                                 child: InkWell(
                                                   onTap: () {
-                                                    //  context.push(TafsirScreen());
+                                                    _showPageSearchDialog(context);
                                                   },
                                                   child: const Text(
                                                     "البحث عن صفحة",
@@ -168,10 +164,10 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                               Expanded(
                                                 child: InkWell(
                                                   onTap: () {
-                                                    context.push(ReadingQuranVirtueScreen());
+                                                    context.push(const ReadingQuranVirtueScreen());
                                                   },
                                                   child: const Text(
-                                                    "فضل قراءة القرآن",
+                                                    "فضل القرآن",
                                                     style: TextStylesManager.regularBoldWhiteStyle,
                                                   ),
                                                 ),
@@ -227,5 +223,49 @@ class _MoshafScreenState extends State<MoshafScreen> {
   void dispose() {
     cubit.saveCurrentPage();
     super.dispose();
+  }
+
+  void _showPageSearchDialog(BuildContext context) {
+    TextEditingController _pageController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('ابحث عن صفحة'),
+          content: TextField(
+            controller: _pageController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+                labelText: 'رقم الصفحة',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.sp))),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('إلغاء'),
+            ),
+            TextButton(
+              onPressed: () {
+                int pageNumber = int.tryParse(_pageController.text) ?? 1;
+                if (pageNumber >= 1 && pageNumber <= 604) {
+                  cubit.controller.jumpToPage(pageNumber - 1);
+                  cubit.currentPage = pageNumber;
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('الرجاء إدخال رقم صفحة صالح بين 1 و 604'),
+                    ),
+                  );
+                }
+              },
+              child: const Text('انتقل'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -5,11 +5,12 @@ import 'package:quran_station/src/core/utils/images_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/audios_main_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/ui_entities/main_screen_item.dart';
-import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/quiz/presentation/screens/start_quiz_screen.dart';
 import 'package:quran_station/src/modules/reading/presentation/screens/moshaf_screen.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../../tajweed/presentation/screens/tajweed_main_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -39,16 +40,8 @@ class MainScreen extends StatelessWidget {
           Icons.record_voice_over_outlined,
           size: 35,
         ),
-        screen: AudiosMainScreen(),
+        screen: TajweedMainScreen(),
       ),
-      // MainScreenItem(
-      //   title: "التفسير",
-      //   icon: Icon(
-      //     Icons.text_snippet,
-      //     size: 35,
-      //   ),
-      //   screen: AudiosMainScreen(),
-      // ),
       MainScreenItem(
         title: "اختبر نفسك",
         icon: Icon(
@@ -123,12 +116,6 @@ class MainScreen extends StatelessWidget {
               ),
             ),
             const HeightSeparator(),
-            Container(
-              decoration: BoxDecoration(border: Border.all(color: ColorManager.black, width: .5)),
-              height: 10.h,
-              width: double.infinity,
-              child: const Center(child: Text("مساحة مخصصة للإعلانات")),
-            ),
           ],
         ),
       ),

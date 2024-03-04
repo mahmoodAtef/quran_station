@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:quran_station/src/modules/quiz/data/data_source/quiz_remote_data_source.dart';
 import 'package:quran_station/src/modules/quiz/data/models/questoin.dart';
@@ -20,6 +21,7 @@ class QuizCubit extends Cubit<QuizState> {
   int totalMarks = 0;
   int currentpage = 0;
   bool quizCompleted = false;
+  PageController quizConttoller = PageController();
   Future getQuestions() async {
     if (qestions.isEmpty) {
       quizCompleted = false;
@@ -55,12 +57,15 @@ class QuizCubit extends Cubit<QuizState> {
     if (kDebugMode) {
       print(index + 1);
     }
+    quizConttoller.jumpToPage(index);
     currentpage = index;
     emit(ChangePageState());
   }
 
   Future restartQuiz() async {
     qestions.clear();
+    quizConttoller.jumpToPage(0);
+    currentpage = 0;
     await getQuestions();
   }
 }

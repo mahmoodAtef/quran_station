@@ -17,8 +17,6 @@ class MoshafScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint("moshaf name is ${moshaf.surahList}");
-
     AudiosBloc bloc = AudiosBloc.get()..add(GetMoshafDetailsEvent(moshaf.moshafData.id));
     bloc.currentMoshaf = moshaf.moshafData.name;
     return Scaffold(
@@ -39,7 +37,6 @@ class MoshafScreen extends StatelessWidget {
               bloc: bloc,
               listener: (context, state) {
                 if (state is GetMoshafDetailsSuccessState) {
-                  print(state.moshafDetails.server);
                   moshaf.moshafDetails = state.moshafDetails;
                 }
               },
