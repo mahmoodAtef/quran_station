@@ -278,9 +278,6 @@ class ItemWidget extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   ColorManager.darkBlue.withOpacity(0.8),
-                  // ColorManager.darkBlue.withOpacity(0.7),
-                  // ColorManager.darkBlue.withOpacity(0.8),
-                  // ColorManager.darkBlue.withOpacity(0.9),
                   ColorManager.darkBlue,
                 ],
                 begin: Alignment.topLeft,

@@ -3,10 +3,12 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../core/utils/images_manager.dart';
@@ -72,27 +74,27 @@ class _PlayerWidgetState extends State<PlayerWidget> {
 
   Future<void> _initAudio() async {
     if (widget.audioAddress != bloc.currentSurahUrl) {
-      if (bloc.handler == null) {
-        bloc.setHandler(title: widget.title);
-        bloc.updateMediaItem(MediaItem(
-            id: widget.title,
-            title: widget.title,
-            artist: bloc.currentReciter,
-            artUri: Uri.parse(ImagesManager.notificationImage)));
-        await AudioService.init(
-          builder: () => bloc.handler!,
-        );
-      } else {
-        await bloc.updateMediaItem(MediaItem(
-            id: widget.title,
-            title: widget.title,
-            artist: bloc.currentReciter,
-            artUri: Uri.parse(ImagesManager.notificationImage)));
-      }
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.speech());
+      // Listen to errors during playback.
+      _audioPlayer.playbackEventStream.listen((event) {},
+          onError: (Object e, StackTrace stackTrace) {
+        print('A stream error occurred: $e');
+      });
       try {
         switch (widget.audioType) {
           case AudioType.url:
-            await _audioPlayer.setUrl(widget.audioAddress);
+            await _audioPlayer.setAudioSource(AudioSource.uri(
+                Uri.parse(
+                  widget.audioAddress,
+                ),
+                tag: MediaItem(
+                  id: widget.audioAddress,
+                  title: widget.title,
+                  artist: bloc.currentReciter,
+                  artUri: Uri.parse(ImagesManager.notificationImage),
+                  album: bloc.currentMoshaf,
+                )));
             bloc.currentSurahUrl = widget.audioAddress;
             break;
           case AudioType.file:
@@ -100,12 +102,59 @@ class _PlayerWidgetState extends State<PlayerWidget> {
             bloc.currentSurahUrl = widget.audioAddress;
             break;
           case AudioType.radio:
-            await _audioPlayer.setUrl(widget.audioAddress);
+            await _audioPlayer.setAudioSource(AudioSource.uri(
+                Uri.parse(
+                  widget.audioAddress,
+                ),
+                tag: MediaItem(
+                  id: widget.audioAddress,
+                  title: widget.title,
+                  artist: bloc.currentReciter,
+                  artUri: Uri.parse(ImagesManager.notificationImage),
+                  album: bloc.currentMoshaf,
+                )));
             bloc.currentSurahUrl = widget.audioAddress;
             break;
         }
-      } catch (e) {}
+      } catch (e) {
+        errorToast(msg: e.toString());
+      }
     }
+    // if (widget.audioAddress != bloc.currentSurahUrl) {
+    //   if (bloc.handler == null) {
+    //     bloc.setHandler(title: widget.title);
+    //     bloc.updateMediaItem(MediaItem(
+    //         id: widget.title,
+    //         title: widget.title,
+    //         artist: bloc.currentReciter,
+    //         artUri: Uri.parse(ImagesManager.notificationImage)));
+    //     await AudioService.init(
+    //       builder: () => bloc.handler!,
+    //     );
+    //   } else {
+    //     await bloc.updateMediaItem(MediaItem(
+    //         id: widget.title,
+    //         title: widget.title,
+    //         artist: bloc.currentReciter,
+    //         artUri: Uri.parse(ImagesManager.notificationImage)));
+    //   }
+    //   try {
+    //     switch (widget.audioType) {
+    //       case AudioType.url:
+    //         await _audioPlayer.setUrl(widget.audioAddress);
+    //         bloc.currentSurahUrl = widget.audioAddress;
+    //         break;
+    //       case AudioType.file:
+    //         await _audioPlayer.setFilePath(widget.audioAddress);
+    //         bloc.currentSurahUrl = widget.audioAddress;
+    //         break;
+    //       case AudioType.radio:
+    //         await _audioPlayer.setUrl(widget.audioAddress);
+    //         bloc.currentSurahUrl = widget.audioAddress;
+    //         break;
+    //     }
+    //   } catch (e) {}
+    // }
   }
 
   Future<void> _togglePlayback() async {

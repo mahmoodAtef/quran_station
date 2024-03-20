@@ -25,8 +25,6 @@ class AudiosRemoteDataSource extends BaseAudiosRemoteDataSource {
   Future<Either<Exception, List<ReciterData>>> getRecitersData() async {
     List<ReciterData> recitersData = [];
     try {
-      // await downloadPages();
-      await QuizRemoteDataSource().getQuiz();
       await firestore.collection("reciters").get().then((value) {
         value.docs.forEach((element) async {
           ReciterData data = ReciterData.fromJson(element.data());

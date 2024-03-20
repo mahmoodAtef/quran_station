@@ -67,7 +67,7 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   }));
   int currentTab = 0;
   String? currentReciter;
-  late String currentMoshaf;
+  String currentMoshaf = '';
   List<Reciter> mostPopularReciters = [];
   List<int> mostPopularRecitersIds = [];
   List<RadioModel> radios = [];

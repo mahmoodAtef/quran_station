@@ -1,4 +1,4 @@
-package com.example.quran_station
+package com.tofy.kalam_rabbi
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -18,13 +18,13 @@ Drawer appDrawer = Drawer(
       const HeightSeparator(),
       ListTile(
         leading: const Icon(
-          Icons.workspace_premium,
+          Icons.share,
           color: ColorManager.primary,
         ),
         title: const Text("مشاركة التطبيق"),
         onTap: () {
           Share.share(
-            "استمتع بتجربة قرآنية مميزة مع تطبيق كلام ربي",
+            "استمتع بتجربة قرآنية مميزة مع تطبيق كلام ربي \n https://play.google.com/store/apps/details?id=com.tofy.kalam_rabbi",
           );
         },
       ),
