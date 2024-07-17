@@ -19,13 +19,20 @@ class RadiosPage extends StatelessWidget {
           onRetry: () {
             bloc.add(GetAllRadiosEvent());
           },
-          child: ListView.separated(
-            shrinkWrap: true,
-            itemCount: bloc.radios.length,
-            itemBuilder: (context, index) => SizedBox(child: RadioItem(radio: bloc.radios[index])),
-            separatorBuilder: (context, index) {
-              return const Divider();
-            },
+          child: Column(
+            children: [
+              state is GetAllRadiosLoading ? const LinearProgressIndicator() : const SizedBox(),
+            bloc.radios.isEmpty ? const SizedBox() :    Expanded(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: bloc.radios.length,
+                  itemBuilder: (context, index) => SizedBox(child: RadioItem(radio: bloc.radios[index])),
+                  separatorBuilder: (context, index) {
+                    return const Divider();
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },

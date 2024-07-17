@@ -16,6 +16,7 @@ class TafsirPage extends StatelessWidget {
         itemBuilder: (context, index) => SizedBox(
             child: SurahTafsirItem(
           index: index,
+
         )),
         separatorBuilder: (context, index) {
           return const Divider();

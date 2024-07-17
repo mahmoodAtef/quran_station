@@ -1,4 +1,7 @@
+import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
+import 'package:quran_station/src/modules/audios/data/data_sources/audios_base_data_source.dart';
 import 'package:quran_station/src/modules/audios/data/data_sources/audios_remote_data_source.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf/moshaf_data.dart';
 import 'package:quran_station/src/modules/audios/data/models/moshaf/moshaf_details.dart';
@@ -30,5 +33,8 @@ class AudiosRepository {
 
   Future<Either<Exception, List<Tafsir>>> getSurahTafsir(int surahId) {
     return baseAudiosRemoteDataSource.getSurahTafsir(surahId);
+  }
+  Future<Either<Exception, Unit>>  downloadSurah(String url, String readerName, String surahName, {required  Function(double) onProgress , Emitter}) async{
+    return baseAudiosRemoteDataSource.downloadSurah(url, readerName, surahName  , onProgress: onProgress);
   }
 }

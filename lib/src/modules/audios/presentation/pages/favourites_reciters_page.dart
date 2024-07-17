@@ -22,7 +22,12 @@ class FavouritesRecitersPage extends StatelessWidget {
                       style: TextStylesManager.regularBoldStyle,
                     ),
                   )
-                : RecitersList(reciters: bloc.favoriteReciters));
+                : Column(
+                  children: [
+                  state is GetFavoriteRecitersLoadingState ? const LinearProgressIndicator() : const SizedBox(),
+                 bloc.favoriteReciters.isEmpty ? const SizedBox() :    Expanded(child: RecitersList(reciters: bloc.favoriteReciters)),
+                  ],
+                ));
       },
     );
   }

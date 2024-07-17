@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
+import 'package:quran_station/src/modules/audios/data/models/reciter/reciter_model.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
@@ -14,6 +15,7 @@ class SearchForReciterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Reciter> searchByNameResult = [];
     TextEditingController controller = TextEditingController();
     AudiosBloc bloc = AudiosBloc.get();
     return Scaffold(
@@ -42,25 +44,33 @@ class SearchForReciterScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: BlocBuilder<AudiosBloc, AudiosState>(
-        bloc: bloc,
-        builder: (context, state) {
-          return ConnectionWidget(
-            onRetry: () {
-              if (controller.text != "") {
-                bloc.add(SearchByNameEvent(controller.text));
-              }
-            },
-            child: Padding(
-              padding: EdgeInsets.all(6.0.w),
-              child: ListView.separated(
-                  itemBuilder: (context, index) =>
-                      ReciterItem(reciter: bloc.searchByNameResult[index]),
-                  separatorBuilder: (context, index) => const HeightSeparator(),
-                  itemCount: bloc.searchByNameResult.length),
-            ),
-          );
+      body: BlocListener<AudiosBloc, AudiosState>(
+        listener: (context, state) {
+          if (state is GetSearchByNameResult) {
+            searchByNameResult = state.result;
+          }
         },
+        child: BlocBuilder<AudiosBloc, AudiosState>(
+          bloc: bloc,
+          builder: (context, state) {
+            return ConnectionWidget(
+              onRetry: () {
+                if (controller.text != "") {
+                  bloc.add(SearchByNameEvent(controller.text));
+                }
+              },
+              child: Padding(
+                padding: EdgeInsets.all(6.0.w),
+                child: ListView.separated(
+                    itemBuilder: (context, index) =>
+                        ReciterItem(reciter: searchByNameResult[index]),
+                    separatorBuilder: (context, index) =>
+                        const HeightSeparator(),
+                    itemCount: searchByNameResult.length),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

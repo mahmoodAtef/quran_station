@@ -62,9 +62,11 @@ dependencies:
   screenshot:
   share_plus:
   path_provider:
-  url_launcher: ^6.2.5
-
-
+  url_launcher:
+  dio:
+  flutter_pdfview:
+  pdf: ^3.10.8
+  pdfx: ^2.6.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -94,6 +96,7 @@ flutter:
     - assets/fonts/
     - assets/quran_data/
     - assets/quran_data/quran_images/
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

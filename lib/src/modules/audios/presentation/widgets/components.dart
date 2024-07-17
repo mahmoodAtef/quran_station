@@ -10,6 +10,7 @@ import 'package:quran_station/src/modules/audios/presentation/screens/audio_play
 import 'package:quran_station/src/modules/audios/presentation/screens/reciter_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/surah_tafsir_screen.dart';
 import 'package:sizer/sizer.dart';
+
 import '../../../../core/utils/styles_manager.dart';
 import '../../bloc/audios_bloc.dart';
 import '../../data/models/moshaf/moshaf.dart';
@@ -26,9 +27,21 @@ void errorToast({
   );
 }
 
+void defaultToast({
+  required String msg,
+}) {
+  Fluttertoast.showToast(
+    msg: msg,
+    backgroundColor: ColorManager.darkBlue,
+    toastLength: Toast.LENGTH_SHORT,
+  );
+}
+
 class ReciterItem extends StatelessWidget {
   final Reciter reciter;
+
   const ReciterItem({super.key, required this.reciter});
+
   @override
   Widget build(BuildContext context) {
     AudiosBloc bloc = AudiosBloc.get();
@@ -70,6 +83,7 @@ class ReciterItem extends StatelessWidget {
 
 class MoshafWidget extends StatelessWidget {
   final Moshaf moshaf;
+
   const MoshafWidget({super.key, required this.moshaf});
 
   @override
@@ -86,6 +100,7 @@ class MoshafWidget extends StatelessWidget {
 
 class SurahItem extends StatelessWidget {
   final int surahId;
+
   const SurahItem({super.key, required this.surahId});
 
   @override
@@ -101,6 +116,7 @@ class SurahItem extends StatelessWidget {
 
 class TabWidget extends StatelessWidget {
   final int index;
+
   const TabWidget({super.key, required this.index});
 
   @override
@@ -119,7 +135,9 @@ class TabWidget extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.sp),
-              color: bloc.currentTab == index ? ColorManager.primary : ColorManager.grey1,
+              color: bloc.currentTab == index
+                  ? ColorManager.primary
+                  : ColorManager.grey1,
             ),
             child: Text(
               textAlign: TextAlign.center,
@@ -139,6 +157,7 @@ class TabWidget extends StatelessWidget {
 
 class RadioItem extends StatelessWidget {
   final RadioModel radio;
+
   const RadioItem({super.key, required this.radio});
 
   @override
@@ -148,7 +167,9 @@ class RadioItem extends StatelessWidget {
         AudiosBloc bloc = AudiosBloc.get();
         bloc.currentReciter = "راديو";
         context.push(AudioPlayerScreen(
-            audioAddress: radio.url, title: radio.name, audioType: AudioType.radio));
+            audioAddress: radio.url,
+            title: radio.name,
+            audioType: AudioType.radio));
       },
       title: radio.name,
       icon: Icons.radio,
@@ -158,6 +179,7 @@ class RadioItem extends StatelessWidget {
 
 class SurahTafsirItem extends StatelessWidget {
   final int index;
+
   const SurahTafsirItem({super.key, required this.index});
 
   @override
@@ -228,6 +250,7 @@ class SurahTafsirItem extends StatelessWidget {
 
 class TafsirItem extends StatelessWidget {
   final Tafsir tafsir;
+
   const TafsirItem({super.key, required this.tafsir});
 
   @override
@@ -237,7 +260,9 @@ class TafsirItem extends StatelessWidget {
         AudiosBloc bloc = AudiosBloc.get();
         bloc.currentReciter = "الخلاصة من تفسير الطبري";
         context.push(AudioPlayerScreen(
-            audioAddress: tafsir.url, title: tafsir.name, audioType: AudioType.url));
+            audioAddress: tafsir.url,
+            title: tafsir.name,
+            audioType: AudioType.url));
       },
       title: tafsir.name,
       icon: Icons.mic,
@@ -251,6 +276,7 @@ class ItemWidget extends StatelessWidget {
   final IconData? icon;
   final Widget? suffix;
   final String? subTitle;
+
   const ItemWidget(
       {super.key,
       required this.onPressed,

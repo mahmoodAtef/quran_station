@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quran_station/src/core/utils/theme_manager.dart';
 
 class ColorManager {
   static const Color primary = Color(0xff922C40);
@@ -10,7 +11,16 @@ class ColorManager {
   static const Color grey2 = Colors.grey;
   static const Color white = Colors.white;
   static const Color black = Colors.black;
+
   static Color error = Colors.red.shade800;
   static const Color transparent = Colors.transparent;
   static const Color quranPage = Color(0xfff6efce);
+
+  static Color getLightColor() {
+    return ThemeManager.isDarkMode ? black : white;
+  }
+
+  static Color getDarkColor() {
+    return ThemeManager.isDarkMode ? white : black;
+  }
 }

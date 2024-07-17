@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quran_station/src/core/exceptions/exception_handler.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/search_for_reciter_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/app_bar.dart';
@@ -34,7 +35,7 @@ class AudiosMainScreen extends StatelessWidget {
               color: ColorManager.black,
             )),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'الصوتيات',
           style: TextStylesManager.appBarTitle,
         ),
@@ -86,19 +87,17 @@ class AudiosMainScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                _isLoading(state)
-                    ? const LinearProgressIndicator()
-                    : Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(6.w),
-                          child: BlocBuilder<AudiosBloc, AudiosState>(
-                            bloc: bloc,
-                            builder: (context, state) {
-                              return bloc.audioTabsWidgets[bloc.currentTab];
-                            },
-                          ),
-                        ),
-                      ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(6.w),
+                    child: BlocBuilder<AudiosBloc, AudiosState>(
+                      bloc: bloc,
+                      builder: (context, state) {
+                        return bloc.audioTabsWidgets[bloc.currentTab];
+                      },
+                    ),
+                  ),
+                ),
               ],
             );
           },
@@ -109,11 +108,8 @@ class AudiosMainScreen extends StatelessWidget {
 
   void _handleExceptionS(BuildContext context, AudiosState state) {
     if (state is AudiosError) {
-      state.handle(context);
+      ExceptionHandler.handle(state.exception);
+      Navigator.pop(context);
     }
-  }
-
-  bool _isLoading(AudiosState state) {
-    return state is AudiosLoading;
   }
 }

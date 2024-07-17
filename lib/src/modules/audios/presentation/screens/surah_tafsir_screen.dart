@@ -37,7 +37,7 @@ class SurahTafsirScreen extends StatelessWidget {
               color: ColorManager.black,
             )),
         centerTitle: true,
-        title: const Text(
+        title:  Text(
           'الصوتيات',
           style: TextStylesManager.appBarTitle,
         ),
