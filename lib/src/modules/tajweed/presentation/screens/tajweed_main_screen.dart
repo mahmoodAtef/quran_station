@@ -29,11 +29,11 @@ class TajweedMainScreen extends StatelessWidget {
                 },
                 title: "كتاب التجويد الميسر"),
             const Spacer(),
-            const Text(
-              "انتظروا قريبا دورة التجويد الميسر لفضيلة الشيخ أحمد محيي الدين",
-              style: TextStylesManager.regularBoldStyle,
-              textAlign: TextAlign.center,
-            )
+            // const Text(
+            //   "انتظروا قريبا دورة التجويد الميسر لفضيلة الشيخ أحمد محيي الدين",
+            //   style: TextStylesManager.regularBoldStyle,
+            //   textAlign: TextAlign.center,
+            // )
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/images_manager.dart';
 import 'package:quran_station/src/core/utils/styles_manager.dart';
@@ -66,7 +67,7 @@ class MainScreen extends StatelessWidget {
               color: ColorManager.black,
             )),
         centerTitle: true,
-        title:  Text(
+        title: Text(
           'كَلَامُ رَبِّي',
           style: TextStylesManager.appBarTitle,
         ),
@@ -98,24 +99,64 @@ class MainScreen extends StatelessWidget {
                   imageUrl: ImagesManager.mainScreenImage),
             ),
             SizedBox(height: 5.h),
+            // Expanded(
+            //   child: GridView.builder(
+            //     shrinkWrap: true,
+            //     physics: const NeverScrollableScrollPhysics(),
+            //     itemCount: items.length,
+            //     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            //         maxCrossAxisExtent: 200,
+            //         childAspectRatio: 1,
+            //         crossAxisSpacing: 10,
+            //         mainAxisSpacing: 10),
+            //     itemBuilder: (context, index) {
+            //       return MainScreenItemWidget(
+            //         item: items[index],
+            //       );
+            //     },
+            //   ),
+            // ),
             Expanded(
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: items.length,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 1,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10),
-                itemBuilder: (context, index) {
-                  return MainScreenItemWidget(
-                    item: items[index],
-                  );
-                },
+              child: StaggeredGrid.count(
+                crossAxisCount: 4,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                children: [
+                  StaggeredGridTile.count(
+                      crossAxisCellCount: 2,
+                      mainAxisCellCount: 3,
+                      child: MainScreenItemWidget(
+                        item: items[0],
+                        //
+                      )),
+                  StaggeredGridTile.count(
+                    crossAxisCellCount: 2,
+                    mainAxisCellCount: 2,
+                    child: MainScreenItemWidget(
+                      item: items[1],
+                      //
+                    ),
+                  ),
+                  StaggeredGridTile.count(
+                    crossAxisCellCount: 2,
+                    mainAxisCellCount: 3,
+                    child: MainScreenItemWidget(
+                      item: items[2],
+                      //
+                    ),
+                  ),
+                  StaggeredGridTile.count(
+                    crossAxisCellCount: 2,
+                    mainAxisCellCount: 2,
+                    child: MainScreenItemWidget(
+                      item: items[3],
+                      //
+                    ),
+                  ),
+                ],
               ),
             ),
-            const HeightSeparator(),
+            // const HeightSeparator(),
           ],
         ),
       ),
