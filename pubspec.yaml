@@ -54,7 +54,8 @@ dependencies:
   # firebase
   firebase_core:
   cloud_firestore:
-  connectivity:
+  connectivity_plus: ^6.1.2
+
   #localization
   flutter_localizations:
     sdk: flutter
