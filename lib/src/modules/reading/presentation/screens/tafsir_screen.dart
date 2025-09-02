@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quran_station/src/core/utils/color_manager.dart';
-import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:quran_station/src/modules/reading/presentation/pages/tafsir_page.dart';
 import 'package:sizer/sizer.dart';
@@ -17,6 +15,7 @@ class _TafsirScreenState extends State<TafsirScreen> {
   bool loading = true;
   MoshafCubit cubit = MoshafCubit.get();
   late PageController controller;
+
   @override
   void initState() {
     _getInitialPage();
@@ -33,11 +32,13 @@ class _TafsirScreenState extends State<TafsirScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "التفسير الميسر",
-          style: TextStylesManager.appBarTitle,
+          style: theme.appBarTheme.titleTextStyle,
         ),
       ),
       body: SafeArea(
@@ -55,7 +56,8 @@ class _TafsirScreenState extends State<TafsirScreen> {
                             cubit.currentTafsirPage = index + 1;
                           },
                           controller: controller,
-                          itemBuilder: (context, index) => TextTafsirPage(pageNumber: index + 1));
+                          itemBuilder: (context, index) =>
+                              TextTafsirPage(pageNumber: index + 1));
                 },
               ),
             ),
@@ -68,22 +70,28 @@ class _TafsirScreenState extends State<TafsirScreen> {
                       onPressed: () {
                         if (cubit.currentTafsirPage != 1) {
                           controller.previousPage(
-                              duration: const Duration(milliseconds: 100), curve: Curves.linear);
+                              duration: const Duration(milliseconds: 100),
+                              curve: Curves.linear);
                         }
                       },
                       icon: Icon(
                           color: cubit.currentTafsirPage != 1
-                              ? ColorManager.black
-                              : ColorManager.grey2,
+                              ? theme.iconTheme.color
+                              : theme.disabledColor,
                           Icons.arrow_back_ios)),
                   IconButton(
                       onPressed: () {
                         if (cubit.currentTafsirPage != 604) {
                           controller.nextPage(
-                              duration: const Duration(milliseconds: 100), curve: Curves.linear);
+                              duration: const Duration(milliseconds: 100),
+                              curve: Curves.linear);
                         }
                       },
-                      icon: const Icon(Icons.arrow_forward_ios))
+                      icon: Icon(
+                          color: cubit.currentTafsirPage != 604
+                              ? theme.iconTheme.color
+                              : theme.disabledColor,
+                          Icons.arrow_forward_ios))
                 ],
               ),
             )

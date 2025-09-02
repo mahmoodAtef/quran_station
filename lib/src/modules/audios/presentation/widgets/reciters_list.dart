@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/reciters_group.dart';
-import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
 
 import '../../data/models/reciter/reciter_model.dart';
 
@@ -32,18 +31,21 @@ class _RecitersListState extends State<RecitersList> {
     return ListView.builder(
         controller: _scrollController,
         shrinkWrap: true,
-        itemCount: _isLongList() ? displayedGroupes + 1 : groupedRecitersList.length,
+        itemCount:
+            _isLongList() ? displayedGroupes + 1 : groupedRecitersList.length,
         itemBuilder: (context, index) {
           if (index > displayedGroupes - 1 && _isLongList()) {
             return const HeightSeparator();
           } else {
             return RecitersGroup(
-                letter: groupedRecitersList[index].key, reciters: groupedRecitersList[index].value);
+                letter: groupedRecitersList[index].key,
+                reciters: groupedRecitersList[index].value);
           }
         });
   }
 
-  List<MapEntry<String, List<Reciter>>> _groupRecitersByLetter(List<Reciter> reciters) {
+  List<MapEntry<String, List<Reciter>>> _groupRecitersByLetter(
+      List<Reciter> reciters) {
     Map<String, List<Reciter>> groupedReciters = {};
     reciters.sort((a, b) => a.data.letter.compareTo(b.data.letter));
     for (var reciter in reciters) {
@@ -70,7 +72,8 @@ class _RecitersListState extends State<RecitersList> {
   }
 
   void _scrollListener() async {
-    if (_scrollController?.offset == _scrollController?.position.maxScrollExtent) {
+    if (_scrollController?.offset ==
+        _scrollController?.position.maxScrollExtent) {
       _getMoreLetters();
     }
   }

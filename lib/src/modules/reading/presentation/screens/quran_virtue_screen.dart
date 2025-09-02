@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/reading/data/quran_data/quran_virtue.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../../../core/utils/color_manager.dart';
-import '../../../../core/utils/font_manager.dart';
 
 class ReadingQuranVirtueScreen extends StatelessWidget {
   const ReadingQuranVirtueScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "فضل قراءة القرآن",
-          style: TextStylesManager.appBarTitle,
+          style: textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: Padding(
@@ -26,10 +27,9 @@ class ReadingQuranVirtueScreen extends StatelessWidget {
             children: [
               Text(
                 "قد حثّ الله سبحانه وتعالى عباده المؤمنين على قراءة القرآن الكريم و تدبره و تعلمه و استماعه وذلك لما له من فضل عظيم وثواب كريم\nومن الآيات التي ذكرت فضل القرآن الكريم قولة تعالى :",
-                style: TextStyle(
+                style: textTheme.bodyMedium?.copyWith(
                   fontSize: 13.sp,
-                  color: ColorManager.black,
-                  fontWeight: FontWeightManager.semiBold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const HeightSeparator(),
@@ -47,11 +47,11 @@ class ReadingQuranVirtueScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     e.key,
-                                    style: TextStyle(
+                                    style: textTheme.titleMedium?.copyWith(
                                       fontSize: 14.sp,
                                       fontFamily: "hafs",
-                                      color: ColorManager.primary,
-                                      fontWeight: FontWeightManager.bold,
+                                      color: theme.primaryColor,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   SizedBox(
@@ -59,10 +59,9 @@ class ReadingQuranVirtueScreen extends StatelessWidget {
                                   ),
                                   Text(
                                     e.value,
-                                    style: TextStyle(
+                                    style: textTheme.bodyMedium?.copyWith(
                                       fontSize: 13.sp,
-                                      color: ColorManager.black,
-                                      fontWeight: FontWeightManager.semiBold,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ],
@@ -75,10 +74,9 @@ class ReadingQuranVirtueScreen extends StatelessWidget {
               const HeightSeparator(),
               Text(
                 "وأيضا لرسول الله صلى ﷺ الكثير من الأحاديث الصحيحة لبيان فضل أن يكون للمؤمن شأن مع القرآن الكريم لما فيه من ثواب عظيم\n ومنها قوله ﷺ",
-                style: TextStyle(
+                style: textTheme.bodyMedium?.copyWith(
                   fontSize: 13.sp,
-                  color: ColorManager.black,
-                  fontWeight: FontWeightManager.semiBold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               ListView(
@@ -95,10 +93,10 @@ class ReadingQuranVirtueScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     e.key,
-                                    style: TextStyle(
+                                    style: textTheme.titleMedium?.copyWith(
                                       fontSize: 14.sp,
-                                      color: ColorManager.primary,
-                                      fontWeight: FontWeightManager.bold,
+                                      color: theme.primaryColor,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   SizedBox(
@@ -107,10 +105,9 @@ class ReadingQuranVirtueScreen extends StatelessWidget {
                                   Text(
                                     e.value,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: textTheme.bodyMedium?.copyWith(
                                       fontSize: 13.sp,
-                                      color: ColorManager.black,
-                                      fontWeight: FontWeightManager.semiBold,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ],

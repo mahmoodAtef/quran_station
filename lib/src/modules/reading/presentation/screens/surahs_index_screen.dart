@@ -4,7 +4,6 @@ import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:quran_station/src/modules/reading/data/quran_data/sura_data.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../core/utils/styles_manager.dart';
 import '../../../audios/presentation/widgets/components.dart';
 
 class SurahsIndexScreen extends StatelessWidget {
@@ -12,14 +11,19 @@ class SurahsIndexScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     List<MapEntry<String, dynamic>> surahs = suraData.entries.toList();
 
     MoshafCubit cubit = MoshafCubit.get();
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "فهرس السور",
-          style: TextStylesManager.appBarTitle,
+          style: textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: Padding(
@@ -32,11 +36,15 @@ class SurahsIndexScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   child: Text(
                     "صفحة ${surahs[index].value["page_number"]}",
-                    style: TextStylesManager.regularWhiteStyle,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 onPressed: () {
-                  cubit.controller.jumpToPage(surahs[index].value["page_number"] - 1);
+                  cubit.controller
+                      .jumpToPage(surahs[index].value["page_number"] - 1);
                   context.pop();
                 },
                 title: "سورة ${surahs[index].key}"),

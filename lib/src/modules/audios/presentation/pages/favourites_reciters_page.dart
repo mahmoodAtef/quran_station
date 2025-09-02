@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 
 import '../../../main/presentation/widgets/connectivity.dart';
@@ -21,10 +20,10 @@ class FavouritesRecitersPage extends StatelessWidget {
             },
             child: (bloc.favoriteReciters.isEmpty &&
                     state is! GetFavoriteRecitersLoadingState)
-                ? const Center(
+                ? Center(
                     child: Text(
                       "لا يوجد قراء",
-                      style: TextStylesManager.regularBoldStyle,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   )
                 : Column(

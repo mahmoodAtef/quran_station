@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:quran_station/generated/l10n.dart';
+import 'package:quran_station/src/core/utils/app_manager.dart';
 import 'package:quran_station/src/core/utils/theme_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
+import 'package:quran_station/src/modules/main/cubit/main_cubit.dart';
 import 'package:quran_station/src/modules/main/presentation/screens/splash_screen.dart';
 import 'package:quran_station/src/modules/quiz/cubit/quiz_cubit.dart';
 import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:sizer/sizer.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppManager.initializeHydratedStorage();
   runApp(const MyApp());
 }
 
@@ -31,23 +35,30 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (BuildContext context) => MoshafCubit.get(),
           ),
+          BlocProvider(
+            create: (BuildContext context) => MainCubit.get(),
+          ),
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
-          return MaterialApp(
-            darkTheme: ThemeManager.dark,
-            locale: const Locale('ar'),
-            supportedLocales: S.delegate.supportedLocales,
-            localizationsDelegates: const [
-              S.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            debugShowCheckedModeBanner: false,
-            showSemanticsDebugger: false,
-            title: 'كلامُ ربي',
-            theme: ThemeManager.light,
-            home: const SplashScreen(),
+          return BlocBuilder<MainCubit, MainState>(
+            builder: (context, state) {
+              return MaterialApp(
+                darkTheme: AppTheme.darkTheme,
+                theme: AppTheme.currentTheme,
+                locale: const Locale('ar'),
+                supportedLocales: S.delegate.supportedLocales,
+                localizationsDelegates: const [
+                  S.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                debugShowCheckedModeBanner: false,
+                showSemanticsDebugger: false,
+                title: 'كلامُ ربي',
+                home: const SplashScreen(),
+              );
+            },
           );
         }));
   }

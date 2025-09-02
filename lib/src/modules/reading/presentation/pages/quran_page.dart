@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../../../core/utils/color_manager.dart';
 
 class QuranPage extends StatelessWidget {
   final int pageNumber;
@@ -10,6 +8,8 @@ class QuranPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       margin: EdgeInsets.only(
         right: pageNumber.isOdd ? 1.sp : 0,
@@ -20,44 +20,47 @@ class QuranPage extends StatelessWidget {
       decoration: BoxDecoration(
           image: pageNumber.isOdd
               ? const DecorationImage(
-                  fit: BoxFit.fill, image: AssetImage("assets/quran_data/quran_images/empty.png"))
+                  fit: BoxFit.fill,
+                  image: AssetImage("assets/quran_data/quran_images/empty.png"))
               : const DecorationImage(
                   fit: BoxFit.fill,
-                  image: AssetImage("assets/quran_data/quran_images/empty_2.png")),
-          color: ColorManager.card,
+                  image:
+                      AssetImage("assets/quran_data/quran_images/empty_2.png")),
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.only(
             bottomLeft: pageNumber.isOdd ? Radius.circular(10.sp) : Radius.zero,
             topLeft: pageNumber.isOdd ? Radius.circular(10.sp) : Radius.zero,
-            bottomRight: pageNumber.isEven ? Radius.circular(10.sp) : Radius.zero,
+            bottomRight:
+                pageNumber.isEven ? Radius.circular(10.sp) : Radius.zero,
             topRight: pageNumber.isEven ? Radius.circular(10.sp) : Radius.zero,
           ),
           border: Border(
               left: pageNumber.isEven
-                  ? const BorderSide(
+                  ? BorderSide(
                       strokeAlign: BorderSide.strokeAlignInside,
-                      color: ColorManager.black,
+                      color: theme.colorScheme.outline,
                       width: 2,
                     )
-                  : const BorderSide(
+                  : BorderSide(
                       strokeAlign: BorderSide.strokeAlignInside,
-                      color: ColorManager.black,
+                      color: theme.colorScheme.outline,
                       width: .5,
                     ),
               right: pageNumber.isOdd
-                  ? const BorderSide(
+                  ? BorderSide(
                       strokeAlign: BorderSide.strokeAlignInside,
-                      color: ColorManager.black,
+                      color: theme.colorScheme.outline,
                       width: 2,
                     )
                   : BorderSide.none,
-              bottom: const BorderSide(
+              bottom: BorderSide(
                 strokeAlign: BorderSide.strokeAlignInside,
-                color: ColorManager.black,
+                color: theme.colorScheme.outline,
                 width: 2,
               ),
-              top: const BorderSide(
+              top: BorderSide(
                 strokeAlign: BorderSide.strokeAlignInside,
-                color: ColorManager.black,
+                color: theme.colorScheme.outline,
                 width: 2,
               ))),
       child: Padding(
