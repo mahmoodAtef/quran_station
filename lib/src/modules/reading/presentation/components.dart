@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quran_station/src/core/utils/color_manager.dart';
-import 'package:quran_station/src/core/utils/font_manager.dart';
 import 'package:sizer/sizer.dart';
 
 class AyaTafsir extends StatelessWidget {
@@ -10,6 +8,8 @@ class AyaTafsir extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SizedBox(
       width: 90.w,
       child: Card(
@@ -20,11 +20,11 @@ class AyaTafsir extends StatelessWidget {
             children: [
               Text(
                 ayaText,
-                style: TextStyle(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 14.sp,
                   fontFamily: "hafs",
-                  color: ColorManager.primary,
-                  fontWeight: FontWeightManager.bold,
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(
@@ -32,10 +32,10 @@ class AyaTafsir extends StatelessWidget {
               ),
               Text(
                 _removeAyaNumber(tafsirText),
-                style: TextStyle(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 13.sp,
-                  color: ColorManager.black,
-                  fontWeight: FontWeightManager.semiBold,
+                  color: theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],

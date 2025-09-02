@@ -1,5 +1,3 @@
-// ignore_for_file: body_might_complete_normally_catch_error
-
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -7,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quran_station/src/core/exceptions/exception_handler.dart';
-import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/quiz/cubit/quiz_cubit.dart';
@@ -16,13 +13,12 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../core/utils/styles_manager.dart';
-
 class StartQuizScreen extends StatelessWidget {
   const StartQuizScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     QuizCubit cubit = QuizCubit.get()..getQuestions();
     ScreenshotController screenshotController = ScreenshotController();
     ScreenshotController resultScreenshotController = ScreenshotController();
@@ -40,21 +36,19 @@ class StartQuizScreen extends StatelessWidget {
             controller: screenshotController,
             child: Scaffold(
               key: scaffoldKey,
-              drawer: appDrawer,
+              drawer: appDrawer(context),
               appBar: AppBar(
                 leadingWidth: 10.w,
                 leading: IconButton(
                     onPressed: () async {
                       scaffoldKey.currentState!.openDrawer();
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.menu,
-                      color: ColorManager.black,
                     )),
                 centerTitle: true,
                 title: Text(
-                  'كَلَامُ رَبِّي',
-                  style: TextStylesManager.appBarTitle,
+                  'كَلَامُ رَبِّي',
                 ),
                 actions: [
                   if (cubit.state is! GetQuizLoadingState &&
@@ -67,9 +61,8 @@ class StartQuizScreen extends StatelessWidget {
                               screenshotController,
                               "اختبر معلوماتك في القران الكريم..!");
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.share,
-                          color: ColorManager.black,
                         ))
                 ],
               ),
@@ -77,7 +70,10 @@ class StartQuizScreen extends StatelessWidget {
                   bloc: cubit,
                   builder: (context, state) {
                     return state is GetQuizLoadingState
-                        ? const LinearProgressIndicator()
+                        ? LinearProgressIndicator(
+                            color: theme.colorScheme.primary,
+                            backgroundColor: theme.colorScheme.surfaceVariant,
+                          )
                         : Padding(
                             padding: EdgeInsets.all(5.0.w),
                             child: Column(
@@ -97,6 +93,7 @@ class StartQuizScreen extends StatelessWidget {
                                       itemBuilder: (context, index) =>
                                           QuestionCard(
                                             question: cubit.qestions[index],
+                                            questionNumber: index + 1,
                                           )),
                                 ),
                                 Padding(
@@ -114,8 +111,9 @@ class StartQuizScreen extends StatelessWidget {
                                           },
                                           icon: Icon(
                                               color: cubit.currentpage != 0
-                                                  ? ColorManager.black
-                                                  : ColorManager.grey2,
+                                                  ? theme.colorScheme.onSurface
+                                                  : theme.colorScheme.onSurface
+                                                      .withOpacity(0.3),
                                               Icons.arrow_back_ios)),
                                       if (cubit.currentpage == 19 &&
                                           !cubit.quizCompleted)
@@ -123,6 +121,12 @@ class StartQuizScreen extends StatelessWidget {
                                           child: SizedBox(
                                             height: 5.h,
                                             child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      theme.colorScheme.primary,
+                                                  foregroundColor: theme
+                                                      .colorScheme.onPrimary,
+                                                ),
                                                 onPressed: () {
                                                   cubit.finishQuiz();
 
@@ -135,8 +139,16 @@ class StartQuizScreen extends StatelessWidget {
                                                               resultScreenshotController,
                                                           child: AlertDialog(
                                                             elevation: 3,
+                                                            backgroundColor: theme
+                                                                .dialogBackgroundColor,
                                                             actions: [
                                                               TextButton(
+                                                                style: TextButton
+                                                                    .styleFrom(
+                                                                  foregroundColor: theme
+                                                                      .colorScheme
+                                                                      .primary,
+                                                                ),
                                                                 child: const Text(
                                                                     "تحدي الأصدقاء"),
                                                                 onPressed:
@@ -148,6 +160,12 @@ class StartQuizScreen extends StatelessWidget {
                                                                 },
                                                               ),
                                                               TextButton(
+                                                                  style: TextButton
+                                                                      .styleFrom(
+                                                                    foregroundColor: theme
+                                                                        .colorScheme
+                                                                        .primary,
+                                                                  ),
                                                                   onPressed:
                                                                       () {
                                                                     context
@@ -164,10 +182,28 @@ class StartQuizScreen extends StatelessWidget {
                                                                 if (cubit
                                                                         .totalMarks >
                                                                     10)
-                                                                  const Text(
-                                                                      'تهانينا'),
-                                                                const Text(
-                                                                    'لقد حصلت على '),
+                                                                  Text(
+                                                                      'تهانينا',
+                                                                      style: theme
+                                                                          .textTheme
+                                                                          .titleMedium
+                                                                          ?.copyWith(
+                                                                        color: theme
+                                                                            .colorScheme
+                                                                            .primary,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      )),
+                                                                Text(
+                                                                    'لقد حصلت على ',
+                                                                    style: theme
+                                                                        .textTheme
+                                                                        .bodyLarge
+                                                                        ?.copyWith(
+                                                                      color: theme
+                                                                          .colorScheme
+                                                                          .onSurface,
+                                                                    )),
                                                                 const SizedBox(
                                                                     height: 20),
                                                                 Stack(
@@ -182,26 +218,30 @@ class StartQuizScreen extends StatelessWidget {
                                                                           100,
                                                                       child:
                                                                           CircularProgressIndicator(
-                                                                        backgroundColor:
-                                                                            ColorManager.grey1,
-                                                                        color: ColorManager
+                                                                        backgroundColor: theme
+                                                                            .colorScheme
+                                                                            .surfaceVariant,
+                                                                        color: theme
+                                                                            .colorScheme
                                                                             .primary,
                                                                         value: cubit.totalMarks /
                                                                             20,
                                                                         // تحويل نسبة الدرجة إلى النسبة المطلوبة
                                                                         strokeWidth:
                                                                             10,
-                                                                        valueColor:
-                                                                            const AlwaysStoppedAnimation<Color>(ColorManager.primary),
+                                                                        valueColor: AlwaysStoppedAnimation<Color>(theme
+                                                                            .colorScheme
+                                                                            .primary),
                                                                       ),
                                                                     ),
                                                                     Text(
                                                                       '${(cubit.totalMarks / 20 * 100).toInt()}%',
-                                                                      style: const TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          color:
-                                                                              ColorManager.black),
+                                                                      style: theme
+                                                                          .textTheme
+                                                                          .titleLarge
+                                                                          ?.copyWith(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: theme.colorScheme.onSurface),
                                                                     ),
                                                                   ],
                                                                 ),
@@ -220,6 +260,12 @@ class StartQuizScreen extends StatelessWidget {
                                           child: SizedBox(
                                             height: 5.h,
                                             child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: theme
+                                                      .colorScheme.secondary,
+                                                  foregroundColor: theme
+                                                      .colorScheme.onSecondary,
+                                                ),
                                                 onPressed: () {
                                                   cubit.restartQuiz();
                                                 },
@@ -236,8 +282,9 @@ class StartQuizScreen extends StatelessWidget {
                                           },
                                           icon: Icon(
                                               color: cubit.currentpage != 19
-                                                  ? ColorManager.black
-                                                  : ColorManager.grey2,
+                                                  ? theme.colorScheme.onSurface
+                                                  : theme.colorScheme.onSurface
+                                                      .withOpacity(0.3),
                                               Icons.arrow_forward_ios))
                                     ],
                                   ),

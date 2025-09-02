@@ -8,24 +8,25 @@ import 'package:quran_station/src/modules/main/presentation/widgets/components.d
 import 'package:quran_station/src/modules/main/presentation/widgets/connectivity.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../core/utils/color_manager.dart';
-
 class SearchForReciterScreen extends StatelessWidget {
   const SearchForReciterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     List<Reciter> searchByNameResult = [];
     TextEditingController controller = TextEditingController();
     AudiosBloc bloc = AudiosBloc.get();
+
     return Scaffold(
       appBar: CustomAppBar(
         actions: [
           Padding(
             padding: EdgeInsetsDirectional.only(end: 5.w),
-            child: const Icon(
+            child: Icon(
               Icons.search,
-              color: ColorManager.black,
+              color:
+                  theme.appBarTheme.iconTheme?.color ?? theme.iconTheme.color,
             ),
           ),
         ],
@@ -59,14 +60,15 @@ class SearchForReciterScreen extends StatelessWidget {
                   bloc.add(SearchByNameEvent(controller.text));
                 }
               },
-              child: Padding(
+              child: Container(
+                color: theme.scaffoldBackgroundColor,
                 padding: EdgeInsets.all(6.0.w),
                 child: ListView.separated(
-                    itemBuilder: (context, index) =>
-                        ReciterItem(reciter: searchByNameResult[index]),
-                    separatorBuilder: (context, index) =>
-                        const HeightSeparator(),
-                    itemCount: searchByNameResult.length),
+                  itemBuilder: (context, index) =>
+                      ReciterItem(reciter: searchByNameResult[index]),
+                  separatorBuilder: (context, index) => const HeightSeparator(),
+                  itemCount: searchByNameResult.length,
+                ),
               ),
             );
           },

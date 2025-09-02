@@ -2,9 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
-import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/local_reciter_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
@@ -15,8 +13,10 @@ class NoInternetAudiosPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     List<Directory> localReciters = [];
     AudiosBloc.get().add(GetDownloadedAudiosEvent());
+
     return BlocListener<AudiosBloc, AudiosState>(
       listener: (context, state) {
         if (state is GetDownloadedAudiosSuccessState) {
@@ -32,11 +32,14 @@ class NoInternetAudiosPage extends StatelessWidget {
         builder: (context, state) {
           if (state is! GetDownloadedAudiosLoadingState) {
             return localReciters.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
-                    "لا توجد تسجيلات",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ))
+                      "لا توجد تسجيلات",
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
                 : ListView.separated(
                     itemBuilder: (context, index) => ItemWidget(
                       suffix: IconButton(
@@ -45,7 +48,7 @@ class NoInternetAudiosPage extends StatelessWidget {
                         },
                         icon: Icon(
                           Icons.delete,
-                          color: ColorManager.white,
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
                       onPressed: () {
@@ -54,15 +57,23 @@ class NoInternetAudiosPage extends StatelessWidget {
                       },
                       title: localReciters[index].path.split("/").last,
                       subTitle:
-                          "${localReciters[index].listSync().length}  تسجيل",
+                          "${localReciters[index].listSync().length} تسجيل",
                     ),
-                    separatorBuilder: (context, index) => const Divider(),
+                    separatorBuilder: (context, index) => Divider(
+                      color: theme.dividerColor,
+                      thickness: theme.dividerTheme.thickness,
+                    ),
                     itemCount: localReciters.length,
                   );
           } else {
-            // يمكنك هنا عرض عنصر تحميل أو أي شيء آخر أثناء التحميل
             return Column(
-              children: [LinearProgressIndicator(), Spacer()],
+              children: [
+                LinearProgressIndicator(
+                  backgroundColor: theme.colorScheme.surfaceVariant,
+                  valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
+                ),
+                const Spacer(),
+              ],
             );
           }
         },
@@ -71,6 +82,8 @@ class NoInternetAudiosPage extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context, String path) {
+    final theme = Theme.of(context);
+
     showDialog(
       context: context,
       builder: (context) {
@@ -78,37 +91,67 @@ class NoInternetAudiosPage extends StatelessWidget {
           bloc: AudiosBloc.get(),
           listener: (context, state) {
             if (state is DeleteDownloadedItemSuccessState) {
-              defaultToast(msg: "تم حذف المجلد  بنجاح");
+              defaultToast(msg: "تم حذف المجلد بنجاح");
               context.pop();
             }
           },
           child: AlertDialog(
+            backgroundColor: theme.dialogBackgroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25.0),
+              side: BorderSide(
+                color: theme.colorScheme.outline.withOpacity(0.2),
+              ),
             ),
             title: Text(
               "حذف المجلد",
-              style: TextStylesManager.appBarTitle,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                color: theme.colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             content: Text(
               'هل تريد حذف جميع تسجيلات هذا المجلد؟',
-              style: TextStylesManager.regularBoldStyle,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             actions: <Widget>[
               TextButton(
-                child: const Text('إلغاء'),
+                style: TextButton.styleFrom(
+                  foregroundColor: theme.colorScheme.secondary,
+                ),
+                child: Text(
+                  'إلغاء',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: theme.colorScheme.secondary,
+                  ),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: const Text('حذف'),
+                style: TextButton.styleFrom(
+                  foregroundColor: theme.colorScheme.error,
+                ),
+                child: Text(
+                  'حذف',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: theme.colorScheme.error,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 onPressed: () {
                   AudiosBloc.get().add(DeleteDownloadedItemEvent(path, false));
                 },
               ),
             ],
-            actionsPadding: EdgeInsetsDirectional.only(end: 5.w, bottom: 2.h),
+            actionsPadding: EdgeInsetsDirectional.only(
+              end: 5.w,
+              bottom: 2.h,
+            ),
           ),
         );
       },

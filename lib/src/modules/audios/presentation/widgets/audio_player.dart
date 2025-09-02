@@ -4,7 +4,6 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/timer_widget.dart';
@@ -31,10 +30,12 @@ class PlayerWidget extends StatefulWidget {
   _PlayerWidgetState createState() => _PlayerWidgetState();
 }
 
-class _PlayerWidgetState extends State<PlayerWidget> {
+class _PlayerWidgetState extends State<PlayerWidget>
+    with TickerProviderStateMixin {
   late AudioPlayer _audioPlayer;
   late StreamSubscription<Duration?> _durationSubscription;
-  late IconData _stopIcon;
+  late AnimationController _playButtonController;
+  late AnimationController _rotationController;
   AudiosBloc bloc = AudiosBloc.get();
   Duration? _position;
   bool _isRepeating = false;
@@ -43,19 +44,24 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   DateTime? _timerEndTime;
 
   bool get _isPlaying => _audioPlayer.playing;
-
-  IconData get _playPauseIcon => _isPlaying ? Icons.pause : Icons.play_arrow;
-
-  double get _audioPlayerTimer => bloc.playbackTimerPercentage ?? 0.0;
-
   Duration? get _duration => _audioPlayer.duration;
 
   @override
   void initState() {
     super.initState();
     _audioPlayer = widget.player;
-    _stopIcon = Icons.stop;
     _position = Duration.zero;
+
+    // Animation controllers
+    _playButtonController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _rotationController = AnimationController(
+      duration: const Duration(seconds: 10),
+      vsync: this,
+    );
+
     _initializeAudio();
 
     _durationSubscription = _audioPlayer.positionStream.listen((position) {
@@ -68,6 +74,15 @@ class _PlayerWidgetState extends State<PlayerWidget> {
       if (playerState.processingState == ProcessingState.completed) {
         _onCompleted();
       }
+
+      // Handle animation based on playing state
+      if (playerState.playing) {
+        _playButtonController.forward();
+        _rotationController.repeat();
+      } else {
+        _playButtonController.reverse();
+        _rotationController.stop();
+      }
     });
   }
 
@@ -75,6 +90,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   void dispose() {
     _durationSubscription.cancel();
     _timer?.cancel();
+    _playButtonController.dispose();
+    _rotationController.dispose();
     super.dispose();
   }
 
@@ -88,7 +105,9 @@ class _PlayerWidgetState extends State<PlayerWidget> {
         await _setAudioSource();
         bloc.currentSurahUrl = widget.audioAddress;
       } catch (e) {
-        errorToast(msg: e.toString());
+        errorToast(
+          msg: e.toString(),
+        );
       }
     }
   }
@@ -136,8 +155,9 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   }
 
   Future<void> _stopPlayback() async {
-    await _audioPlayer.seek(Duration.zero);
-    setState(() {});
+    setState(() async {
+      await _audioPlayer.seek(Duration.zero);
+    });
   }
 
   Future<void> _onCompleted() async {
@@ -166,63 +186,209 @@ class _PlayerWidgetState extends State<PlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final remainingTime = _timerEndTime != null
         ? _timerEndTime!.difference(DateTime.now())
         : Duration.zero;
     final progress = _timerDuration != null && _timerDuration! > 0
         ? 1 - remainingTime.inSeconds / (_timerDuration! * 60)
         : 0.0;
-  
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Text(
-          _position != null && _duration != null
-              ? '${_formatDuration(_position!)} / ${_formatDuration(_duration!)}'
-              : '',
-          style: const TextStyle(fontSize: 16.0),
-        ),
-        Slider(
-          onChanged: (value) {
-            final duration = _duration;
-            if (duration != null) {
-              final position = value * duration.inMilliseconds;
-              _audioPlayer.seek(Duration(milliseconds: position.round()));
-            }
-          },
-          value: (_position != null &&
-                  _duration != null &&
-                  _position!.inMilliseconds > 0 &&
-                  _position!.inMilliseconds < _duration!.inMilliseconds)
-              ? _position!.inMilliseconds / _duration!.inMilliseconds
-              : 0.0,
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const TimerWidget(),
-            if (widget.audioType != AudioType.radio)
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    _isRepeating = !_isRepeating;
-                  });
-                },
-                icon: Icon(_isRepeating ? Icons.repeat_one : Icons.repeat),
+
+    return Container(
+      padding: EdgeInsets.all(3.w),
+      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(3.w),
+        color: colorScheme.surface,
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.shadow.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // Audio Progress Section
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 2.h),
+            child: Column(
+              children: [
+                // Time Display
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _position != null ? _formatDuration(_position!) : '00:00',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Text(
+                      _duration != null ? _formatDuration(_duration!) : '00:00',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 1.h),
+
+                // Modern Slider
+                Container(
+                  height: 6,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3),
+                    color: colorScheme.outline.withOpacity(0.2),
+                  ),
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 6,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 12,
+                        elevation: 4,
+                      ),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 20),
+                      activeTrackColor: colorScheme.primary,
+                      inactiveTrackColor: colorScheme.outline.withOpacity(0.2),
+                      thumbColor: colorScheme.primary,
+                      overlayColor: colorScheme.primary.withOpacity(0.1),
+                    ),
+                    child: Slider(
+                      onChanged: (value) {
+                        final duration = _duration;
+                        if (duration != null) {
+                          final position = value * duration.inMilliseconds;
+                          _audioPlayer
+                              .seek(Duration(milliseconds: position.round()));
+                        }
+                      },
+                      value: (_position != null &&
+                              _duration != null &&
+                              _position!.inMilliseconds > 0 &&
+                              _position!.inMilliseconds <
+                                  _duration!.inMilliseconds)
+                          ? _position!.inMilliseconds /
+                              _duration!.inMilliseconds
+                          : 0.0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 2.h),
+
+          // Controls Section
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Timer Widget
+              const TimerWidget(),
+
+              // Repeat Button (for non-radio)
+              if (widget.audioType != AudioType.radio)
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _isRepeating
+                        ? colorScheme.primaryContainer
+                        : colorScheme.surfaceVariant.withOpacity(0.5),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isRepeating = !_isRepeating;
+                      });
+                    },
+                    icon: Icon(
+                      _isRepeating
+                          ? Icons.repeat_one_rounded
+                          : Icons.repeat_rounded,
+                      color: _isRepeating
+                          ? colorScheme.primary
+                          : colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+
+              // Main Play/Pause Button
+              Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      colorScheme.primary,
+                      colorScheme.primary.withOpacity(0.8),
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.primary.withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(35),
+                    onTap: _togglePlayback,
+                    child: AnimatedBuilder(
+                      animation: _playButtonController,
+                      builder: (context, child) {
+                        return Icon(
+                          _isPlaying
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          color: colorScheme.onPrimary,
+                          size: 32,
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ),
-            FloatingActionButton(
-              onPressed: _togglePlayback,
-              child: Icon(_playPauseIcon),
-            ),
-            IconButton(
-              onPressed: _stopPlayback,
-              icon: Icon(_stopIcon),
-              color: _isPlaying ? ColorManager.primary : ColorManager.grey2,
-            ),
-          ],
-        ),
-        SizedBox(height: 3.h),
-      ],
+
+              // Stop Button
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _isPlaying
+                      ? colorScheme.errorContainer
+                      : colorScheme.surfaceVariant.withOpacity(0.5),
+                ),
+                child: IconButton(
+                  onPressed: _stopPlayback,
+                  icon: Icon(
+                    Icons.stop_rounded,
+                    color: _isPlaying
+                        ? colorScheme.onError
+                        : colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 2.h),
+        ],
+      ),
     );
   }
 }

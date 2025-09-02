@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
-import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/main/presentation/screens/main_screen.dart';
 import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
 import 'package:sizer/sizer.dart';
@@ -12,6 +11,8 @@ class OnBoardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.all(5.w),
@@ -22,13 +23,18 @@ class OnBoardingScreen extends StatelessWidget {
             children: [
               SizedBox(height: 10.h),
               Text(
-                "كَلَامُ رَبِّي",
-                style: TextStylesManager.titleBoldStyle,
+                "كَلَامُ رَبِّي",
+                style: theme.textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
               ),
-              // SizedBox(height: .1.h),
-              const Text(
+              Text(
                 "تجربة قرآنية متكاملة",
-                style: TextStylesManager.regularBoldStyle,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
               SizedBox(height: 1.h),
               SizedBox(
@@ -41,7 +47,8 @@ class OnBoardingScreen extends StatelessWidget {
                         height: 57.h,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(30.sp)),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(30.sp)),
                           image: const DecorationImage(
                             image: AssetImage("assets/images/onBoarding.jpg"),
                             fit: BoxFit.cover,
@@ -53,7 +60,8 @@ class OnBoardingScreen extends StatelessWidget {
                       alignment: AlignmentDirectional.bottomCenter,
                       child: DefaultButton(
                           onPressed: () async {
-                            CacheHelper.saveData(key: "showSplash", value: false);
+                            CacheHelper.saveData(
+                                key: "showSplash", value: false);
                             context.pushAndRemove(const MainScreen());
                           },
                           title: "ابدأ الاستخدام"),

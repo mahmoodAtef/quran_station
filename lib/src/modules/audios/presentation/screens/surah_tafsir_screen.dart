@@ -1,3 +1,4 @@
+// surah_tafsir_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
@@ -8,62 +9,73 @@ import 'package:quran_station/src/modules/main/presentation/widgets/components.d
 import 'package:quran_station/src/modules/main/presentation/widgets/connectivity.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../core/utils/color_manager.dart';
-import '../../../../core/utils/styles_manager.dart';
-
 class SurahTafsirScreen extends StatelessWidget {
   final int surahId;
   final String surahName;
-  const SurahTafsirScreen({super.key, required this.surahId, required this.surahName});
+
+  const SurahTafsirScreen(
+      {super.key, required this.surahId, required this.surahName});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     AudiosBloc bloc = AudiosBloc.get()..add(GetSurahTafsir(surahId));
-    SurahTafsir surahTafsir = bloc.quranTafsir.firstWhere((element) => element.surahId == surahId);
+    SurahTafsir surahTafsir =
+        bloc.quranTafsir.firstWhere((element) => element.surahId == surahId);
     GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
       key: scaffoldKey,
-      drawer: appDrawer,
+      drawer: appDrawer(context),
       appBar: CustomAppBar(
         height: 9.h,
         leadingWidth: 10.w,
         leading: IconButton(
-            onPressed: () async {
-              scaffoldKey.currentState!.openDrawer();
-            },
-            icon: const Icon(
-              Icons.menu,
-              color: ColorManager.black,
-            )),
+          onPressed: () async {
+            scaffoldKey.currentState!.openDrawer();
+          },
+          icon: Icon(
+            Icons.menu,
+            color: theme.appBarTheme.iconTheme?.color ?? theme.iconTheme.color,
+          ),
+        ),
         centerTitle: true,
-        title:  Text(
+        title: Text(
           'الصوتيات',
-          style: TextStylesManager.appBarTitle,
+          style: theme.appBarTheme.titleTextStyle,
         ),
       ),
       body: BlocBuilder<AudiosBloc, AudiosState>(
-          bloc: bloc,
-          builder: (context, state) {
-            return state is GetSurahTafsirLoading || surahTafsir.tafsir == null
-                ? const LinearProgressIndicator()
-                : ConnectionWidget(
-                    onRetry: () {
-                      bloc.add(GetSurahTafsir(surahId));
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.all(5.w),
-                      child: ListView.separated(
-                          itemBuilder: (context, index) {
-                            return TafsirItem(tafsir: surahTafsir.tafsir![index]);
-                          },
-                          separatorBuilder: (context, index) {
-                            return const Divider();
-                          },
-                          itemCount: surahTafsir.tafsir!.length),
+        bloc: bloc,
+        builder: (context, state) {
+          return state is GetSurahTafsirLoading || surahTafsir.tafsir == null
+              ? LinearProgressIndicator(
+                  backgroundColor: theme.colorScheme.surfaceVariant,
+                  valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
+                )
+              : ConnectionWidget(
+                  onRetry: () {
+                    bloc.add(GetSurahTafsir(surahId));
+                  },
+                  child: Container(
+                    color: theme.scaffoldBackgroundColor,
+                    padding: EdgeInsets.all(5.w),
+                    child: ListView.separated(
+                      itemBuilder: (context, index) {
+                        return TafsirItem(tafsir: surahTafsir.tafsir![index]);
+                      },
+                      separatorBuilder: (context, index) {
+                        return Divider(
+                          color: theme.dividerColor,
+                          thickness: theme.dividerTheme.thickness,
+                        );
+                      },
+                      itemCount: surahTafsir.tafsir!.length,
                     ),
-                  );
-          }),
+                  ),
+                );
+        },
+      ),
     );
   }
 }

@@ -1,10 +1,10 @@
+// connectivity.dart
 // ignore_for_file: library_private_types_in_public_api
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:sizer/sizer.dart';
 
 import 'components.dart';
@@ -45,17 +45,24 @@ class _ConnectionWidgetState extends State<ConnectionWidget> {
   }
 
   Widget _notConnectedWidget() {
+    final theme = Theme.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.wifi_off,
-            color: ColorManager.secondary,
+            color: theme.colorScheme.error,
             size: 45.sp,
           ),
           SizedBox(height: 5.sp),
-          const Text('تعذر اتصال الانترنت'),
+          Text(
+            'تعذر اتصال الانترنت',
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
           SizedBox(height: 10.sp),
           DefaultButton(
             title: "اعادة المحاولة",

@@ -1,13 +1,7 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quran_station/src/core/utils/color_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
-import 'package:quran_station/src/core/utils/styles_manager.dart';
+import 'package:quran_station/src/core/utils/theme_manager.dart';
 import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:quran_station/src/modules/reading/presentation/screens/juz_index_screen.dart';
 import 'package:quran_station/src/modules/reading/presentation/screens/quran_virtue_screen.dart';
@@ -44,9 +38,10 @@ class _MoshafScreenState extends State<MoshafScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       body: Container(
-        color: ColorManager.black,
+        color: AppColors.black,
         child: SafeArea(
           child: BlocBuilder<MoshafCubit, MoshafState>(
             bloc: cubit,
@@ -72,7 +67,9 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                 cubit.getCurrentPageData();
                                 return ColorFiltered(
                                     colorFilter: ColorFilter.mode(
-                                        ColorManager.darkBlue.withOpacity(.7), BlendMode.dst),
+                                        AppColors.backgroundDark
+                                            .withOpacity(.7),
+                                        BlendMode.dst),
                                     child: QuranPage(pageNumber: index + 1));
                               },
                             ),
@@ -89,11 +86,13 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                     Container(
                                       height: 5.h,
                                       width: 100.w,
-                                      color: ColorManager.black.withOpacity(.7),
+                                      color: AppColors.black.withOpacity(.7),
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 5.w),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 5.w),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             IconButton(
                                                 onPressed: () {
@@ -103,17 +102,23 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                                 },
                                                 icon: const Icon(
                                                   Icons.menu,
-                                                  color: ColorManager.white,
+                                                  color: AppColors.onSecondary,
                                                 )),
                                             InkWell(
-                                              onTap: () {
-                                                context.push(const TafsirScreen());
-                                              },
-                                              child: const Text(
-                                                "التفسير الميسر",
-                                                style: TextStylesManager.regularBoldWhiteStyle,
-                                              ),
-                                            )
+                                                onTap: () {
+                                                  context.push(
+                                                      const TafsirScreen());
+                                                },
+                                                child: Text(
+                                                  "التفسير الميسر",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                        color: AppColors
+                                                            .onSurfaceDark,
+                                                      ),
+                                                ))
                                           ],
                                         ),
                                       ),
@@ -122,53 +127,87 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                       Container(
                                         height: 25.h,
                                         width: 40.w,
-                                        color: ColorManager.black.withOpacity(.7),
+                                        color: AppColors.black.withOpacity(.7),
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 5.w),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 5.w),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Expanded(
                                                 child: InkWell(
                                                   onTap: () {
-                                                    context.push(const SurahsIndexScreen());
+                                                    context.push(
+                                                        const SurahsIndexScreen());
                                                   },
-                                                  child: const Text(
+                                                  child: Text(
                                                     "فهرس السور",
-                                                    style: TextStylesManager.regularBoldWhiteStyle,
+                                                    style: theme
+                                                        .textTheme.titleMedium
+                                                        ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors
+                                                          .onSurfaceDark,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                               Expanded(
                                                 child: InkWell(
                                                   onTap: () {
-                                                    context.push(const JuzIndexScreen());
+                                                    context.push(
+                                                        const JuzIndexScreen());
                                                   },
-                                                  child: const Text(
+                                                  child: Text(
                                                     "الأجزاء",
-                                                    style: TextStylesManager.regularBoldWhiteStyle,
+                                                    style: theme
+                                                        .textTheme.titleMedium
+                                                        ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors
+                                                          .onSurfaceDark,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                               Expanded(
                                                 child: InkWell(
                                                   onTap: () {
-                                                    _showPageSearchDialog(context);
+                                                    _showPageSearchDialog(
+                                                        context);
                                                   },
-                                                  child: const Text(
+                                                  child: Text(
                                                     "البحث عن صفحة",
-                                                    style: TextStylesManager.regularBoldWhiteStyle,
+                                                    style: theme
+                                                        .textTheme.titleMedium
+                                                        ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors
+                                                          .onSurfaceDark,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                               Expanded(
                                                 child: InkWell(
                                                   onTap: () {
-                                                    context.push(const ReadingQuranVirtueScreen());
+                                                    context.push(
+                                                        const ReadingQuranVirtueScreen());
                                                   },
-                                                  child: const Text(
+                                                  child: Text(
                                                     "فضل القرآن",
-                                                    style: TextStylesManager.regularBoldWhiteStyle,
+                                                    style: theme
+                                                        .textTheme.titleMedium
+                                                        ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors
+                                                          .onSurfaceDark,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -187,23 +226,36 @@ class _MoshafScreenState extends State<MoshafScreen> {
                             child: Container(
                               height: 5.h,
                               width: 100.w,
-                              color: ColorManager.black.withOpacity(.7),
+                              color: AppColors.black.withOpacity(.7),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 5.w),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "الجزء ${cubit.currentJuz}",
-                                      style: TextStylesManager.regularBoldWhiteStyle,
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.onSurfaceDark,
+                                      ),
                                     ),
                                     Text(
                                       "${cubit.currentPage}",
-                                      style: TextStylesManager.regularBoldWhiteStyle,
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.onSurfaceDark,
+                                      ),
                                     ),
                                     Text(
                                       "سورة ${cubit.currentSura}",
-                                      style: TextStylesManager.regularBoldWhiteStyle,
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.onSurfaceDark,
+                                      ),
                                     )
                                   ],
                                 ),
@@ -237,7 +289,8 @@ class _MoshafScreenState extends State<MoshafScreen> {
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
                 labelText: 'رقم الصفحة',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.sp))),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.sp))),
           ),
           actions: <Widget>[
             TextButton(

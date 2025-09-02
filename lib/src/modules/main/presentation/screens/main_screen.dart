@@ -1,165 +1,245 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:quran_station/src/core/utils/color_manager.dart';
-import 'package:quran_station/src/core/utils/images_manager.dart';
-import 'package:quran_station/src/core/utils/styles_manager.dart';
-import 'package:quran_station/src/modules/audios/presentation/screens/audios_main_screen.dart';
-import 'package:quran_station/src/modules/main/presentation/ui_entities/main_screen_item.dart';
-import 'package:quran_station/src/modules/main/presentation/widgets/components.dart';
-import 'package:quran_station/src/modules/quiz/presentation/screens/start_quiz_screen.dart';
-import 'package:quran_station/src/modules/reading/presentation/screens/moshaf_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quran_station/src/core/exceptions/exception_handler.dart';
+import 'package:quran_station/src/core/utils/navigation_manager.dart';
+import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
+import 'package:quran_station/src/modules/audios/presentation/screens/search_for_reciter_screen.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../tajweed/presentation/screens/tajweed_main_screen.dart';
+import '../../../main/presentation/widgets/components.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<MainScreenItem> items = const [
-      MainScreenItem(
-        title: "الصوتيات",
-        icon: Icon(
-          Icons.headphones,
-          size: 35,
-        ),
-        screen: AudiosMainScreen(),
-      ),
-      MainScreenItem(
-        title: "المصحف",
-        icon: Icon(
-          Icons.menu_book_rounded,
-          size: 35,
-        ),
-        screen: MoshafScreen(),
-      ),
-      MainScreenItem(
-        title: "التجويد",
-        icon: Icon(
-          Icons.record_voice_over_outlined,
-          size: 35,
-        ),
-        screen: TajweedMainScreen(),
-      ),
-      MainScreenItem(
-        title: "اختبر نفسك",
-        icon: Icon(
-          Icons.question_mark,
-          size: 35,
-        ),
-        screen: StartQuizScreen(),
-      ),
-    ];
+    final theme = Theme.of(context);
     GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    AudiosBloc bloc = AudiosBloc.get();
+
     return Scaffold(
       key: scaffoldKey,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      drawer: appDrawer(context),
       appBar: AppBar(
-        // height: 10.h,
         leadingWidth: 10.w,
         leading: IconButton(
-            onPressed: () async {
-              scaffoldKey.currentState!.openDrawer();
-            },
-            icon: const Icon(
-              Icons.menu,
-              color: ColorManager.black,
-            )),
+          onPressed: () async {
+            scaffoldKey.currentState!.openDrawer();
+          },
+          icon: Icon(
+            Icons.menu,
+          ),
+          tooltip: 'القائمة',
+          splashColor: theme.colorScheme.primary.withOpacity(0.2),
+          highlightColor: theme.colorScheme.primary.withOpacity(0.1),
+        ),
         centerTitle: true,
         title: Text(
-          'كَلَامُ رَبِّي',
-          style: TextStylesManager.appBarTitle,
-        ),
-      ),
-      drawer: appDrawer,
-      body: Padding(
-        padding: EdgeInsets.all(5.0.w),
-        child: Column(
-          children: [
-            Container(
-              height: 20.h,
-              width: double.infinity,
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.sp),
-                color: ColorManager.primary,
+          'كَلَامُ رَبِّي',
+          style: theme.appBarTheme.titleTextStyle ??
+              theme.textTheme.titleLarge?.copyWith(
+                color: theme.appBarTheme.foregroundColor ??
+                    theme.colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
               ),
-              child: CachedNetworkImage(
-                  filterQuality: FilterQuality.high,
-                  errorWidget: (context, string, error) {
-                    return FittedBox(
-                      fit: BoxFit.fill,
-                      child: Container(
-                        color: ColorManager.grey2,
-                      ),
-                    );
-                  },
-                  fit: BoxFit.cover,
-                  imageUrl: ImagesManager.mainScreenImage),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.push(const SearchForReciterScreen());
+            },
+            icon: Icon(
+              Icons.search,
             ),
-            SizedBox(height: 5.h),
-            // Expanded(
-            //   child: GridView.builder(
-            //     shrinkWrap: true,
-            //     physics: const NeverScrollableScrollPhysics(),
-            //     itemCount: items.length,
-            //     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            //         maxCrossAxisExtent: 200,
-            //         childAspectRatio: 1,
-            //         crossAxisSpacing: 10,
-            //         mainAxisSpacing: 10),
-            //     itemBuilder: (context, index) {
-            //       return MainScreenItemWidget(
-            //         item: items[index],
-            //       );
-            //     },
-            //   ),
-            // ),
-            Expanded(
-              child: StaggeredGrid.count(
-                crossAxisCount: 4,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
+            tooltip: 'البحث',
+          ),
+        ],
+      ),
+      body: BlocListener<AudiosBloc, AudiosState>(
+        bloc: bloc,
+        listener: (context, state) {
+          _handleExceptionS(context, state);
+          if (state is GetAllRecitersSuccessState) {
+            bloc.add(GetFavoriteRecitersEvent());
+          }
+        },
+        child: BlocBuilder<AudiosBloc, AudiosState>(
+          bloc: bloc,
+          builder: (context, state) {
+            return Container(
+              color: theme.scaffoldBackgroundColor,
+              child: Column(
                 children: [
-                  StaggeredGridTile.count(
-                      crossAxisCellCount: 2,
-                      mainAxisCellCount: 3,
-                      child: MainScreenItemWidget(
-                        item: items[0],
-                        //
-                      )),
-                  StaggeredGridTile.count(
-                    crossAxisCellCount: 2,
-                    mainAxisCellCount: 2,
-                    child: MainScreenItemWidget(
-                      item: items[1],
-                      //
+                  // Header Section with App Title and Description
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.all(4.0.w),
+                    padding: EdgeInsets.all(4.0.w),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          theme.colorScheme.primary,
+                          theme.colorScheme.primaryContainer,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.headphones_outlined,
+                          size: 8.h,
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                        SizedBox(height: 1.h),
+                        Text(
+                          'الصوتيات',
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            color: theme.colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 0.5.h),
+                        Text(
+                          'استمع للقرآن الكريم بأصوات أجمل القراء',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onPrimary.withOpacity(0.9),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  StaggeredGridTile.count(
-                    crossAxisCellCount: 2,
-                    mainAxisCellCount: 3,
-                    child: MainScreenItemWidget(
-                      item: items[2],
-                      //
+
+                  // Tabs Section
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 4.0.w),
+                    padding: EdgeInsets.symmetric(vertical: 1.h),
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.shadowColor.withOpacity(0.1),
+                          blurRadius: 6.0,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: SizedBox(
+                      height: 6.h,
+                      width: 90.w,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(horizontal: 2.w),
+                        itemBuilder: (context, index) => Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              bloc.add(ChangeTabEvent(index));
+                            },
+                            borderRadius: BorderRadius.circular(8.0),
+                            splashColor:
+                                theme.colorScheme.primary.withOpacity(0.2),
+                            highlightColor:
+                                theme.colorScheme.primary.withOpacity(0.1),
+                            child: TabWidget(
+                              index: index,
+                            ),
+                          ),
+                        ),
+                        separatorBuilder: (context, index) => SizedBox(
+                          width: 2.0.w,
+                        ),
+                        itemCount: bloc.tabs.length,
+                      ),
                     ),
                   ),
-                  StaggeredGridTile.count(
-                    crossAxisCellCount: 2,
-                    mainAxisCellCount: 2,
-                    child: MainScreenItemWidget(
-                      item: items[3],
-                      //
+
+                  SizedBox(height: 2.h),
+
+                  // Content Section
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 4.w),
+                      padding: EdgeInsets.all(2.w),
+                      decoration: BoxDecoration(
+                        color: theme.cardColor,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16.0),
+                          topRight: Radius.circular(16.0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.shadowColor.withOpacity(0.08),
+                            blurRadius: 10.0,
+                            offset: const Offset(0, -2),
+                          ),
+                        ],
+                      ),
+                      child: BlocBuilder<AudiosBloc, AudiosState>(
+                        bloc: bloc,
+                        builder: (context, state) {
+                          return AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: Container(
+                              key: ValueKey(bloc.currentTab),
+                              child: bloc.audioTabsWidgets[bloc.currentTab],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            // const HeightSeparator(),
-          ],
+            );
+          },
         ),
       ),
     );
+  }
+
+  void _handleExceptionS(BuildContext context, AudiosState state) {
+    final theme = Theme.of(context);
+
+    if (state is AudiosError) {
+      // Show error message with theme colors before handling exception
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'حدث خطأ أثناء تحميل البيانات',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onError,
+            ),
+          ),
+          backgroundColor: theme.colorScheme.error,
+          behavior: SnackBarBehavior.floating,
+          action: SnackBarAction(
+            label: 'موافق',
+            textColor: theme.colorScheme.onError,
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
+        ),
+      );
+
+      ExceptionHandler.handle(state.exception);
+      Navigator.pop(context);
+    }
   }
 }

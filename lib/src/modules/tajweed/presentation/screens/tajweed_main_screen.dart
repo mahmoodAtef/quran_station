@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
-import 'package:quran_station/src/core/utils/styles_manager.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/tajweed/presentation/screens/tajweed_pdf_screen.dart';
 import 'package:sizer/sizer.dart';
@@ -10,11 +9,13 @@ class TajweedMainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "تجويد القرآن الكريم",
-          style: TextStylesManager.appBarTitle,
+          style: theme.appBarTheme.titleTextStyle,
         ),
       ),
       body: Padding(
@@ -29,9 +30,11 @@ class TajweedMainScreen extends StatelessWidget {
                 },
                 title: "كتاب التجويد الميسر"),
             const Spacer(),
-            // const Text(
+            // Text(
             //   "انتظروا قريبا دورة التجويد الميسر لفضيلة الشيخ أحمد محيي الدين",
-            //   style: TextStylesManager.regularBoldStyle,
+            //   style: theme.textTheme.bodyLarge?.copyWith(
+            //     fontWeight: FontWeight.bold,
+            //   ),
             //   textAlign: TextAlign.center,
             // )
           ],
