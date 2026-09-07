@@ -809,7 +809,7 @@ class _ItemWidgetState extends State<ItemWidget>
         return Transform.scale(
           scale: _scaleAnimation.value,
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+            margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
             child: Material(
               elevation: _isPressed ? 1 : 4,
               shadowColor: colorScheme.shadow.withOpacity(0.15),

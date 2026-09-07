@@ -14,6 +14,7 @@ import 'package:quran_station/src/modules/audios/data/models/radio/radio.dart';
 import 'package:quran_station/src/modules/audios/data/models/reciter/reciter_model.dart';
 import 'package:quran_station/src/modules/audios/data/models/tafsir/surah_tafsir.dart';
 import 'package:quran_station/src/modules/audios/data/repositories/audios_repository.dart';
+import 'package:quran_station/src/modules/audios/presentation/logic/audio_player_handler.dart';
 import 'package:quran_station/src/modules/audios/presentation/pages/offline_reciters.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/audio_player_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/audio_player.dart';

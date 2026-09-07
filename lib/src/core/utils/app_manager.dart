@@ -15,7 +15,7 @@ class AppManager {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     await JustAudioBackground.init(
-      androidNotificationChannelId: 'com.tofy.kalam_rabbi',
+      androidNotificationChannelId: 'com.zerobugs.kalamrabbi',
       androidNotificationChannelName: 'Audio playback',
       androidNotificationOngoing: true,
     );

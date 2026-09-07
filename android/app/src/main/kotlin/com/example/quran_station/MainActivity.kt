@@ -1,4 +1,4 @@
-package com.tofy.kalam_rabbi
+package com.zerobugs.kalamrabbi
 
 import io.flutter.embedding.android.FlutterActivity
 

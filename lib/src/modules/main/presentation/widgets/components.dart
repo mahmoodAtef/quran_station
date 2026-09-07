@@ -161,7 +161,7 @@ Widget appDrawer(BuildContext context) {
                   title: "مشاركة التطبيق",
                   onTap: () {
                     Share.share(
-                      "استمتع بتجربة قرآنية مميزة مع تطبيق كلام ربي \n https://play.google.com/store/apps/details?id=com.tofy.kalam_rabbi",
+                      "استمتع بتجربة قرآنية مميزة مع تطبيق كلام ربي \n https://play.google.com/store/apps/details?id=com.zerobugs.kalamrabbi",
                     );
                   },
                 ),

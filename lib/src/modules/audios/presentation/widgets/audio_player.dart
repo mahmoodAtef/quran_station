@@ -1,12 +1,14 @@
+// lib/src/modules/audios/presentation/widgets/player_widget.dart
 import 'dart:async';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
-import 'package:quran_station/src/modules/audios/presentation/widgets/timer_widget.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/player_controls_section.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/player_progress_section.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../core/utils/images_manager.dart';
@@ -27,21 +29,20 @@ class PlayerWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _PlayerWidgetState createState() => _PlayerWidgetState();
+  State<PlayerWidget> createState() => _PlayerWidgetState();
 }
 
 class _PlayerWidgetState extends State<PlayerWidget>
     with TickerProviderStateMixin {
-  late AudioPlayer _audioPlayer;
-  late StreamSubscription<Duration?> _durationSubscription;
-  late AnimationController _playButtonController;
-  late AnimationController _rotationController;
-  AudiosBloc bloc = AudiosBloc.get();
-  Duration? _position;
+  late final AudioPlayer _audioPlayer;
+  late final StreamSubscription<Duration?> _positionSubscription;
+  late final StreamSubscription<PlayerState> _playerStateSubscription;
+  late final AnimationController _playButtonController;
+  late final AnimationController _rotationController;
+
+  final AudiosBloc bloc = AudiosBloc.get();
+  Duration _position = Duration.zero;
   bool _isRepeating = false;
-  Timer? _timer;
-  int? _timerDuration;
-  DateTime? _timerEndTime;
 
   bool get _isPlaying => _audioPlayer.playing;
   Duration? get _duration => _audioPlayer.duration;
@@ -50,9 +51,7 @@ class _PlayerWidgetState extends State<PlayerWidget>
   void initState() {
     super.initState();
     _audioPlayer = widget.player;
-    _position = Duration.zero;
 
-    // Animation controllers
     _playButtonController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
@@ -64,53 +63,53 @@ class _PlayerWidgetState extends State<PlayerWidget>
 
     _initializeAudio();
 
-    _durationSubscription = _audioPlayer.positionStream.listen((position) {
-      setState(() {
-        _position = position;
-      });
+    _positionSubscription = _audioPlayer.positionStream.listen((position) {
+      setState(() => _position = position);
     });
 
-    _audioPlayer.playerStateStream.listen((playerState) {
-      if (playerState.processingState == ProcessingState.completed) {
-        _onCompleted();
-      }
+    _playerStateSubscription =
+        _audioPlayer.playerStateStream.listen((playerState) {
+          if (playerState.processingState == ProcessingState.completed) {
+            _onCompleted();
+          }
 
-      // Handle animation based on playing state
-      if (playerState.playing) {
-        _playButtonController.forward();
-        _rotationController.repeat();
-      } else {
-        _playButtonController.reverse();
-        _rotationController.stop();
-      }
-    });
+          if (playerState.playing) {
+            _playButtonController.forward();
+            _rotationController.repeat();
+          } else {
+            _playButtonController.reverse();
+            _rotationController.stop();
+          }
+        });
   }
 
   @override
   void dispose() {
-    _durationSubscription.cancel();
-    _timer?.cancel();
+    _positionSubscription.cancel();
+    _playerStateSubscription.cancel();
     _playButtonController.dispose();
     _rotationController.dispose();
     super.dispose();
   }
 
   Future<void> _initializeAudio() async {
-    if (widget.audioAddress != bloc.currentSurahUrl) {
-      final session = await AudioSession.instance;
-      await session.configure(const AudioSessionConfiguration.speech());
-      _audioPlayer.playbackEventStream
-          .listen((event) {}, onError: (Object e, StackTrace stackTrace) {});
-      try {
-        await _setAudioSource();
-        bloc.currentSurahUrl = widget.audioAddress;
-      } catch (e) {
-        errorToast(
-          msg: e.toString(),
-        );
-      }
+    if (widget.audioAddress == bloc.currentSurahUrl) return;
+
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.speech());
+    _audioPlayer.playbackEventStream.listen(
+          (event) {},
+      onError: (Object e, StackTrace stackTrace) {},
+    );
+
+    try {
+      await _setAudioSource();
+      bloc.currentSurahUrl = widget.audioAddress;
+    } catch (e) {
+      errorToast(msg: e.toString());
     }
   }
+
 
   Future<void> _setAudioSource() async {
     final mediaItem = MediaItem(
@@ -121,26 +120,11 @@ class _PlayerWidgetState extends State<PlayerWidget>
       album: bloc.currentMoshaf,
     );
 
-    switch (widget.audioType) {
-      case AudioType.url:
-        await _audioPlayer.setAudioSource(AudioSource.uri(
-          Uri.parse(widget.audioAddress),
-          tag: mediaItem,
-        ));
-        break;
-      case AudioType.file:
-        await _audioPlayer.setAudioSource(AudioSource.file(
-          widget.audioAddress,
-          tag: mediaItem,
-        ));
-        break;
-      case AudioType.radio:
-        await _audioPlayer.setAudioSource(AudioSource.uri(
-          Uri.parse(widget.audioAddress),
-          tag: mediaItem,
-        ));
-        break;
-    }
+    final source = widget.audioType == AudioType.file
+        ? AudioSource.file(widget.audioAddress, tag: mediaItem)
+        : AudioSource.uri(Uri.parse(widget.audioAddress), tag: mediaItem);
+
+    await _audioPlayer.setAudioSource(source);
   }
 
   Future<void> _togglePlayback() async {
@@ -155,9 +139,9 @@ class _PlayerWidgetState extends State<PlayerWidget>
   }
 
   Future<void> _stopPlayback() async {
-    setState(() async {
-      await _audioPlayer.seek(Duration.zero);
-    });
+    await _audioPlayer.seek(Duration.zero);
+    await _audioPlayer.pause();
+    setState(() => _position = Duration.zero);
   }
 
   Future<void> _onCompleted() async {
@@ -166,287 +150,59 @@ class _PlayerWidgetState extends State<PlayerWidget>
     if (_isRepeating) {
       await _audioPlayer.play();
     } else {
-      setState(() {
-        _position = Duration.zero;
-      });
+      setState(() => _position = Duration.zero);
     }
   }
 
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-
-    final twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    final twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    final twoDigitHours = twoDigits(duration.inHours);
-
-    return duration.inHours == 0
-        ? "$twoDigitMinutes:$twoDigitSeconds"
-        : "$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds";
+  void _onSeek(double value) {
+    final duration = _duration;
+    if (duration == null) return;
+    final position = value * duration.inMilliseconds;
+    _audioPlayer.seek(Duration(milliseconds: position.round()));
   }
+
+  void _toggleRepeat() => setState(() => _isRepeating = !_isRepeating);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final remainingTime = _timerEndTime != null
-        ? _timerEndTime!.difference(DateTime.now())
-        : Duration.zero;
-    final progress = _timerDuration != null && _timerDuration! > 0
-        ? 1 - remainingTime.inSeconds / (_timerDuration! * 60)
-        : 0.0;
-
     return Container(
       padding: EdgeInsets.all(3.w),
       margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(3.w),
+        borderRadius: BorderRadius.circular(4.w),
         color: colorScheme.surface,
         boxShadow: [
           BoxShadow(
             color: colorScheme.shadow.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            blurRadius: 5.w,
+            offset: Offset(0, 1.h),
           ),
         ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          // Audio Progress Section
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 2.h),
-            child: Column(
-              children: [
-                // Time Display
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _position != null ? _formatDuration(_position!) : '00:00',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    Text(
-                      _duration != null ? _formatDuration(_duration!) : '00:00',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1.h),
-
-                // Modern Slider
-                Container(
-                  height: 6,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(3),
-                    color: colorScheme.outline.withOpacity(0.2),
-                  ),
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 6,
-                      thumbShape: const RoundSliderThumbShape(
-                        enabledThumbRadius: 12,
-                        elevation: 4,
-                      ),
-                      overlayShape:
-                          const RoundSliderOverlayShape(overlayRadius: 20),
-                      activeTrackColor: colorScheme.primary,
-                      inactiveTrackColor: colorScheme.outline.withOpacity(0.2),
-                      thumbColor: colorScheme.primary,
-                      overlayColor: colorScheme.primary.withOpacity(0.1),
-                    ),
-                    child: Slider(
-                      onChanged: (value) {
-                        final duration = _duration;
-                        if (duration != null) {
-                          final position = value * duration.inMilliseconds;
-                          _audioPlayer
-                              .seek(Duration(milliseconds: position.round()));
-                        }
-                      },
-                      value: (_position != null &&
-                              _duration != null &&
-                              _position!.inMilliseconds > 0 &&
-                              _position!.inMilliseconds <
-                                  _duration!.inMilliseconds)
-                          ? _position!.inMilliseconds /
-                              _duration!.inMilliseconds
-                          : 0.0,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        children: [
+          PlayerProgressSection(
+            position: _position,
+            duration: _duration,
+            onSeek: _onSeek,
           ),
-
           SizedBox(height: 2.h),
-
-          // Controls Section
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Timer Widget
-              const TimerWidget(),
-
-              // Repeat Button (for non-radio)
-              if (widget.audioType != AudioType.radio)
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _isRepeating
-                        ? colorScheme.primaryContainer
-                        : colorScheme.surfaceVariant.withOpacity(0.5),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isRepeating = !_isRepeating;
-                      });
-                    },
-                    icon: Icon(
-                      _isRepeating
-                          ? Icons.repeat_one_rounded
-                          : Icons.repeat_rounded,
-                      color: _isRepeating
-                          ? colorScheme.primary
-                          : colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-
-              // Main Play/Pause Button
-              Container(
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      colorScheme.primary,
-                      colorScheme.primary.withOpacity(0.8),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorScheme.primary.withOpacity(0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(35),
-                    onTap: _togglePlayback,
-                    child: AnimatedBuilder(
-                      animation: _playButtonController,
-                      builder: (context, child) {
-                        return Icon(
-                          _isPlaying
-                              ? Icons.pause_rounded
-                              : Icons.play_arrow_rounded,
-                          color: colorScheme.onPrimary,
-                          size: 32,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-
-              // Stop Button
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _isPlaying
-                      ? colorScheme.errorContainer
-                      : colorScheme.surfaceVariant.withOpacity(0.5),
-                ),
-                child: IconButton(
-                  onPressed: _stopPlayback,
-                  icon: Icon(
-                    Icons.stop_rounded,
-                    color: _isPlaying
-                        ? colorScheme.onError
-                        : colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ],
+          PlayerControlsSection(
+            audioType: widget.audioType,
+            isPlaying: _isPlaying,
+            isRepeating: _isRepeating,
+            playButtonController: _playButtonController,
+            onTogglePlayback: _togglePlayback,
+            onToggleRepeat: _toggleRepeat,
+            onStop: _stopPlayback,
           ),
-
           SizedBox(height: 2.h),
         ],
       ),
     );
-  }
-}
-
-class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
-  final AudioPlayer audioPlayer;
-  final String id;
-  final String title;
-  final AudiosBloc bloc = AudiosBloc.get();
-  static MediaItem? item;
-
-  AudioPlayerHandler(
-      {required this.id, required this.audioPlayer, required this.title}) {
-    audioPlayer.playbackEventStream.map(_transformEvent).pipe(playbackState);
-    mediaItem.add(MediaItem(
-      id: id,
-      title: title,
-      artUri: Uri.parse(ImagesManager.notificationImage),
-      artist: bloc.currentReciter,
-    ));
-  }
-
-  @override
-  Future<void> play() => audioPlayer.play();
-
-  @override
-  Future<void> pause() => audioPlayer.pause();
-
-  @override
-  Future<void> seek(Duration position) => audioPlayer.seek(position);
-
-  @override
-  Future<void> stop() => audioPlayer.stop();
-
-  PlaybackState _transformEvent(PlaybackEvent event) {
-    return PlaybackState(
-      controls: [
-        audioPlayer.playing ? MediaControl.pause : MediaControl.play,
-        MediaControl.stop,
-      ],
-      androidCompactActionIndices: const [0, 1],
-      processingState: {
-        ProcessingState.idle: AudioProcessingState.idle,
-        ProcessingState.loading: AudioProcessingState.loading,
-        ProcessingState.buffering: AudioProcessingState.buffering,
-        ProcessingState.ready: AudioProcessingState.ready,
-        ProcessingState.completed: AudioProcessingState.completed,
-      }[audioPlayer.processingState]!,
-      playing: audioPlayer.playing,
-      updatePosition: audioPlayer.position,
-      bufferedPosition: audioPlayer.bufferedPosition,
-      speed: audioPlayer.speed,
-      queueIndex: event.currentIndex,
-    );
-  }
-
-  Future<void> updateItem(MediaItem newItem) async {
-    item = newItem;
-    mediaItem.add(newItem);
   }
 }

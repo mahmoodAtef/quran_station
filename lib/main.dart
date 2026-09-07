@@ -43,9 +43,10 @@ class MyApp extends StatelessWidget {
           return BlocBuilder<MainCubit, MainState>(
             builder: (context, state) {
               return MaterialApp(
-                darkTheme: AppTheme.darkTheme,
-                theme: AppTheme.currentTheme,
+                // darkTheme: AppTheme.darkTheme,
+                theme: AppTheme.lightTheme,
                 locale: const Locale('ar'),
+                themeMode: ThemeMode.light,
                 supportedLocales: S.delegate.supportedLocales,
                 localizationsDelegates: const [
                   S.delegate,
@@ -53,7 +54,7 @@ class MyApp extends StatelessWidget {
                   GlobalWidgetsLocalizations.delegate,
                   GlobalCupertinoLocalizations.delegate,
                 ],
-                debugShowCheckedModeBanner: false,
+                 debugShowCheckedModeBanner: false,
                 showSemanticsDebugger: false,
                 title: 'كلامُ ربي',
                 home: const SplashScreen(),
