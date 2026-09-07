@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quran_station/src/core/utils/images_manager.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/main/cubit/main_cubit.dart';
 import 'package:quran_station/src/modules/main/presentation/ui_entities/main_screen_item.dart';
@@ -60,11 +61,8 @@ Widget appDrawer(BuildContext context) {
                     radius: 4.h,
                     backgroundColor:
                         theme.colorScheme.onPrimary.withOpacity(0.2),
-                    child: Icon(
-                      Icons.book_outlined,
-                      size: 6.h,
-                      color: theme.colorScheme.onPrimary,
-                    ),
+                    backgroundImage: AssetImage(ImagesManager.logo),
+
                   ),
                   SizedBox(height: 1.h),
                   Text(
@@ -95,16 +93,16 @@ Widget appDrawer(BuildContext context) {
                   },
                 ),
 
-                // Tajweed Navigation
-                _buildModernListTile(
-                  context,
-                  icon: Icons.record_voice_over_outlined,
-                  title: "التجويد",
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push(const TajweedMainScreen());
-                  },
-                ),
+                // // Tajweed Navigation
+                // _buildModernListTile(
+                //   context,
+                //   icon: Icons.record_voice_over_outlined,
+                //   title: "التجويد",
+                //   onTap: () {
+                //     Navigator.pop(context);
+                //     context.push(const TajweedMainScreen());
+                //   },
+                // ),
 
                 // Quiz Navigation
                 _buildModernListTile(

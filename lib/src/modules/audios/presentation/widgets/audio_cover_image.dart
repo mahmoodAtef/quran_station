@@ -78,21 +78,15 @@ class AudioCoverImage extends StatelessWidget {
     );
 
     if (audioType == AudioType.radio) {
-      return CachedNetworkImage(
+      return Image.asset(
         fit: BoxFit.cover,
-        imageUrl: imageUrl,
-        placeholder: (context, url) => placeholder(),
-        errorWidget: (context, url, error) => errorWidget(),
+       imageUrl,
       );
     }
 
-    return Image.network(
+    return Image.asset(
       imageUrl,
       fit: BoxFit.cover,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return placeholder();
-      },
       errorBuilder: (context, error, stackTrace) => errorWidget(),
     );
   }

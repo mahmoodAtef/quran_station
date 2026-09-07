@@ -66,234 +66,236 @@ class StartQuizScreen extends StatelessWidget {
                         ))
                 ],
               ),
-              body: BlocConsumer<QuizCubit, QuizState>(
-                  bloc: cubit,
-                  builder: (context, state) {
-                    return state is GetQuizLoadingState
-                        ? LinearProgressIndicator(
-                            color: theme.colorScheme.primary,
-                            backgroundColor: theme.colorScheme.surfaceVariant,
-                          )
-                        : Padding(
-                            padding: EdgeInsets.all(5.0.w),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5.w),
-                                  child: ProgressBar(
-                                      currentQuestion: cubit.currentpage + 1),
-                                ),
-                                Expanded(
-                                  child: PageView.builder(
-                                      controller: cubit.quizConttoller,
-                                      onPageChanged: (index) {
-                                        cubit.changeQuestionPage(index);
-                                      },
-                                      itemCount: cubit.qestions.length,
-                                      itemBuilder: (context, index) =>
-                                          QuestionCard(
-                                            question: cubit.qestions[index],
-                                            questionNumber: index + 1,
-                                          )),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(2.w),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      IconButton(
-                                          onPressed: () {
-                                            if (cubit.currentpage != 0) {
-                                              cubit.changeQuestionPage(
-                                                  cubit.currentpage - 1);
-                                            }
-                                          },
-                                          icon: Icon(
-                                              color: cubit.currentpage != 0
-                                                  ? theme.colorScheme.onSurface
-                                                  : theme.colorScheme.onSurface
-                                                      .withOpacity(0.3),
-                                              Icons.arrow_back_ios)),
-                                      if (cubit.currentpage == 19 &&
-                                          !cubit.quizCompleted)
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 5.h,
-                                            child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      theme.colorScheme.primary,
-                                                  foregroundColor: theme
-                                                      .colorScheme.onPrimary,
-                                                ),
-                                                onPressed: () {
-                                                  cubit.finishQuiz();
+              body: SafeArea(
+                child: BlocConsumer<QuizCubit, QuizState>(
+                    bloc: cubit,
+                    builder: (context, state) {
+                      return state is GetQuizLoadingState
+                          ? LinearProgressIndicator(
+                              color: theme.colorScheme.primary,
+                              backgroundColor: theme.colorScheme.surfaceVariant,
+                            )
+                          : Padding(
+                              padding: EdgeInsets.all(5.0.w),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5.w),
+                                    child: ProgressBar(
+                                        currentQuestion: cubit.currentpage + 1),
+                                  ),
+                                  Expanded(
+                                    child: PageView.builder(
+                                        controller: cubit.quizConttoller,
+                                        onPageChanged: (index) {
+                                          cubit.changeQuestionPage(index);
+                                        },
+                                        itemCount: cubit.qestions.length,
+                                        itemBuilder: (context, index) =>
+                                            QuestionCard(
+                                              question: cubit.qestions[index],
+                                              questionNumber: index + 1,
+                                            )),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(2.w),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        IconButton(
+                                            onPressed: () {
+                                              if (cubit.currentpage != 0) {
+                                                cubit.changeQuestionPage(
+                                                    cubit.currentpage - 1);
+                                              }
+                                            },
+                                            icon: Icon(
+                                                color: cubit.currentpage != 0
+                                                    ? theme.colorScheme.onSurface
+                                                    : theme.colorScheme.onSurface
+                                                        .withOpacity(0.3),
+                                                Icons.arrow_back_ios)),
+                                        if (cubit.currentpage == 19 &&
+                                            !cubit.quizCompleted)
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 5.h,
+                                              child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        theme.colorScheme.primary,
+                                                    foregroundColor: theme
+                                                        .colorScheme.onPrimary,
+                                                  ),
+                                                  onPressed: () {
+                                                    cubit.finishQuiz();
 
-                                                  showDialog(
-                                                      barrierDismissible: false,
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return Screenshot(
-                                                          controller:
-                                                              resultScreenshotController,
-                                                          child: AlertDialog(
-                                                            elevation: 3,
-                                                            backgroundColor: theme
-                                                                .dialogBackgroundColor,
-                                                            actions: [
-                                                              TextButton(
-                                                                style: TextButton
-                                                                    .styleFrom(
-                                                                  foregroundColor: theme
-                                                                      .colorScheme
-                                                                      .primary,
-                                                                ),
-                                                                child: const Text(
-                                                                    "تحدي الأصدقاء"),
-                                                                onPressed:
-                                                                    () async {
-                                                                  await _captureAndShareScreenshot(
-                                                                      context,
-                                                                      resultScreenshotController,
-                                                                      "هذه نتيجتي في اختبار المعلومات القرآنية. من يتحداني؟");
-                                                                },
-                                                              ),
-                                                              TextButton(
+                                                    showDialog(
+                                                        barrierDismissible: false,
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return Screenshot(
+                                                            controller:
+                                                                resultScreenshotController,
+                                                            child: AlertDialog(
+                                                              elevation: 3,
+                                                              backgroundColor: theme
+                                                                  .dialogBackgroundColor,
+                                                              actions: [
+                                                                TextButton(
                                                                   style: TextButton
                                                                       .styleFrom(
                                                                     foregroundColor: theme
                                                                         .colorScheme
                                                                         .primary,
                                                                   ),
-                                                                  onPressed:
-                                                                      () {
-                                                                    context
-                                                                        .pop();
-                                                                  },
                                                                   child: const Text(
-                                                                      "مراجعة الاجابات"))
-                                                            ],
-                                                            content: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              children: [
-                                                                if (cubit
-                                                                        .totalMarks >
-                                                                    10)
-                                                                  Text(
-                                                                      'تهانينا',
-                                                                      style: theme
-                                                                          .textTheme
-                                                                          .titleMedium
-                                                                          ?.copyWith(
-                                                                        color: theme
-                                                                            .colorScheme
-                                                                            .primary,
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                      )),
-                                                                Text(
-                                                                    'لقد حصلت على ',
-                                                                    style: theme
-                                                                        .textTheme
-                                                                        .bodyLarge
-                                                                        ?.copyWith(
-                                                                      color: theme
-                                                                          .colorScheme
-                                                                          .onSurface,
-                                                                    )),
-                                                                const SizedBox(
-                                                                    height: 20),
-                                                                Stack(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .center,
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width:
-                                                                          100,
-                                                                      height:
-                                                                          100,
-                                                                      child:
-                                                                          CircularProgressIndicator(
-                                                                        backgroundColor: theme
-                                                                            .colorScheme
-                                                                            .surfaceVariant,
-                                                                        color: theme
-                                                                            .colorScheme
-                                                                            .primary,
-                                                                        value: cubit.totalMarks /
-                                                                            20,
-                                                                        // تحويل نسبة الدرجة إلى النسبة المطلوبة
-                                                                        strokeWidth:
-                                                                            10,
-                                                                        valueColor: AlwaysStoppedAnimation<Color>(theme
-                                                                            .colorScheme
-                                                                            .primary),
-                                                                      ),
-                                                                    ),
-                                                                    Text(
-                                                                      '${(cubit.totalMarks / 20 * 100).toInt()}%',
-                                                                      style: theme
-                                                                          .textTheme
-                                                                          .titleLarge
-                                                                          ?.copyWith(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: theme.colorScheme.onSurface),
-                                                                    ),
-                                                                  ],
+                                                                      "تحدي الأصدقاء"),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await _captureAndShareScreenshot(
+                                                                        context,
+                                                                        resultScreenshotController,
+                                                                        "هذه نتيجتي في اختبار المعلومات القرآنية. من يتحداني؟");
+                                                                  },
                                                                 ),
+                                                                TextButton(
+                                                                    style: TextButton
+                                                                        .styleFrom(
+                                                                      foregroundColor: theme
+                                                                          .colorScheme
+                                                                          .primary,
+                                                                    ),
+                                                                    onPressed:
+                                                                        () {
+                                                                      context
+                                                                          .pop();
+                                                                    },
+                                                                    child: const Text(
+                                                                        "مراجعة الاجابات"))
                                                               ],
+                                                              content: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  if (cubit
+                                                                          .totalMarks >
+                                                                      10)
+                                                                    Text(
+                                                                        'تهانينا',
+                                                                        style: theme
+                                                                            .textTheme
+                                                                            .titleMedium
+                                                                            ?.copyWith(
+                                                                          color: theme
+                                                                              .colorScheme
+                                                                              .primary,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        )),
+                                                                  Text(
+                                                                      'لقد حصلت على ',
+                                                                      style: theme
+                                                                          .textTheme
+                                                                          .bodyLarge
+                                                                          ?.copyWith(
+                                                                        color: theme
+                                                                            .colorScheme
+                                                                            .onSurface,
+                                                                      )),
+                                                                  const SizedBox(
+                                                                      height: 20),
+                                                                  Stack(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width:
+                                                                            100,
+                                                                        height:
+                                                                            100,
+                                                                        child:
+                                                                            CircularProgressIndicator(
+                                                                          backgroundColor: theme
+                                                                              .colorScheme
+                                                                              .surfaceVariant,
+                                                                          color: theme
+                                                                              .colorScheme
+                                                                              .primary,
+                                                                          value: cubit.totalMarks /
+                                                                              20,
+                                                                          // تحويل نسبة الدرجة إلى النسبة المطلوبة
+                                                                          strokeWidth:
+                                                                              10,
+                                                                          valueColor: AlwaysStoppedAnimation<Color>(theme
+                                                                              .colorScheme
+                                                                              .primary),
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        '${(cubit.totalMarks / 20 * 100).toInt()}%',
+                                                                        style: theme
+                                                                            .textTheme
+                                                                            .titleLarge
+                                                                            ?.copyWith(
+                                                                                fontWeight: FontWeight.bold,
+                                                                                color: theme.colorScheme.onSurface),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                        );
-                                                      });
-                                                },
-                                                child: const Text(
-                                                    "إنهاء الاختبار")),
+                                                          );
+                                                        });
+                                                  },
+                                                  child: const Text(
+                                                      "إنهاء الاختبار")),
+                                            ),
                                           ),
-                                        ),
-                                      if (cubit.quizCompleted)
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 5.h,
-                                            child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: theme
-                                                      .colorScheme.secondary,
-                                                  foregroundColor: theme
-                                                      .colorScheme.onSecondary,
-                                                ),
-                                                onPressed: () {
-                                                  cubit.restartQuiz();
-                                                },
-                                                child: const Text(
-                                                    "إعادة الاختبار")),
+                                        if (cubit.quizCompleted)
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 5.h,
+                                              child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: theme
+                                                        .colorScheme.secondary,
+                                                    foregroundColor: theme
+                                                        .colorScheme.onSecondary,
+                                                  ),
+                                                  onPressed: () {
+                                                    cubit.restartQuiz();
+                                                  },
+                                                  child: const Text(
+                                                      "إعادة الاختبار")),
+                                            ),
                                           ),
-                                        ),
-                                      IconButton(
-                                          onPressed: () {
-                                            if (cubit.currentpage != 19) {
-                                              cubit.changeQuestionPage(
-                                                  cubit.currentpage + 1);
-                                            }
-                                          },
-                                          icon: Icon(
-                                              color: cubit.currentpage != 19
-                                                  ? theme.colorScheme.onSurface
-                                                  : theme.colorScheme.onSurface
-                                                      .withOpacity(0.3),
-                                              Icons.arrow_forward_ios))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
-                  },
-                  listener: (context, state) async {}),
+                                        IconButton(
+                                            onPressed: () {
+                                              if (cubit.currentpage != 19) {
+                                                cubit.changeQuestionPage(
+                                                    cubit.currentpage + 1);
+                                              }
+                                            },
+                                            icon: Icon(
+                                                color: cubit.currentpage != 19
+                                                    ? theme.colorScheme.onSurface
+                                                    : theme.colorScheme.onSurface
+                                                        .withOpacity(0.3),
+                                                Icons.arrow_forward_ios))
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                    },
+                    listener: (context, state) async {}),
+              ),
             ),
           );
         },

@@ -41,12 +41,14 @@ class MyApp extends StatelessWidget {
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
           return BlocBuilder<MainCubit, MainState>(
+            buildWhen: (previous, current) => current != previous ,
             builder: (context, state) {
               return MaterialApp(
                 // darkTheme: AppTheme.darkTheme,
-                theme: AppTheme.lightTheme,
+                theme: lightTheme,
+                darkTheme: darkTheme,
                 locale: const Locale('ar'),
-                themeMode: ThemeMode.light,
+                themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
                 supportedLocales: S.delegate.supportedLocales,
                 localizationsDelegates: const [
                   S.delegate,

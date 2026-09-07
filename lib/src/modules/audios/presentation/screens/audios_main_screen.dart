@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran_station/src/core/exceptions/exception_handler.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/search_for_reciter_screen.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/tab_widget.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../main/presentation/widgets/components.dart';

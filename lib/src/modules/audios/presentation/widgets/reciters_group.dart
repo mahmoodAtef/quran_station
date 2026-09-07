@@ -1,6 +1,7 @@
 // lib/src/modules/audios/presentation/widgets/reciters_group.dart
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/reciter_item.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../data/models/reciter/reciter_model.dart';

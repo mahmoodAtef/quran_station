@@ -224,6 +224,12 @@ class MoshafScreen extends StatelessWidget {
                 topLeft: Radius.circular(20.0),
                 topRight: Radius.circular(20.0),
               ),
+              border:
+              BoxBorder.all(
+                   color: theme.dividerColor.withValues(
+                     alpha: .03
+                   )
+              ),
               boxShadow: [
                 BoxShadow(
                   color: theme.shadowColor.withOpacity(0.08),
@@ -242,7 +248,9 @@ class MoshafScreen extends StatelessWidget {
                 return _buildSurahItem(context, theme, surahId, index);
               },
               separatorBuilder: (context, index) => Divider(
-                color: theme.dividerColor,
+                color: theme.dividerColor.withValues(
+                  alpha: 0.03,
+                ),
                 thickness: 0.5,
                 height: 2.h,
                 indent: 4.w,

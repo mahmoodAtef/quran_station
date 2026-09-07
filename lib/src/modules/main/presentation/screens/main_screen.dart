@@ -5,6 +5,7 @@ import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/search_for_reciter_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/tab_widget.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../main/presentation/widgets/components.dart';
@@ -97,11 +98,6 @@ class MainScreen extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        Icon(
-                          Icons.headphones_outlined,
-                          size: 8.h,
-                          color: theme.colorScheme.onPrimary,
-                        ),
                         SizedBox(height: 1.h),
                         Text(
                           'الصوتيات',

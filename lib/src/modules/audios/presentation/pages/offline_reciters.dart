@@ -6,6 +6,8 @@ import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/screens/local_reciter_screen.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/item_widget.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/toasts.dart';
 import 'package:sizer/sizer.dart';
 
 class NoInternetAudiosPage extends StatelessWidget {
@@ -91,7 +93,7 @@ class NoInternetAudiosPage extends StatelessWidget {
           bloc: AudiosBloc.get(),
           listener: (context, state) {
             if (state is DeleteDownloadedItemSuccessState) {
-              defaultToast(msg: "تم حذف المجلد بنجاح");
+              defaultToast(msg: "تم حذف المجلد بنجاح", );
               context.pop();
             }
           },

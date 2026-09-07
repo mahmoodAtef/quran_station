@@ -36,11 +36,7 @@ class PlayerControlsSection extends StatelessWidget {
         if (audioType != AudioType.radio) _buildRepeatButton(colorScheme),
         _buildPlayButton(colorScheme),
         _buildStopButton(colorScheme),
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-        )
+         SizedBox(width: 3.w),
       ],
     );
   }
@@ -110,7 +106,7 @@ class PlayerControlsSection extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isPlaying
-            ? colorScheme.errorContainer
+            ? colorScheme.error
             : colorScheme.surfaceContainerHighest.withOpacity(0.5),
       ),
       child: IconButton(

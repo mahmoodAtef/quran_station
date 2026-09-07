@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quran_station/src/core/utils/navigation_manager.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/item_widget.dart';
 import 'package:quran_station/src/modules/reading/cubit/moshaf_cubit.dart';
 import 'package:quran_station/src/modules/reading/data/quran_data/juz_data.dart';
 import 'package:sizer/sizer.dart';

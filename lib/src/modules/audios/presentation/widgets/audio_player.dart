@@ -9,6 +9,7 @@ import 'package:quran_station/src/modules/audios/bloc/audios_bloc.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/components.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/player_controls_section.dart';
 import 'package:quran_station/src/modules/audios/presentation/widgets/player_progress_section.dart';
+import 'package:quran_station/src/modules/audios/presentation/widgets/toasts.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../core/utils/images_manager.dart';
@@ -106,7 +107,7 @@ class _PlayerWidgetState extends State<PlayerWidget>
       await _setAudioSource();
       bloc.currentSurahUrl = widget.audioAddress;
     } catch (e) {
-      errorToast(msg: e.toString());
+      errorToast(msg: e.toString(),);
     }
   }
 
