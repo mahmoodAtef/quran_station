@@ -14,6 +14,8 @@ class FavouritesRecitersPage extends StatelessWidget {
     return BlocBuilder<AudiosBloc, AudiosState>(
       bloc: bloc,
       builder: (context, state) {
+        debugPrint("******************** Favourite Reciters ********************");
+        debugPrint(bloc.favoriteReciters.toString());
         return ConnectionWidget(
             onRetry: () {
               bloc.add(GetFavoriteRecitersEvent());
@@ -22,6 +24,7 @@ class FavouritesRecitersPage extends StatelessWidget {
                     state is! GetFavoriteRecitersLoadingState)
                 ? Center(
                     child: Text(
+
                       "لا يوجد قراء",
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
@@ -35,7 +38,7 @@ class FavouritesRecitersPage extends StatelessWidget {
                           ? const SizedBox()
                           : Expanded(
                               child: RecitersList(
-                                  reciters: bloc.favoriteReciters)),
+                                  reciters: bloc.favoriteReciters.toSet().toList())),
                     ],
                   ));
       },

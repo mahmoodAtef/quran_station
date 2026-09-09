@@ -18,11 +18,11 @@ class RadioItem extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+      margin: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.5.h),
       child: Card(
-        elevation: 3,
-        shadowColor: colorScheme.shadow.withOpacity(0.2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
+        elevation: 2,
+        shadowColor: colorScheme.shadow.withOpacity(0.1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.w)),
         child: InkWell(
           onTap: () {
             final bloc = AudiosBloc.get();
@@ -33,30 +33,23 @@ class RadioItem extends StatelessWidget {
               audioType: AudioType.radio,
             ));
           },
-          borderRadius: BorderRadius.circular(4.w),
+          borderRadius: BorderRadius.circular(3.w),
           child: Container(
-            padding: EdgeInsets.all(4.w),
+            padding: EdgeInsets.all(3.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.w),
-              gradient: LinearGradient(
-                colors: [
-                  colorScheme.secondaryContainer.withOpacity(0.3),
-                  colorScheme.surface,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              borderRadius: BorderRadius.circular(3.w),
+              color: colorScheme.surface,
             ),
             child: Row(
               children: [
                 Container(
-                  width: 13.w,
-                  height: 13.w,
+                  width: 12.w,
+                  height: 12.w,
                   decoration: BoxDecoration(
-                    color: colorScheme.secondary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(6.5.w),
+                    color: colorScheme.primary.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(6.w),
                   ),
-                  child: Icon(Icons.radio, color: colorScheme.secondary, size: 6.w),
+                  child: Icon(Icons.radio, color: colorScheme.primary.withOpacity(0.7), size: 6.w),
                 ),
                 SizedBox(width: 3.w),
                 Expanded(
@@ -72,15 +65,15 @@ class RadioItem extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 0.5.h),
+                      SizedBox(height: 0.3.h),
                       Row(
                         children: [
-                          Icon(Icons.live_tv, size: 3.6.w, color: colorScheme.secondary),
+                          Icon(Icons.live_tv, size: 3.2.w, color: colorScheme.primary.withOpacity(0.6)),
                           SizedBox(width: 1.w),
                           Text(
                             'بث مباشر',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.secondary,
+                              color: colorScheme.primary.withOpacity(0.6),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -92,10 +85,10 @@ class RadioItem extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(2.w),
                   decoration: BoxDecoration(
-                    color: colorScheme.secondary.withOpacity(0.1),
+                    color: colorScheme.primary.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(5.w),
                   ),
-                  child: Icon(Icons.play_arrow, color: colorScheme.secondary, size: 5.w),
+                  child: Icon(Icons.play_arrow, color: colorScheme.primary.withOpacity(0.7), size: 5.w),
                 ),
               ],
             ),

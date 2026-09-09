@@ -28,6 +28,7 @@ class _ProgressBarState extends State<ProgressBar>
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
       duration: widget.animationDuration ?? const Duration(milliseconds: 300),
       vsync: this,
@@ -786,7 +787,7 @@ class _QuestionCardState extends State<QuestionCard>
       ThemeData theme, int index, bool isCompleted, bool isDark) {
     if (!isCompleted) {
       return widget.question.userAnswer == index
-          ? const Color(0xFF1E40AF)
+          ? (isDark ? Colors.white : const Color(0xFF1E40AF))
           : (isDark ? Colors.white : const Color(0xFF1F2937));
     } else {
       if (widget.question.trueAnswerIndex == index) {

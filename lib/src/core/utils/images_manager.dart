@@ -9,3 +9,5 @@ class ImagesManager {
       "https://firebasestorage.googleapis.com/v0/b/quran-station-f943f.appspot.com/o/images%2FmainScreen.jpg?alt=media&token=13a0ec20-d3e9-4561-9bbe-3740689d7c34";
   static const String logo = "assets/images/logo.png";
 }
+
+

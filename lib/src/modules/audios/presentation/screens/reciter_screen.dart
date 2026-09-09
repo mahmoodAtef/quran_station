@@ -44,7 +44,7 @@ class ReciterScreen extends StatelessWidget {
                     bloc.add(GetReciterEvent(reciterID));
                   },
                   child: Padding(
-                    padding: EdgeInsets.all(6.0.w),
+                    padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
                     child: ListView.separated(
                       addAutomaticKeepAlives: true,
                       shrinkWrap: true,
@@ -52,7 +52,7 @@ class ReciterScreen extends StatelessWidget {
                         moshaf: reciter.moshafs![index],
                       ),
                       separatorBuilder: (context, index) => SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       itemCount: reciter.moshafs!.length,
                     ),

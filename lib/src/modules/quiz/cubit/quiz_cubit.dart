@@ -22,6 +22,7 @@ class QuizCubit extends Cubit<QuizState> {
   int currentpage = 0;
   bool quizCompleted = false;
   PageController quizConttoller = PageController();
+
   Future getQuestions() async {
     if (qestions.isEmpty) {
       quizCompleted = false;
@@ -41,31 +42,54 @@ class QuizCubit extends Cubit<QuizState> {
   }
 
   void answerQuestion(Question question, int answerIndex) {
+    if (quizCompleted) return;
+    
     question.setAnswer(answerIndex);
     emit(AnswerQuestionState());
+
+    // Auto navigate to the next question after a short delay
+    if (currentpage < qestions.length - 1) {
+      Future.delayed(const Duration(milliseconds: 400), () {
+        if (!isClosed && !quizCompleted) {
+          changeQuestionPage(currentpage + 1);
+        }
+      });
+    }
   }
 
   void finishQuiz() {
     quizCompleted = true;
+    totalMarks = 0;
     for (var question in qestions) {
       totalMarks = totalMarks + question.getMark();
-      emit(QuizFinishedState());
     }
+    emit(QuizFinishedState());
   }
 
   void changeQuestionPage(int index) {
-    if (kDebugMode) {
-      print(index + 1);
+    if (quizConttoller.hasClients && currentpage != index) {
+      quizConttoller.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
     }
-    quizConttoller.jumpToPage(index);
+    currentpage = index;
+    emit(ChangePageState());
+  }
+
+  void updateCurrentPage(int index) {
     currentpage = index;
     emit(ChangePageState());
   }
 
   Future restartQuiz() async {
     qestions.clear();
-    quizConttoller.jumpToPage(0);
     currentpage = 0;
+    quizCompleted = false;
+    if (quizConttoller.hasClients) {
+      quizConttoller.jumpToPage(0);
+    }
     await getQuestions();
   }
 }

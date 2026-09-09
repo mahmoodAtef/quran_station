@@ -17,39 +17,32 @@ class SurahTafsirItem extends StatelessWidget {
     final surahName = ConstanceManager.quranSurahsNames[index];
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+      margin: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.5.h),
       child: Card(
-        elevation: 4,
-        shadowColor: colorScheme.shadow.withOpacity(0.4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
+        elevation: 2,
+        shadowColor: colorScheme.shadow.withOpacity(0.1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.w)),
         child: InkWell(
           onTap: () => context.push(
             SurahTafsirScreen(surahId: index + 1, surahName: surahName),
           ),
-          borderRadius: BorderRadius.circular(4.w),
+          borderRadius: BorderRadius.circular(3.w),
           child: Container(
-            padding: EdgeInsets.all(4.w),
+            padding: EdgeInsets.all(3.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.w),
-              gradient: LinearGradient(
-                colors: [
-                  colorScheme.tertiaryContainer.withOpacity(0.6),
-                  colorScheme.surface,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              borderRadius: BorderRadius.circular(3.w),
+              color: colorScheme.surface,
             ),
             child: Row(
               children: [
                 Container(
-                  width: 13.w,
-                  height: 13.w,
+                  width: 12.w,
+                  height: 12.w,
                   decoration: BoxDecoration(
-                    color: colorScheme.tertiary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(3.w),
+                    color: colorScheme.primary.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(2.w),
                   ),
-                  child: Icon(Icons.library_books, color: colorScheme.onSurface, size: 6.w),
+                  child: Icon(Icons.library_books, color: colorScheme.primary.withOpacity(0.7), size: 6.w),
                 ),
                 SizedBox(width: 3.w),
                 Expanded(
@@ -65,15 +58,15 @@ class SurahTafsirItem extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 0.5.h),
+                      SizedBox(height: 0.3.h),
                       Row(
                         children: [
-                          Icon(Icons.school, size: 3.6.w, color: colorScheme.onSurface),
+                          Icon(Icons.school, size: 3.2.w, color: colorScheme.primary.withOpacity(0.6)),
                           SizedBox(width: 1.w),
                           Text(
                             'تفسير وتأويل',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurface,
+                              color: colorScheme.primary.withOpacity(0.6),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -83,7 +76,7 @@ class SurahTafsirItem extends StatelessWidget {
                   ),
                 ),
                 Icon(Icons.arrow_forward_ios,
-                    size: 4.w, color: colorScheme.onSurface.withOpacity(0.4)),
+                    size: 3.5.w, color: colorScheme.onSurface.withOpacity(0.4)),
               ],
             ),
           ),

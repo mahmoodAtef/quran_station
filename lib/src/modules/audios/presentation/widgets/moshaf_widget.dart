@@ -17,21 +17,21 @@ class MoshafWidget extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+      margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
       child: Card(
-        elevation: 3,
-        shadowColor: colorScheme.shadow.withOpacity(0.2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
+        elevation: 2,
+        shadowColor: colorScheme.shadow.withOpacity(0.1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.w)),
         child: InkWell(
           onTap: () => context.push(MoshafScreen(moshaf: moshaf)),
-          borderRadius: BorderRadius.circular(4.w),
+          borderRadius: BorderRadius.circular(3.w),
           child: Container(
-            padding: EdgeInsets.all(4.w),
+            padding: EdgeInsets.all(3.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.w),
+              borderRadius: BorderRadius.circular(3.w),
               gradient: LinearGradient(
                 colors: [
-                  colorScheme.primaryContainer.withOpacity(0.3),
+                  colorScheme.primaryContainer.withOpacity(0.2),
                   colorScheme.surface,
                 ],
                 begin: Alignment.topLeft,
@@ -41,11 +41,11 @@ class MoshafWidget extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 13.w,
-                  height: 13.w,
+                  width: 12.w,
+                  height: 12.w,
                   decoration: BoxDecoration(
                     color: colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(3.w),
+                    borderRadius: BorderRadius.circular(2.w),
                   ),
                   child: Icon(Icons.menu_book, color: colorScheme.primary, size: 6.w),
                 ),

@@ -197,19 +197,19 @@ class MoshafScreen extends StatelessWidget {
               ),
 
               // Play all button
-              IconButton(
-                onPressed: () {
-                  // TODO: Implement play all functionality
-                },
-                icon: Icon(
-                  Icons.play_circle_filled,
-                  color: theme.colorScheme.primary,
-                  size: 32,
-                ),
-                tooltip: 'تشغيل الكل',
-                splashColor: theme.colorScheme.primary.withOpacity(0.2),
-                highlightColor: theme.colorScheme.primary.withOpacity(0.1),
-              ),
+              // IconButton(
+              //   onPressed: () {
+              //     // TODO: Implement play all functionality
+              //   },
+              //   icon: Icon(
+              //     Icons.play_circle_filled,
+              //     color: theme.colorScheme.primary,
+              //     size: 32,
+              //   ),
+              //   tooltip: 'تشغيل الكل',
+              //   splashColor: theme.colorScheme.primary.withOpacity(0.2),
+              //   highlightColor: theme.colorScheme.primary.withOpacity(0.1),
+              // ),
             ],
           ),
         ),

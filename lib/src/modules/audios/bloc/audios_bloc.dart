@@ -84,7 +84,6 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
     on<AudiosEvent>((event, emit) async {
       if (event is GetAllRecitersEvent) {
         await _handleGetAllRecitersEvent(emit);
-        print(state);
       } else if (event is GetReciterEvent) {
         await _handleGetReciterEvent(event, emit);
       } else if (event is SearchByNameEvent) {
@@ -199,6 +198,7 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
           }
         }
       });
+      favoriteReciters = favoriteReciters.toSet().toList();
       emit(GetFavoriteRecitersSuccessState());
     }
   }
@@ -245,6 +245,7 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
           mostPopularRecitersIds.clear();
           mostPopularReciters
               .addAll(reciters.where((element) => r.contains(element.data.id)));
+          mostPopularReciters = mostPopularReciters.toSet().toList();
           emit(GetMostPopularRecitersSuccessState());
         },
       );
@@ -409,20 +410,22 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   void _handleSetPlaybackTimerEvent(
       SetPlaybackTimerEvent event, Emitter<AudiosState> emit) async {
     playbackTimer?.cancel();
-    final totalDuration = Duration(minutes: event.minutes);
-    const interval = Duration(seconds: 1); // تحديث النسبة المؤوية كل ثانية
-    final startTime = DateTime.now();
+    int totalSeconds = event.minutes * 60;
+    int remainingSeconds = totalSeconds;
 
-    playbackTimer = Timer.periodic(interval, (timer) async {
-      final elapsedTime = DateTime.now().difference(startTime).inSeconds;
-      final totalMilliseconds = totalDuration.inSeconds;
-      add(UpdatePlaybackTimerEvent(elapsedTime / totalMilliseconds));
-      // التحقق إذا انتهى الوقت
-      if (elapsedTime >= totalMilliseconds) {
-        await audioPlayer.stop();
-        playbackTimer?.cancel();
-        playbackTimer = null;
-        playbackTimerPercentage = 1.0; // 100%
+    playbackTimerPercentage = 0.0;
+    emit(TimerUpdateState(0.0));
+
+    playbackTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (audioPlayer.playing) {
+        remainingSeconds--;
+        double p = 1.0 - (remainingSeconds / totalSeconds);
+        add(UpdatePlaybackTimerEvent(p));
+
+        if (remainingSeconds <= 0) {
+          await audioPlayer.stop();
+          add(CancelPlaybackTimerEvent());
+        }
       }
     });
   }
@@ -430,13 +433,13 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   void _handleUpdatePlaybackTimerEvent(
       UpdatePlaybackTimerEvent event, Emitter<AudiosState> emit) async {
     playbackTimerPercentage = event.percentage;
-    print(playbackTimerPercentage.toString() + "% \n\n");
-    emit(TimerUpdateState(event.percentage));
+    emit(TimerUpdateState(playbackTimerPercentage ?? 0.0));
   }
 
   void _handleCancelPlaybackTimerEvent(Emitter<AudiosState> emit) {
     playbackTimer?.cancel();
     playbackTimer = null;
+    playbackTimerPercentage = null;
     emit(TimerCancelledState());
   }
 }

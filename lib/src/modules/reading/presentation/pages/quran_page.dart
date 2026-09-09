@@ -9,6 +9,7 @@ class QuranPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isSpecialPage = pageNumber == 1 || pageNumber == 2;
 
     return Container(
       margin: EdgeInsets.only(
@@ -64,12 +65,14 @@ class QuranPage extends StatelessWidget {
                 width: 2,
               ))),
       child: Padding(
-        padding: EdgeInsets.all(4.w),
+        padding: isSpecialPage 
+            ? EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h) 
+            : EdgeInsets.all(4.w),
         child: ColorFiltered(
           colorFilter: const ColorFilter.srgbToLinearGamma(),
           child: Image.asset(
             "assets/quran_data/quran_images/$pageNumber.webp",
-            fit: BoxFit.fill,
+            fit: isSpecialPage ? BoxFit.contain : BoxFit.fill,
             filterQuality: FilterQuality.high,
           ),
         ),

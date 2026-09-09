@@ -19,6 +19,8 @@ class StartQuizScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     QuizCubit cubit = QuizCubit.get()..getQuestions();
     ScreenshotController screenshotController = ScreenshotController();
     ScreenshotController resultScreenshotController = ScreenshotController();
@@ -36,6 +38,7 @@ class StartQuizScreen extends StatelessWidget {
             controller: screenshotController,
             child: Scaffold(
               key: scaffoldKey,
+              backgroundColor: theme.scaffoldBackgroundColor,
               drawer: appDrawer(context),
               appBar: AppBar(
                 leadingWidth: 10.w,
@@ -45,10 +48,12 @@ class StartQuizScreen extends StatelessWidget {
                     },
                     icon: Icon(
                       Icons.menu,
+                      color: colorScheme.onPrimary,
                     )),
                 centerTitle: true,
                 title: Text(
                   'كَلَامُ رَبِّي',
+                  style: theme.appBarTheme.titleTextStyle,
                 ),
                 actions: [
                   if (cubit.state is! GetQuizLoadingState &&
@@ -63,6 +68,7 @@ class StartQuizScreen extends StatelessWidget {
                         },
                         icon: Icon(
                           Icons.share,
+                          color: colorScheme.onPrimary,
                         ))
                 ],
               ),
@@ -111,6 +117,7 @@ class StartQuizScreen extends StatelessWidget {
                                               }
                                             },
                                             icon: Icon(
+
                                                 color: cubit.currentpage != 0
                                                     ? theme.colorScheme.onSurface
                                                     : theme.colorScheme.onSurface
@@ -119,6 +126,7 @@ class StartQuizScreen extends StatelessWidget {
                                         if (cubit.currentpage == 19 &&
                                             !cubit.quizCompleted)
                                           Expanded(
+
                                             child: SizedBox(
                                               height: 5.h,
                                               child: ElevatedButton(
@@ -140,15 +148,12 @@ class StartQuizScreen extends StatelessWidget {
                                                                 resultScreenshotController,
                                                             child: AlertDialog(
                                                               elevation: 3,
-                                                              backgroundColor: theme
-                                                                  .dialogBackgroundColor,
+                                                              backgroundColor: theme.colorScheme.surface,
                                                               actions: [
                                                                 TextButton(
                                                                   style: TextButton
                                                                       .styleFrom(
-                                                                    foregroundColor: theme
-                                                                        .colorScheme
-                                                                        .primary,
+                                                                    foregroundColor: isDark ? colorScheme.onSurface : colorScheme.primary,
                                                                   ),
                                                                   child: const Text(
                                                                       "تحدي الأصدقاء"),
@@ -163,9 +168,7 @@ class StartQuizScreen extends StatelessWidget {
                                                                 TextButton(
                                                                     style: TextButton
                                                                         .styleFrom(
-                                                                      foregroundColor: theme
-                                                                          .colorScheme
-                                                                          .primary,
+                                                                      foregroundColor: isDark ? colorScheme.onSurface : colorScheme.primary,
                                                                     ),
                                                                     onPressed:
                                                                         () {
@@ -189,9 +192,7 @@ class StartQuizScreen extends StatelessWidget {
                                                                             .textTheme
                                                                             .titleMedium
                                                                             ?.copyWith(
-                                                                          color: theme
-                                                                              .colorScheme
-                                                                              .primary,
+                                                                          color: isDark ? colorScheme.onSurface : colorScheme.primary,
                                                                           fontWeight:
                                                                               FontWeight.bold,
                                                                         )),
@@ -222,17 +223,11 @@ class StartQuizScreen extends StatelessWidget {
                                                                           backgroundColor: theme
                                                                               .colorScheme
                                                                               .surfaceVariant,
-                                                                          color: theme
-                                                                              .colorScheme
-                                                                              .primary,
+                                                                          color: isDark ? colorScheme.secondary : colorScheme.primary,
                                                                           value: cubit.totalMarks /
                                                                               20,
-                                                                          // تحويل نسبة الدرجة إلى النسبة المطلوبة
                                                                           strokeWidth:
                                                                               10,
-                                                                          valueColor: AlwaysStoppedAnimation<Color>(theme
-                                                                              .colorScheme
-                                                                              .primary),
                                                                         ),
                                                                       ),
                                                                       Text(
@@ -315,14 +310,14 @@ class StartQuizScreen extends StatelessWidget {
       }
     });
 
-    XFile? imageFile = await _convertBytesToXFile(imageBytes!);
-
-    // مشاركة الصورة
-    if (imageFile != null) {
-      Share.shareXFiles(
-        [XFile(imageFile.path)],
-        text: text,
-      );
+    if (imageBytes != null) {
+      XFile? imageFile = await _convertBytesToXFile(imageBytes);
+      if (imageFile != null) {
+        Share.shareXFiles(
+          [XFile(imageFile.path)],
+          text: text,
+        );
+      }
     }
   }
 

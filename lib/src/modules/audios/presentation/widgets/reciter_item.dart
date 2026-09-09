@@ -20,28 +20,21 @@ class ReciterItem extends StatelessWidget {
     final bloc = AudiosBloc.get();
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+      margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
       child: Card(
-        elevation: 4,
-        shadowColor: colorScheme.shadow.withOpacity(0.2),
+        elevation: 2,
+        shadowColor: colorScheme.shadow.withOpacity(0.1),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4.w),
+          borderRadius: BorderRadius.circular(3.w),
         ),
         child: InkWell(
           onTap: () => context.push(ReciterScreen(reciterID: reciter.data.id)),
-          borderRadius: BorderRadius.circular(4.w),
+          borderRadius: BorderRadius.circular(3.w),
           child: Container(
-            padding: EdgeInsets.all(4.w),
+            padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.w),
-              gradient: LinearGradient(
-                colors: [
-                  colorScheme.surface,
-                  colorScheme.surface.withOpacity(0.8),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              borderRadius: BorderRadius.circular(3.w),
+              color: colorScheme.surface,
             ),
             child: Row(
               children: [
@@ -105,7 +98,7 @@ class _Details extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        SizedBox(height: 0.5.h),
+        SizedBox(height: 0.2.h),
         Row(
           children: [
             Icon(Icons.library_books_outlined,
@@ -143,6 +136,7 @@ class _FavoriteButton extends StatelessWidget {
     required this.reciter,
   });
 
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AudiosBloc, AudiosState>(
@@ -150,13 +144,13 @@ class _FavoriteButton extends StatelessWidget {
       builder: (context, state) {
         final isFavorite = bloc.favoriteReciters.contains(reciter);
         return Container(
-          width: 10.w,
-          height: 10.w,
+          width: 9.w,
+          height: 9.w,
           decoration: BoxDecoration(
             color: isFavorite
                 ? colorScheme.primary.withOpacity(0.1)
                 : colorScheme.surface,
-            borderRadius: BorderRadius.circular(5.w),
+            borderRadius: BorderRadius.circular(4.5.w),
             border: Border.all(
               color: isFavorite
                   ? colorScheme.primary
@@ -164,6 +158,7 @@ class _FavoriteButton extends StatelessWidget {
             ),
           ),
           child: IconButton(
+            padding: EdgeInsets.zero,
             onPressed: () {
               if (isFavorite) {
                 bloc.add(RemoveReciterFromFavoritesEvent(reciter.data.id));
@@ -176,7 +171,7 @@ class _FavoriteButton extends StatelessWidget {
               color: isFavorite
                   ? colorScheme.primary
                   : colorScheme.onSurface.withOpacity(0.6),
-              size: 4.2.w,
+              size: 4.5.w,
             ),
           ),
         );

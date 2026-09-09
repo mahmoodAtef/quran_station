@@ -26,6 +26,7 @@ class _MoshafScreenState extends State<MoshafScreen> {
   @override
   void initState() {
     _getInitialPage();
+
     super.initState();
   }
 
@@ -134,80 +135,74 @@ class _MoshafScreenState extends State<MoshafScreen> {
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              Expanded(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    context.push(
-                                                        const SurahsIndexScreen());
-                                                  },
-                                                  child: Text(
-                                                    "فهرس السور",
-                                                    style: theme
-                                                        .textTheme.titleMedium
-                                                        ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: AppColors
-                                                          .onSurfaceDark,
-                                                    ),
+                                              InkWell(
+                                                onTap: () {
+                                                  context.push(
+                                                      const SurahsIndexScreen());
+                                                },
+                                                child: Text(
+                                                  "فهرس السور",
+                                                  style: theme
+                                                      .textTheme.titleMedium
+                                                      ?.copyWith(
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    color: AppColors
+                                                        .onSurfaceDark,
                                                   ),
                                                 ),
                                               ),
-                                              Expanded(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    context.push(
-                                                        const JuzIndexScreen());
-                                                  },
-                                                  child: Text(
-                                                    "الأجزاء",
-                                                    style: theme
-                                                        .textTheme.titleMedium
-                                                        ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: AppColors
-                                                          .onSurfaceDark,
-                                                    ),
+                                              InkWell(
+                                                onTap: () {
+                                                  context.push(
+                                                      const JuzIndexScreen());
+                                                },
+                                                child: Text(
+                                                  "الأجزاء",
+                                                  style: theme
+                                                      .textTheme.titleMedium
+                                                      ?.copyWith(
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    color: AppColors
+                                                        .onSurfaceDark,
                                                   ),
                                                 ),
                                               ),
-                                              Expanded(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    _showPageSearchDialog(
-                                                        context);
-                                                  },
-                                                  child: Text(
-                                                    "البحث عن صفحة",
-                                                    style: theme
-                                                        .textTheme.titleMedium
-                                                        ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: AppColors
-                                                          .onSurfaceDark,
-                                                    ),
+                                              InkWell(
+                                                onTap: () {
+                                                  _showPageSearchDialog(
+                                                      context);
+                                                },
+                                                child: Text(
+                                                  "البحث عن صفحة",
+                                                  style: theme
+                                                      .textTheme.titleMedium
+                                                      ?.copyWith(
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    color: AppColors
+                                                        .onSurfaceDark,
                                                   ),
                                                 ),
                                               ),
-                                              Expanded(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    context.push(
-                                                        const ReadingQuranVirtueScreen());
-                                                  },
-                                                  child: Text(
-                                                    "فضل القرآن",
-                                                    style: theme
-                                                        .textTheme.titleMedium
-                                                        ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: AppColors
-                                                          .onSurfaceDark,
-                                                    ),
+                                              InkWell(
+                                                onTap: () {
+                                                  context.push(
+                                                      const ReadingQuranVirtueScreen());
+                                                },
+                                                child: Text(
+                                                  "فضل القرآن",
+                                                  style: theme
+                                                      .textTheme.titleMedium
+                                                      ?.copyWith(
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    color: AppColors
+                                                        .onSurfaceDark,
                                                   ),
                                                 ),
                                               ),
