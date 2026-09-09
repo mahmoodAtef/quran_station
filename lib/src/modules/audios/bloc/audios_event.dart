@@ -159,7 +159,7 @@ class UpdatePlaybackTimerEvent extends AudiosEvent {
   const UpdatePlaybackTimerEvent(this.percentage);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [percentage];
 }
 
 class DeleteDownloadedItemEvent extends AudiosEvent {

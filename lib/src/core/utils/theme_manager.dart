@@ -11,6 +11,10 @@ class AppColors {
   static const Color primaryDark = Color(0xFF141B2E);
   static const Color primaryVariant = Color(0xFF3C4B73);
 
+  // Lighter versions for Dark Mode icons and elements
+  static const Color primaryLightAccent = Color(0xFF6975A5);
+  static const Color secondaryLightAccent = Color(0xFFD45D79);
+
   static const Color secondaryLight = Color(0xFFA63E56);
   static const Color secondaryDark = Color(0xFF7A1F30);
   static const Color secondaryVariant = Color(0xFFB85570);
@@ -256,14 +260,14 @@ final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   scaffoldBackgroundColor: AppColors.backgroundDark,
   visualDensity: VisualDensity.adaptivePlatformDensity,
-  splashColor: AppColors.primaryLight.withOpacity(0.1),
-  highlightColor: AppColors.primaryLight.withOpacity(0.05),
+  splashColor: AppColors.primaryLightAccent.withOpacity(0.1),
+  highlightColor: AppColors.primaryLightAccent.withOpacity(0.05),
   colorScheme: ColorScheme.dark(
-    primary: AppColors.primaryLight,
+    primary: AppColors.primaryLightAccent, // Brightened for visibility
     onPrimary: AppColors.onPrimary,
     primaryContainer: AppColors.primaryDark,
     onPrimaryContainer: AppColors.onPrimary,
-    secondary: AppColors.secondaryLight,
+    secondary: AppColors.secondaryLightAccent, // Brightened for visibility
     onSecondary: AppColors.onSecondary,
     secondaryContainer: AppColors.secondaryDark,
     onSecondaryContainer: AppColors.onSecondary,
@@ -316,7 +320,7 @@ final ThemeData darkTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.primaryLight,
+      backgroundColor: AppColors.primaryLightAccent,
       foregroundColor: AppColors.onPrimary,
       elevation: 3,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -325,15 +329,15 @@ final ThemeData darkTheme = ThemeData(
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: AppColors.secondaryLight,
-      side: const BorderSide(color: AppColors.secondaryLight, width: 2),
+      foregroundColor: AppColors.secondaryLightAccent,
+      side: const BorderSide(color: AppColors.secondaryLightAccent, width: 2),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
   ),
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
-      foregroundColor: AppColors.secondaryLight,
+      foregroundColor: AppColors.secondaryLightAccent,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     ),
   ),
@@ -349,15 +353,15 @@ final ThemeData darkTheme = ThemeData(
     fillColor: AppColors.primaryDark,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.primaryLight),
+      borderSide: const BorderSide(color: AppColors.primaryLightAccent),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: AppColors.primaryLight.withOpacity(0.5)),
+      borderSide: BorderSide(color: AppColors.primaryLightAccent.withOpacity(0.5)),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.primaryLight, width: 2),
+      borderSide: const BorderSide(color: AppColors.primaryLightAccent, width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -367,7 +371,7 @@ final ThemeData darkTheme = ThemeData(
     hintStyle: TextStyle(color: AppColors.onSurfaceDark.withOpacity(0.6)),
   ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: AppColors.secondaryLight,
+    backgroundColor: AppColors.secondaryLightAccent,
     foregroundColor: AppColors.onSecondary,
     elevation: 6,
   ),
@@ -379,7 +383,7 @@ final ThemeData darkTheme = ThemeData(
   ),
   chipTheme: const ChipThemeData(
     backgroundColor: AppColors.primaryDark,
-    selectedColor: AppColors.secondaryLight,
+    selectedColor: AppColors.secondaryLightAccent,
     labelStyle: TextStyle(color: AppColors.onSurfaceDark),
     secondaryLabelStyle: TextStyle(color: AppColors.onSecondary),
     brightness: Brightness.dark,
@@ -407,12 +411,12 @@ final ThemeData darkTheme = ThemeData(
     thickness: 1,
   ),
   progressIndicatorTheme: const ProgressIndicatorThemeData(
-    color: AppColors.primaryLight,
+    color: AppColors.primaryLightAccent,
   ),
   switchTheme: SwitchThemeData(
     thumbColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
-          ? AppColors.primaryLight
+          ? AppColors.primaryLightAccent
           : AppColors.outlineDark,
     ),
     trackColor: WidgetStateProperty.resolveWith(

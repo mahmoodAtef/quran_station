@@ -65,6 +65,8 @@ class ReadingQuranVirtueScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ],
+
+
                               ),
                             ),
                           ),

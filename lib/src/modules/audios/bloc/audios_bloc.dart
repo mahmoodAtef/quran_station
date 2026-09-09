@@ -75,8 +75,12 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   List<int> mostPopularRecitersIds = [];
   AudioPlayerHandler? handler;
   double? downloadProgress;
+  
+  // Timer Properties
   Timer? playbackTimer;
   double? playbackTimerPercentage;
+  int? selectedTimerMinutes;
+  int remainingSeconds = 0;
 
   double get progress => downloadProgress ?? 0.0;
 
@@ -410,22 +414,24 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
   void _handleSetPlaybackTimerEvent(
       SetPlaybackTimerEvent event, Emitter<AudiosState> emit) async {
     playbackTimer?.cancel();
+    selectedTimerMinutes = event.minutes;
     int totalSeconds = event.minutes * 60;
-    int remainingSeconds = totalSeconds;
+    remainingSeconds = totalSeconds;
 
     playbackTimerPercentage = 0.0;
     emit(TimerUpdateState(0.0));
 
     playbackTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (audioPlayer.playing) {
-        remainingSeconds--;
+      remainingSeconds--;
+      
+      if (remainingSeconds <= 0) {
+        add(CancelPlaybackTimerEvent());
+        if (audioPlayer.playing) {
+          await audioPlayer.stop();
+        }
+      } else {
         double p = 1.0 - (remainingSeconds / totalSeconds);
         add(UpdatePlaybackTimerEvent(p));
-
-        if (remainingSeconds <= 0) {
-          await audioPlayer.stop();
-          add(CancelPlaybackTimerEvent());
-        }
       }
     });
   }
@@ -440,6 +446,8 @@ class AudiosBloc extends Bloc<AudiosEvent, AudiosState> {
     playbackTimer?.cancel();
     playbackTimer = null;
     playbackTimerPercentage = null;
+    selectedTimerMinutes = null;
+    remainingSeconds = 0;
     emit(TimerCancelledState());
   }
 }

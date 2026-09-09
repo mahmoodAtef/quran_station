@@ -70,18 +70,18 @@ class _PlayerWidgetState extends State<PlayerWidget>
 
     _playerStateSubscription =
         _audioPlayer.playerStateStream.listen((playerState) {
-          if (playerState.processingState == ProcessingState.completed) {
-            _onCompleted();
-          }
+      if (playerState.processingState == ProcessingState.completed) {
+        _onCompleted();
+      }
 
-          if (playerState.playing) {
-            _playButtonController.forward();
-            _rotationController.repeat();
-          } else {
-            _playButtonController.reverse();
-            _rotationController.stop();
-          }
-        });
+      if (playerState.playing) {
+        _playButtonController.forward();
+        _rotationController.repeat();
+      } else {
+        _playButtonController.reverse();
+        _rotationController.stop();
+      }
+    });
   }
 
   @override
@@ -99,7 +99,7 @@ class _PlayerWidgetState extends State<PlayerWidget>
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
     _audioPlayer.playbackEventStream.listen(
-          (event) {},
+      (event) {},
       onError: (Object e, StackTrace stackTrace) {},
     );
 
@@ -107,10 +107,11 @@ class _PlayerWidgetState extends State<PlayerWidget>
       await _setAudioSource();
       bloc.currentSurahUrl = widget.audioAddress;
     } catch (e) {
-      errorToast(msg: e.toString(),);
+      errorToast(
+        msg: e.toString(),
+      );
     }
   }
-
 
   Future<void> _setAudioSource() async {
     final mediaItem = MediaItem(
@@ -143,6 +144,8 @@ class _PlayerWidgetState extends State<PlayerWidget>
     await _audioPlayer.seek(Duration.zero);
     await _audioPlayer.pause();
     setState(() => _position = Duration.zero);
+    // إلغاء المؤقت عند إيقاف التشغيل يدوياً
+    bloc.add(CancelPlaybackTimerEvent());
   }
 
   Future<void> _onCompleted() async {
@@ -152,6 +155,8 @@ class _PlayerWidgetState extends State<PlayerWidget>
       await _audioPlayer.play();
     } else {
       setState(() => _position = Duration.zero);
+      // إلغاء المؤقت عند انتهاء السورة
+      bloc.add(CancelPlaybackTimerEvent());
     }
   }
 
